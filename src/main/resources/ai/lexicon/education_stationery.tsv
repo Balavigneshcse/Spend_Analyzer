@@ -46,7 +46,8 @@ file	S	files, stick file, folder, project file, document file, plastic folder, f
 exam pad	S	writing pad, clip board, clipboard, exam board
 textbook	S	text book, textbooks, book, books, bok, puthagam, pusthagam, kitab, kitaab, reference book, guide, guide book, question bank, qb, previous year papers, local author book, second hand book, old books, novel, story book, local guide
 calculator	S	calci, calc, scientific calculator, casio, casio calculator, fx 991, calculater, caluclator
-drafter	S	mini drafter, drafting machine, t square, lab coat, labcoat, apron, lab apron, workshop uniform, workshop dress, safety shoes
+drafter	S	mini drafter, drafting machine, t square
+lab coat	S	labcoat, apron, lab apron, workshop uniform, workshop dress, safety shoes
 id card	S	id card fee, id card lanyard, lanyard, id tag, duplicate id card, college id
 stationery	S	stationary, stationery items, stationary items, stationery shop, stationary shop, stationeries, statinary, book shop, bookshop, book stall, fancy store stationery
 
@@ -57,6 +58,7 @@ spiral binding	S	spiral, binding, book binding, soft binding, hard binding, cali
 lamination	S	laminate, id lamination, certificate lamination
 scanning	S	scan copy, document scan, scan and print
 browsing	S	browsing centre, browsing center, net centre, net cafe, internet cafe, cyber cafe, browsing charge
+assignment	S	assignments, assignment sheets, assignment paper, assignment print
 project report	S	project work, project materials, project kit, project components, mini project, final year project, project expenses, model making, science project
 passport photo	S	passport size photo, photos passport, passport size photos, photo print, stamp size photo
 
@@ -108,7 +110,7 @@ great learning	S
 simplilearn	S
 scaler	S
 coding ninjas	S
-language class	S	hindi class, german class, french class, gate application, gate exam fee, cat exam fee
+language class	S	hindi class, german class, french class
 spoken english	S	spoken english class
 ielts	S	ielts fee
 toefl	S
@@ -125,7 +127,7 @@ turnitin	S	plagiarism check
 chatgpt plus	S	chatgpt
 github pro	S
 overleaf	S
-competitive exam form	S	tnpsc application, ssc application, bank exam fee, rrb application, upsc application, exam hall ticket print, online application
+competitive exam form	S	tnpsc application, ssc application, bank exam fee, rrb application, upsc application, exam hall ticket print, online application, gate application, gate exam fee, cat exam fee
 study materials	S	school supplies, college supplies, study material, materials, material, notes, notes copy, class notes, printed notes, handwritten notes
 magazine	S	employment news, competition success
 newspaper	S	news paper, paper bill, the hindu

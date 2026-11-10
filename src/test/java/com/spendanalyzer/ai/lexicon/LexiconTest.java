@@ -135,6 +135,20 @@ class LexiconTest {
 	}
 
 	@Test
+	void aWordTypedApartWithALetterMissingIsReadAsThatWord() {
+		// "har" is no word at all, and "haircut" is also listed as "hair cut"
+		Span span = only("har cut");
+		assertThat(span.top().canonical()).isEqualTo("haircut");
+		assertThat(span.exact()).isFalse();
+		assertThat(span.typed()).isEqualTo("har cut");
+		assertThat(span.sourceWords()).containsExactly("har", "cut");
+		// only a very close match counts: an unknown word next to "cut" is not a haircut
+		assertThat(matcher.match(analyzer.analyze("zqx cut").tokens()).spans())
+			.extracting(s -> s.top().canonical())
+			.doesNotContain("haircut");
+	}
+
+	@Test
 	void exactHitsAreExactAndRepairsAreNot() {
 		assertThat(only("juice").exact()).isTrue();
 		assertThat(only("chai").exact()).isTrue();

@@ -74,6 +74,9 @@ public final class LexiconMatcher {
 	/** ... and this close to the phrase. */
 	private static final double MIN_PAIR_SCORE = 0.90;
 
+	/** A pair with a part that is no word at all ("har cut") may be one letter shorter. */
+	private static final int MIN_BROKEN_PAIR_LENGTH = 6;
+
 	private final Lexicon lexicon;
 
 	private final FuzzyMatcher fuzzy;
@@ -264,6 +267,8 @@ public final class LexiconMatcher {
 	 * Two neighbouring words that together are one known term: written apart ("note book" for
 	 * "notebook") or a misspelt phrase whose parts happen to be words themselves ("pani pori" for
 	 * "pani puri"). Only a very close match is accepted, because both words were readable as typed.
+	 * When one part is no known word at all ("har cut"), the pair may also be a single word that is
+	 * usually written apart as well ("haircut", "hair cut").
 	 */
 	private Piece repairPair(Token first, Token second) {
 		String joined = first.text() + second.text();
@@ -272,7 +277,8 @@ public final class LexiconMatcher {
 		if (lexicon.isTerm(joined)) {
 			return Piece.exact(joined, typed, source);
 		}
-		if (joined.length() < MIN_PAIR_LENGTH) {
+		boolean broken = !lexicon.isWord(first.text()) || !lexicon.isWord(second.text());
+		if (joined.length() < (broken ? MIN_BROKEN_PAIR_LENGTH : MIN_PAIR_LENGTH)) {
 			return null;
 		}
 		FuzzyMatcher.Result result = fuzzy.match(joined);
@@ -280,13 +286,24 @@ public final class LexiconMatcher {
 			return null;
 		}
 		// the match must stand for a phrase ("panipuri" is "pani puri"), not be some long single word
+		boolean alsoWrittenApart = broken && isWrittenApart(result.best().word());
 		for (LexiconEntry entry : lexicon.find(result.best().word())) {
-			if (entry.derived() || entry.canonical().indexOf(' ') > 0) {
+			if (entry.derived() || entry.canonical().indexOf(' ') > 0 || alsoWrittenApart) {
 				return new Piece(result.best().word(), Token.Kind.WORD, typed, source, result.best().score(),
 						result.best().soundsAlike(), false, null);
 			}
 		}
 		return null;
+	}
+
+	/** "haircut" is also listed as "hair cut": true when the word, cut in two, is a known phrase. */
+	private boolean isWrittenApart(String word) {
+		for (int cut = 2; cut <= word.length() - 2; cut++) {
+			if (lexicon.isTerm(word.substring(0, cut) + " " + word.substring(cut))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void repairUnknown(Token token, List<Piece> out) {

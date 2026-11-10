@@ -17,8 +17,8 @@ simpl	S	simpl bill
 credit card bill	S	credit card payment, cc bill, cc payment, card bill, card bill payment, card payment, credit card due, credit card dues, card due, credit card emi, sbi card bill, hdfc card bill, icici card bill, axis card bill, onecard bill, cred, cred payment
 
 # ---- sending money
-sent home	S	sent to home, send home, money to home, sent to mom, sent to dad, sent to amma, sent to appa, sent to parents, veetuku anupinen, veetukku panam, ghar bheja, ghar paisa bheja, money sent home, family transfer, sent to family, sent to brother, sent to sister
-transfer	S	transferred, transfered, tranfer, money transfer, fund transfer, bank transfer, self transfer, own account transfer, account transfer, upi transfer, sent money, money sent, sent to friend, gpay sent, phonepe sent, paytm sent, moved to savings, moved money, to my other account
+sent home	S	sent to home, send home, money to home, sent to mom, sent to dad, sent to amma, sent to appa, sent to parents, veetuku anupinen, veetukku panam, ghar bheja, ghar paisa bheja, money sent home, family transfer, sent to family, sent to brother, sent to sister, amma ku anupinen, appa ku anupinen, amma ku panam, appa ku panam
+transfer	S	transferred, transfered, tranfer, money transfer, fund transfer, bank transfer, self transfer, own account transfer, account transfer, upi transfer, sent money, money sent, sent to friend, gpay sent, phonepe sent, paytm sent, moved to savings, moved money, to my other account, anupinen, panam anupinen, kaasu anupinen
 neft	S	neft transfer
 imps	S	imps transfer
 rtgs	S
@@ -49,6 +49,7 @@ bank charges	S	bank charge, bank fee, bank fees, service charge, service charges
 atm fee	S	atm charge, atm charges, atm withdrawal charge, atm transaction fee, other bank atm charge, atm decline charge
 late fee	S	late fees, late payment fee, late payment charge, late charges, late fine, overdue charge, overdue fee, penalty, penalty fee, bounce charge, cheque bounce, auto debit bounce, nach bounce, emi bounce charge
 fine	S	fine paid, fine amount, fine payment, abaradham, abaratham, jurmana, dand, hostel fine, college fine, attendance fine, id card fine, dress code fine, mobile fine, discipline fine, late coming fine
+traffic fine	S	traffic challan, challan, e challan, traffic police fine, helmet fine, no parking fine, signal fine, rto fine
 tax	S	taxes, tds, professional tax, advance tax, tax payment, ca fee, auditor fee
 income tax	S
 gst	S	gst payment

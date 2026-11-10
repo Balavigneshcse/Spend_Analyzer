@@ -25,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
  * <p>
  * Lock order (never the other way round, so no deadlocks): edit and delete lock the entry row and
  * then the account rows; create locks the account rows and only then inserts. Account rows are
- * always taken in the order BANK, CASH, CREDIT_CARD.
+ * always taken in the order BANK, CASH, CREDIT_CARD. What the AI learns from a chosen category is
+ * written last, after the account rows, by create and by edit alike; the AI writes its word rows
+ * in alphabetical order.
  */
 @Service
 public class LedgerService {
@@ -124,7 +126,6 @@ public class LedgerService {
 			category = change.category();
 			userCorrected = true;
 			needsReview = false;
-			ai.learn(userId, description, category, aiCategory);
 		}
 
 		EntryRow updated = new EntryRow(old.id(), userId, old.clientId(), EntryType.EXPENSE, amount, mode.account(),
@@ -133,6 +134,10 @@ public class LedgerService {
 		// Undo the old effect and apply the new one. UPI -> CASH gives +bank and -cash in one transaction.
 		accounts.apply(userId, LedgerEffects.replace(old.effects(), updated.effects()));
 		entries.update(updated);
+		if (change.category() != null) {
+			// After the account rows, as in create(): taking the AI rows first could deadlock with it.
+			ai.learn(userId, description, category, aiCategory);
+		}
 		return saved(userId, updated, false);
 	}
 

@@ -140,6 +140,167 @@ class CategorizerAcceptanceTest {
 		assertThat(prediction.needsReview()).as(text).isTrue();
 	}
 
+	@ParameterizedTest
+	@ValueSource(strings = { "gpay to gopi 500", "phonepe to gopi", "paid 200 to gopi", "paytm to zubair 50",
+			"upi to gopi anna" })
+	void whoWasPaidIsNotAnItemEvenWhenTheNameIsNotInAnyList(String text) {
+		// "gopi" is one letter from "gobi" (cauliflower); after "gpay to" it names a person or a shop
+		Prediction prediction = predict(text);
+		assertThat(prediction.category()).as(text).isEqualTo(Category.OTHER);
+		assertThat(prediction.needsReview()).as(text).isTrue();
+		assertThat(prediction.item()).as(text).doesNotContain("cauliflower");
+		// the same before the model is trained
+		Prediction cold = CategorizerEngine.create(UserMemoryStore.NONE).categorize(null, text, null);
+		assertThat(cold.category()).as(text).isEqualTo(Category.OTHER);
+		assertThat(cold.needsReview()).as(text).isTrue();
+	}
+
+	@Test
+	void aKnownWordAfterToIsStillWhatWasBought() {
+		assertThat(predict("paytm to canteen").category()).isEqualTo(Category.FOOD_MEALS);
+		assertThat(predict("gpay to gobi").item()).isEqualTo("cauliflower");
+		// money that went to a person is a transfer when the text says so
+		Prediction lent = predict("lent 500 to gopi");
+		assertThat(lent.category()).isEqualTo(Category.TRANSFERS_FEES);
+		assertThat(lent.item()).isEqualTo("lent to friend");
+		assertThat(lent.needsReview()).isFalse();
+	}
+
+	// ------------------------------------------------------------------ phrases made of fillers
+
+	@ParameterizedTest
+	@CsvSource({ "credit card payment 2000, TRANSFERS_FEES, credit card bill", "card payment, TRANSFERS_FEES, credit card bill",
+			"took cash, TRANSFERS_FEES, cash withdrawal", "double payment, TRANSFERS_FEES, lost money",
+			"money to home, TRANSFERS_FEES, sent home", "friend ku kaasu, TRANSFERS_FEES, lent to friend",
+			"dost ko diya, TRANSFERS_FEES, lent to friend", "online class, EDUCATION_STATIONERY, online course",
+			"special class, EDUCATION_STATIONERY, tuition", "paid for friends, SOCIAL_GIFTS, paid for friends",
+			"paid for friend, SOCIAL_GIFTS, paid for friends", "card for friend, SOCIAL_GIFTS, greeting card",
+			"for mom, SOCIAL_GIFTS, pocket money given", "for dad, SOCIAL_GIFTS, pocket money given",
+			"amma ku, SOCIAL_GIFTS, pocket money given", "appa ku, SOCIAL_GIFTS, pocket money given",
+			"thambi ku, SOCIAL_GIFTS, pocket money given", "thangachi ku, SOCIAL_GIFTS, pocket money given",
+			"paati ku 100, SOCIAL_GIFTS, pocket money given" })
+	void aKnownPhraseMadeOnlyOfFillersIsAnAnswer(String text, Category category, String item) {
+		// every word here is a filler on its own ("credit", "card", "payment"); together they are an item
+		Prediction prediction = predict(text);
+		assertThat(prediction.category()).as(text).isEqualTo(category);
+		assertThat(prediction.item()).as(text).isEqualTo(item);
+		assertThat(prediction.source()).as(text).isEqualTo(PredictionSource.LEXICON_EXACT);
+		assertThat(prediction.confidence()).as(text).isGreaterThanOrEqualTo(0.80);
+		assertThat(prediction.needsReview()).as(text).isFalse();
+		assertThat(engine.rank(text, null).top()).as(text).isEqualTo(category);
+		// no meaningful word for the model to read: the answer is the same without it
+		assertThat(CategorizerEngine.create(UserMemoryStore.NONE).categorize(null, text, null)).as(text)
+			.isEqualTo(prediction);
+	}
+
+	@ParameterizedTest
+	@CsvSource({ "room expenses, RENT_UTILITIES", "room items, GROCERIES", "stuff for room, GROCERIES",
+			"cash to friend, TRANSFERS_FEES", "fresh to home, GROCERIES" })
+	void aVaguePhraseMadeOnlyOfFillersGivesItsCategoryAndAsksForReview(String text, Category category) {
+		Prediction prediction = predict(text);
+		assertThat(prediction.category()).as(text).isEqualTo(category);
+		assertThat(prediction.needsReview()).as(text).isTrue();
+		assertThat(prediction.confidence()).as(text).isLessThan(CategorizerEngine.ACCEPT);
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = { "credit", "card", "payment", "online", "class", "for", "mom", "ku", "paid for", "cash",
+			"credit payment", "pack", "2 pack", "maalai" })
+	void fillersThatAreNotAKnownPhraseStillSayNothing(String text) {
+		Prediction prediction = predict(text);
+		assertThat(prediction.category()).as(text).isEqualTo(Category.OTHER);
+		assertThat(prediction.source()).as(text).isEqualTo(PredictionSource.ABSTAIN);
+		assertThat(engine.rank(text, null).ranked()).as(text).isEmpty();
+	}
+
+	// ------------------------------------------------------------------ reviewed word-list entries
+
+	@ParameterizedTest
+	@CsvSource({ "28 days pack, unlimited pack", "56 days pack, unlimited pack", "84 days pack, unlimited pack",
+			"365 days pack, unlimited pack", "data pack, data pack", "net pack, data pack", "jio pack, jio recharge",
+			"recharge pack, recharge" })
+	void aRechargePackIsStillARecharge(String text, String item) {
+		Prediction prediction = predict(text);
+		assertThat(prediction.category()).as(text).isEqualTo(Category.MOBILE_INTERNET);
+		assertThat(prediction.item()).as(text).isEqualTo(item);
+		assertThat(prediction.needsReview()).as(text).isFalse();
+	}
+
+	@ParameterizedTest
+	@CsvSource({ "chips pack, SNACKS_BEVERAGES, chips", "milk pack, GROCERIES, milk", "biscuit pack 2, SNACKS_BEVERAGES, biscuit",
+			"maalai tea, SNACKS_BEVERAGES, tea", "kaalai dosa, FOOD_MEALS, dosa" })
+	void packAndTimeOfDayAreFillersNotItems(String text, Category category, String item) {
+		// "pack" used to count as a mobile plan and "maalai" (evening) as a garland
+		Prediction prediction = predict(text);
+		assertThat(prediction.category()).as(text).isEqualTo(category);
+		assertThat(prediction.item()).as(text).isEqualTo(item);
+		assertThat(prediction.source()).as(text).isEqualTo(PredictionSource.LEXICON_EXACT);
+		assertThat(prediction.needsReview()).as(text).isFalse();
+		assertThat(prediction.alternatives()).as(text)
+			.noneMatch(a -> a.category() == Category.MOBILE_INTERNET && a.confidence() > 0.05);
+	}
+
+	@Test
+	void aDocIsADocumentNotADoctor() {
+		for (String text : List.of("doc print", "doc xerox")) {
+			Prediction prediction = predict(text);
+			assertThat(prediction.category()).as(text).isEqualTo(Category.EDUCATION_STATIONERY);
+			assertThat(prediction.item()).as(text).doesNotContain("doctor");
+		}
+		// the usual short form for a doctor still works
+		assertThat(predict("dr fee").category()).isEqualTo(Category.HEALTH_MEDICINE);
+	}
+
+	@ParameterizedTest
+	@CsvSource({ "gate exam fee, EDUCATION_STATIONERY, competitive exam form",
+			"gate application, EDUCATION_STATIONERY, competitive exam form", "hindi class, EDUCATION_STATIONERY, language class",
+			"lab coat, EDUCATION_STATIONERY, lab coat", "apron, EDUCATION_STATIONERY, lab coat",
+			"mini drafter, EDUCATION_STATIONERY, drafter", "printer ink, SHOPPING, printer",
+			"ink cartridge, SHOPPING, printer", "new laptop, SHOPPING, laptop",
+			"assignment, EDUCATION_STATIONERY, assignment", "assignment print, EDUCATION_STATIONERY, assignment" })
+	void theItemNameSaysWhatWasBought(String text, Category category, String item) {
+		// repeated buys are grouped by this name: a lab coat must not be counted as a drafter
+		Prediction prediction = predict(text);
+		assertThat(prediction.category()).as(text).isEqualTo(category);
+		assertThat(prediction.item()).as(text).isEqualTo(item);
+		assertThat(prediction.needsReview()).as(text).isFalse();
+	}
+
+	// ------------------------------------------------------------------ gaps a blind test found
+
+	@ParameterizedTest
+	@CsvSource({
+			// a fine buys nothing, whatever it was for
+			"traffic fine, TRANSFERS_FEES, traffic fine", "helmet fine 500, TRANSFERS_FEES, traffic fine",
+			"challan, TRANSFERS_FEES, traffic fine", "no parking fine, TRANSFERS_FEES, traffic fine",
+			// buying a helmet or paying for parking is still transport
+			"helmet, TRANSPORT_FUEL, helmet", "parking ticket, TRANSPORT_FUEL, parking",
+			// "gaadi" is a vehicle, like "vandi"
+			"gaadi service, TRANSPORT_FUEL, bike service", "gaadi repair, TRANSPORT_FUEL, bike service",
+			"gaadi petrol, TRANSPORT_FUEL, petrol",
+			// getting clothes ironed is laundry, not buying clothes
+			"dress iron 5 nos, PERSONAL_CARE, ironing", "shirt ironing, PERSONAL_CARE, ironing",
+			"uniform iron, PERSONAL_CARE, ironing", "dress, SHOPPING, dress",
+			// money sent to the family is a transfer
+			"amma ku anupinen, TRANSFERS_FEES, sent home", "appa ku anupinen 2000, TRANSFERS_FEES, sent home",
+			"veetuku anupinen, TRANSFERS_FEES, sent home" })
+	void knowledgeGapsFoundByTheBlindTest(String text, Category category, String item) {
+		Prediction prediction = predict(text);
+		assertThat(prediction.category()).as(text).isEqualTo(category);
+		assertThat(prediction.item()).as(text).isEqualTo(item);
+		assertThat(prediction.confidence()).as(text).isGreaterThanOrEqualTo(0.80);
+		assertThat(prediction.needsReview()).as(text).isFalse();
+	}
+
+	@Test
+	void aWordTypedApartWithALetterMissingIsStillFound() {
+		// "har" is no word at all, so "har cut" is read as one misspelt word: haircut
+		Prediction prediction = predict("har cut");
+		assertThat(prediction.category()).isEqualTo(Category.PERSONAL_CARE);
+		assertThat(prediction.item()).isEqualTo("haircut");
+		assertThat(prediction.source()).isEqualTo(PredictionSource.LEXICON_FUZZY);
+	}
+
 	// ------------------------------------------------------------------ several words
 
 	@ParameterizedTest
@@ -260,6 +421,43 @@ class CategorizerAcceptanceTest {
 		assertThat(cold.isModelReady()).isTrue();
 		assertThat(cold.stats().trainingExamples()).isGreaterThan(10_000);
 		assertThat(cold.categorize(null, "juse", null).category()).isEqualTo(Category.SNACKS_BEVERAGES);
+	}
+
+	@ParameterizedTest
+	@CsvSource({
+			// a vague word
+			"bill 500, RENT_UTILITIES", "fee, EDUCATION_STATIONERY", "charges, TRANSFERS_FEES",
+			// a shop that sells many things
+			"amazon, SHOPPING",
+			// a repaired spelling, however close
+			"juse, SNACKS_BEVERAGES", "briyany, FOOD_MEALS", "helmt fine, TRANSFERS_FEES" })
+	void withoutTheModelAWeakOrRepairedMatchKeepsItsCategoryButAsksForReview(String text, Category category) {
+		// before training has finished, after a failed training and with app.ai.training=off
+		for (CategorizerEngine withoutModel : List.of(CategorizerEngine.create(UserMemoryStore.NONE),
+				TestEngines.lexiconOnly())) {
+			Prediction prediction = withoutModel.categorize(null, text, null);
+			assertThat(prediction.category()).as(text).isEqualTo(category);
+			assertThat(prediction.confidence()).as(text).isBetween(CategorizerEngine.REVIEW, 0.79);
+			assertThat(prediction.needsReview()).as(text).isTrue();
+		}
+	}
+
+	@ParameterizedTest
+	@CsvSource({ "bus ticket, TRANSPORT_FUEL", "dosa, FOOD_MEALS", "dosa 2, FOOD_MEALS", "eb bill, RENT_UTILITIES",
+			"jio recharge 239, MOBILE_INTERNET", "pen, EDUCATION_STATIONERY" })
+	void withoutTheModelAnExactClearItemIsStillAcceptedSilently(String text, Category category) {
+		Prediction prediction = CategorizerEngine.create(UserMemoryStore.NONE).categorize(null, text, null);
+		assertThat(prediction.category()).as(text).isEqualTo(category);
+		assertThat(prediction.confidence()).as(text).isGreaterThanOrEqualTo(CategorizerEngine.ACCEPT);
+		assertThat(prediction.needsReview()).as(text).isFalse();
+		assertThat(prediction.source()).as(text).isEqualTo(PredictionSource.LEXICON_EXACT);
+	}
+
+	@Test
+	void onceTheModelAgreesARepairedSpellingIsAcceptedSilently() {
+		Prediction prediction = predict("juse");
+		assertThat(prediction.confidence()).isGreaterThanOrEqualTo(CategorizerEngine.ACCEPT);
+		assertThat(prediction.needsReview()).isFalse();
 	}
 
 	// ------------------------------------------------------------------ robustness

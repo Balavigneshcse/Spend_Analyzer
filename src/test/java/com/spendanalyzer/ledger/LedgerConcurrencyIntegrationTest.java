@@ -7,6 +7,7 @@ import static com.spendanalyzer.ledger.LedgerApi.income;
 import static com.spendanalyzer.ledger.LedgerApi.withdrawal;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
+import com.spendanalyzer.ai.api.Categorizer;
+import com.spendanalyzer.model.Category;
 import com.spendanalyzer.security.AuthUser;
 import com.spendanalyzer.testsupport.IntegrationTest;
 import com.spendanalyzer.testsupport.TestData;
@@ -26,6 +30,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /** Overlapping requests (double click, two tabs, a retry) must never corrupt a balance. */
 @IntegrationTest
@@ -36,6 +42,12 @@ class LedgerConcurrencyIntegrationTest {
 
 	@Autowired
 	JdbcClient jdbc;
+
+	@Autowired
+	Categorizer categorizer;
+
+	@Autowired
+	PlatformTransactionManager transactionManager;
 
 	LedgerApi api;
 
@@ -216,6 +228,69 @@ class LedgerConcurrencyIntegrationTest {
 		assertThat(together(calls)).containsOnly(200);
 		// whichever edit came last, the balances match the one entry that is left
 		LedgerApi.assertLedgerExplainsBalances(jdbc, user);
+	}
+
+	@Test
+	void anEditTakesTheBalanceRowsBeforeItTeachesTheAiJustLikeACreate() throws Exception {
+		AuthUser user = TestData.createUser(jdbc);
+		api.onboard(user, "1000", "0", "0");
+		String id = api.created(user, expense("zorbet", "40", "UPI"));
+		ExecutorService pool = Executors.newSingleThreadExecutor();
+		AtomicReference<Future<Integer>> edit = new AtomicReference<>();
+		try {
+			new TransactionTemplate(transactionManager).executeWithoutResult(status -> {
+				// what a create does first: it takes the BANK balance row
+				jdbc.sql("SELECT balance FROM accounts WHERE user_id = ? AND type = 'BANK' FOR UPDATE")
+					.param(user.id())
+					.query(BigDecimal.class)
+					.single();
+				// meanwhile an edit of the same user changes category and amount of a spend with the same text
+				edit.set(pool.submit(() -> status(
+						api.edit(user, id, body("category", "SNACKS_BEVERAGES", "amount", "55")))));
+				awaitLockWait("accounts");
+				// What a create does last: it teaches the AI the chosen category of its text. Had the
+				// waiting edit written its AI rows already, each would now wait for the other and
+				// PostgreSQL would abort one of them (a 500 for the user).
+				categorizer.learn(user.id(), "zorbet", Category.SNACKS_BEVERAGES, true);
+			});
+			assertThat(edit.get().get(30, TimeUnit.SECONDS)).isEqualTo(200);
+		}
+		finally {
+			pool.shutdownNow();
+		}
+
+		api.assertBalances(user, "945.00", "0.00", "0.00");
+		LedgerApi.assertLedgerExplainsBalances(jdbc, user);
+		// the edit's own lesson arrived after it got the balance row
+		Integer hits = jdbc.sql("SELECT hits FROM ai_user_memory WHERE user_id = ? AND norm_text = 'zorbet'")
+			.param(user.id())
+			.query(Integer.class)
+			.single();
+		assertThat(hits).isEqualTo(2);
+	}
+
+	/** Waits until some database session is blocked on a row lock in a statement on this table. */
+	private void awaitLockWait(String table) {
+		long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(20);
+		while (System.nanoTime() < deadline) {
+			// inside a transaction PostgreSQL shows the same picture of the sessions until told otherwise
+			jdbc.sql("SELECT pg_stat_clear_snapshot()").query().listOfRows();
+			Integer waiting = jdbc.sql("""
+					SELECT count(*) FROM pg_stat_activity
+					WHERE datname = current_database() AND wait_event_type = 'Lock' AND query LIKE ?
+					""").param("%" + table + "%").query(Integer.class).single();
+			if (waiting > 0) {
+				return;
+			}
+			try {
+				Thread.sleep(20);
+			}
+			catch (InterruptedException ex) {
+				Thread.currentThread().interrupt();
+				throw new IllegalStateException(ex);
+			}
+		}
+		throw new AssertionError("no session ever waited for a lock on " + table);
 	}
 
 	@Test

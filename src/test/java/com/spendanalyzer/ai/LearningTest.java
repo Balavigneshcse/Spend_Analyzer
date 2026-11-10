@@ -119,6 +119,65 @@ class LearningTest {
 	}
 
 	@Test
+	void undoingAMisTapAlsoTakesBackWhatItTaughtAboutTheWord() {
+		assertThat(engine.categorize(asha, "juice", null).category()).isEqualTo(Category.SNACKS_BEVERAGES);
+		Prediction before = engine.categorize(asha, "mango juice", null);
+		assertThat(before.category()).isEqualTo(Category.SNACKS_BEVERAGES);
+
+		// the user taps Food by mistake ...
+		engine.learn(asha, "juice", Category.FOOD_MEALS, true);
+		assertThat(engine.categorize(asha, "mango juice", null).category()).isEqualTo(Category.FOOD_MEALS);
+		// ... and puts it back. To the ledger this is "the AI's own category", not a correction.
+		engine.learn(asha, "juice", Category.SNACKS_BEVERAGES, false);
+
+		assertThat(engine.categorize(asha, "juice", null).category()).isEqualTo(Category.SNACKS_BEVERAGES);
+		Map<Category, Double> weights = store.wordWeights(asha, List.of("juice")).get("juice");
+		assertThat(weights.get(Category.SNACKS_BEVERAGES)).isEqualTo(1.0);
+		assertThat(weights.get(Category.FOOD_MEALS)).isEqualTo(0.5);
+		// other texts with the word follow the user's last word, not the mistake
+		for (String text : List.of("mango juice", "juice zzkq", "juice 2 glass")) {
+			Prediction after = engine.categorize(asha, text, null);
+			assertThat(after.category()).as(text).isEqualTo(Category.SNACKS_BEVERAGES);
+			assertThat(after.explanation()).as(text).doesNotContain("Food & Meals");
+		}
+	}
+
+	@Test
+	void puttingATextBackToOtherIsRespectedToo() {
+		// the AI itself said OTHER, the user chose Food and then changed their mind
+		assertThat(engine.categorize(asha, "blorfen", null).category()).isEqualTo(Category.OTHER);
+		engine.learn(asha, "blorfen", Category.FOOD_MEALS, true);
+		assertThat(engine.categorize(asha, "blorfen", null).category()).isEqualTo(Category.FOOD_MEALS);
+
+		engine.learn(asha, "blorfen", Category.OTHER, false);
+
+		Prediction prediction = engine.categorize(asha, "blorfen", null);
+		assertThat(prediction.category()).isEqualTo(Category.OTHER);
+		assertThat(prediction.source()).isEqualTo(PredictionSource.USER_MEMORY);
+	}
+
+	@Test
+	void confirmingTheSameChoiceAgainIsNotACorrection() {
+		engine.learn(asha, "juse", Category.SNACKS_BEVERAGES, false);
+		engine.learn(asha, "juse 2", Category.SNACKS_BEVERAGES, false);
+		assertThat(store.wordWeights(asha, List.of("juse")).get("juse").get(Category.SNACKS_BEVERAGES))
+			.isEqualTo(0.5);
+	}
+
+	@Test
+	void whatTheUserTaughtCountsInFullWithoutTheModel() {
+		// the "ask until the model agrees" rule is about the general word list, not the user's own words
+		CategorizerEngine cold = CategorizerEngine.create(store);
+		assertThat(cold.isModelReady()).isFalse();
+		cold.learn(asha, "fluxomat", Category.SNACKS_BEVERAGES, true);
+
+		Prediction prediction = cold.categorize(asha, "fluxomat zzkq", null);
+		assertThat(prediction.category()).isEqualTo(Category.SNACKS_BEVERAGES);
+		assertThat(prediction.confidence()).isGreaterThanOrEqualTo(CategorizerEngine.ACCEPT);
+		assertThat(prediction.needsReview()).isFalse();
+	}
+
+	@Test
 	void keepingTheAiChoiceIsRememberedButWeighsLess() {
 		engine.learn(asha, "juse", Category.SNACKS_BEVERAGES, false);
 

@@ -1,0 +1,275 @@
+idli	FOOD_MEALS		clean
+dosa	FOOD_MEALS		clean
+chicken biryani	FOOD_MEALS		clean
+lunch	FOOD_MEALS		clean
+dinner	FOOD_MEALS		clean
+swiggy	FOOD_MEALS		clean
+fried rice	FOOD_MEALS		clean
+biriyani	FOOD_MEALS		typo
+chapathi	FOOD_MEALS		typo
+dinnr	FOOD_MEALS		typo
+brekfast	FOOD_MEALS		typo
+nodles	FOOD_MEALS		typo
+swigy order	FOOD_MEALS		typo
+chiken rice	FOOD_MEALS		typo
+resturant	FOOD_MEALS		typo
+saapadu	FOOD_MEALS		mixed
+mess la lunch	FOOD_MEALS		mixed
+kothu parotta	FOOD_MEALS		mixed
+thayir sadam	FOOD_MEALS		mixed
+khana	FOOD_MEALS		mixed
+2 idli 1 vada	FOOD_MEALS		multi
+meals 2 plate	FOOD_MEALS		multi
+coffee	SNACKS_BEVERAGES		clean
+samosa	SNACKS_BEVERAGES		clean
+ice cream	SNACKS_BEVERAGES		clean
+lemon juice	SNACKS_BEVERAGES		clean
+cool drinks	SNACKS_BEVERAGES		clean
+chips	SNACKS_BEVERAGES	GROCERIES	clean
+cofee	SNACKS_BEVERAGES		typo
+samsa	SNACKS_BEVERAGES		typo
+icecrem	SNACKS_BEVERAGES		typo
+juce	SNACKS_BEVERAGES		typo
+choclate	SNACKS_BEVERAGES	GROCERIES	typo
+biscut	SNACKS_BEVERAGES	GROCERIES	typo
+pani poori	SNACKS_BEVERAGES		typo
+snaks	SNACKS_BEVERAGES		typo
+chai	SNACKS_BEVERAGES		mixed
+tea kadai	SNACKS_BEVERAGES		mixed
+murukku	SNACKS_BEVERAGES		mixed
+karumbu juice	SNACKS_BEVERAGES		mixed
+filter kaapi	SNACKS_BEVERAGES		mixed
+bajji bonda	SNACKS_BEVERAGES		mixed
+2 tea 1 bun	SNACKS_BEVERAGES		multi
+maaza 250ml	SNACKS_BEVERAGES		multi
+milk	GROCERIES		clean
+vegetables	GROCERIES		clean
+eggs	GROCERIES		clean
+bananas	GROCERIES		clean
+bigbasket	GROCERIES		clean
+cooking oil	GROCERIES		clean
+vegtables	GROCERIES		typo
+tomoto	GROCERIES		typo
+onoin 1kg	GROCERIES		typo
+grocry	GROCERIES		typo
+provison store	GROCERIES		typo
+zepto ordr	GROCERIES		typo
+bred	GROCERIES	SNACKS_BEVERAGES	typo
+suger	GROCERIES		typo
+kaikari	GROCERIES		mixed
+paal packet	GROCERIES		mixed
+arisi 5kg	GROCERIES		mixed
+maligai saman	GROCERIES		mixed
+sabzi	GROCERIES		mixed
+aavin milk 500ml	GROCERIES		multi
+eggs 6 nos	GROCERIES		multi
+toor dal 1 kg	GROCERIES		multi
+bus ticket	TRANSPORT_FUEL		clean
+petrol	TRANSPORT_FUEL		clean
+train ticket	TRANSPORT_FUEL		clean
+metro	TRANSPORT_FUEL		clean
+uber	TRANSPORT_FUEL		clean
+parking	TRANSPORT_FUEL		clean
+bike service	TRANSPORT_FUEL		clean
+petrl	TRANSPORT_FUEL		typo
+buss fare	TRANSPORT_FUEL		typo
+tran tkt	TRANSPORT_FUEL		typo
+rapdo	TRANSPORT_FUEL		typo
+parkng	TRANSPORT_FUEL		typo
+tyre punctr	TRANSPORT_FUEL		typo
+auto fair	TRANSPORT_FUEL		typo
+diesl	TRANSPORT_FUEL		typo
+bus la college	TRANSPORT_FUEL		mixed
+vandi petrol	TRANSPORT_FUEL		mixed
+ooruku bus	TRANSPORT_FUEL		mixed
+gaadi service	TRANSPORT_FUEL		mixed
+petrol 2 litre	TRANSPORT_FUEL		multi
+chennai to trichy bus	TRANSPORT_FUEL		multi
+redbus ticket booking	TRANSPORT_FUEL		multi
+pen	EDUCATION_STATIONERY		clean
+exam fees	EDUCATION_STATIONERY		clean
+textbook	EDUCATION_STATIONERY		clean
+printout	EDUCATION_STATIONERY		clean
+udemy course	EDUCATION_STATIONERY		clean
+semester fees	EDUCATION_STATIONERY		clean
+xerx	EDUCATION_STATIONERY		typo
+note bk	EDUCATION_STATIONERY		typo
+tution fees	EDUCATION_STATIONERY		typo
+prnt out	EDUCATION_STATIONERY		typo
+stationry	EDUCATION_STATIONERY		typo
+pensil	EDUCATION_STATIONERY		typo
+colege fees	EDUCATION_STATIONERY		typo
+lab recrd	EDUCATION_STATIONERY		typo
+arrear fees	EDUCATION_STATIONERY		mixed
+xerox kadai	EDUCATION_STATIONERY		mixed
+kitab	EDUCATION_STATIONERY		mixed
+clg fees kattiten	EDUCATION_STATIONERY		mixed
+a4 sheets 50	EDUCATION_STATIONERY		multi
+spiral binding 2 copies	EDUCATION_STATIONERY		multi
+blue pen 2	EDUCATION_STATIONERY		multi
+room rent	RENT_UTILITIES		clean
+electricity bill	RENT_UTILITIES		clean
+gas cylinder	RENT_UTILITIES		clean
+pg rent	RENT_UTILITIES		clean
+water bill	RENT_UTILITIES		clean
+rnt	RENT_UTILITIES		typo
+hostl rent	RENT_UTILITIES		typo
+electrcity bil	RENT_UTILITIES		typo
+curent bill	RENT_UTILITIES		typo
+maintanance	RENT_UTILITIES		typo
+watr can	RENT_UTILITIES	GROCERIES	typo
+rent advnce	RENT_UTILITIES		typo
+veetu vadagai	RENT_UTILITIES		mixed
+current bill kattinen	RENT_UTILITIES		mixed
+thanni can	RENT_UTILITIES	GROCERIES	mixed
+kiraya	RENT_UTILITIES		mixed
+bijli bill	RENT_UTILITIES		mixed
+rent november	RENT_UTILITIES		multi
+indane gas refill	RENT_UTILITIES		multi
+recharge	MOBILE_INTERNET		clean
+airtel recharge	MOBILE_INTERNET		clean
+wifi bill	MOBILE_INTERNET		clean
+data pack	MOBILE_INTERNET		clean
+new sim	MOBILE_INTERNET		clean
+dth recharge	MOBILE_INTERNET		clean
+rechrge	MOBILE_INTERNET		typo
+airtl	MOBILE_INTERNET		typo
+wify bill	MOBILE_INTERNET		typo
+mobil recharge	MOBILE_INTERNET		typo
+vi rchrg	MOBILE_INTERNET		typo
+bsnl rechage	MOBILE_INTERNET		typo
+brodband	MOBILE_INTERNET		typo
+sim crd	MOBILE_INTERNET		typo
+phone ku recharge	MOBILE_INTERNET		mixed
+net pack potten	MOBILE_INTERNET		mixed
+recharge karwaya	MOBILE_INTERNET		mixed
+jio 299 plan	MOBILE_INTERNET		multi
+airtel 1.5gb pack	MOBILE_INTERNET		multi
+medicine	HEALTH_MEDICINE		clean
+doctor fees	HEALTH_MEDICINE		clean
+blood test	HEALTH_MEDICINE		clean
+paracetamol	HEALTH_MEDICINE		clean
+dentist	HEALTH_MEDICINE		clean
+cough syrup	HEALTH_MEDICINE		clean
+medicne	HEALTH_MEDICINE		typo
+tablt	HEALTH_MEDICINE		typo
+docter	HEALTH_MEDICINE		typo
+hosptal	HEALTH_MEDICINE		typo
+pharmcy	HEALTH_MEDICINE		typo
+scan chrges	HEALTH_MEDICINE		typo
+gym membrship	HEALTH_MEDICINE		typo
+marundhu	HEALTH_MEDICINE		mixed
+maathirai	HEALTH_MEDICINE		mixed
+kaichal tablet	HEALTH_MEDICINE		mixed
+dawai	HEALTH_MEDICINE		mixed
+ors 2 packets	HEALTH_MEDICINE		multi
+eye checkup and drops	HEALTH_MEDICINE		multi
+soap	PERSONAL_CARE	GROCERIES	clean
+shampoo	PERSONAL_CARE		clean
+face wash	PERSONAL_CARE		clean
+saloon	PERSONAL_CARE		clean
+sanitary pads	PERSONAL_CARE		clean
+ironing	PERSONAL_CARE		clean
+shampo	PERSONAL_CARE		typo
+tooth past	PERSONAL_CARE		typo
+har cut	PERSONAL_CARE		typo
+deo spry	PERSONAL_CARE		typo
+tothbrush	PERSONAL_CARE		typo
+laundary	PERSONAL_CARE		typo
+body lotin	PERSONAL_CARE		typo
+mudi vetti	PERSONAL_CARE		mixed
+salon la shaving	PERSONAL_CARE		mixed
+dhobi	PERSONAL_CARE		mixed
+sabun	PERSONAL_CARE	GROCERIES	mixed
+shaving cream and blade	PERSONAL_CARE		multi
+dress iron 5 nos	PERSONAL_CARE		multi
+t shirt	SHOPPING		clean
+jeans	SHOPPING		clean
+shoes	SHOPPING		clean
+amazon order	SHOPPING		clean
+phone case	SHOPPING		clean
+power bank	SHOPPING		clean
+tshrt	SHOPPING		typo
+shooes	SHOPPING		typo
+flipkrt order	SHOPPING		typo
+hedphones	SHOPPING		typo
+chargr cable	SHOPPING		typo
+mobil cover	SHOPPING		typo
+meesho ordr	SHOPPING		typo
+sandls	SHOPPING		typo
+chappal	SHOPPING		mixed
+pudhu shirt	SHOPPING		mixed
+kapda	SHOPPING		mixed
+pongal dress	SHOPPING		mixed
+socks 3 pair	SHOPPING		multi
+usb cable type c	SHOPPING		multi
+movie ticket	ENTERTAINMENT_SUBS		clean
+spotify	ENTERTAINMENT_SUBS		clean
+bookmyshow	ENTERTAINMENT_SUBS		clean
+prime video	ENTERTAINMENT_SUBS		clean
+bowling	ENTERTAINMENT_SUBS		clean
+theme park	ENTERTAINMENT_SUBS		clean
+moive tkt	ENTERTAINMENT_SUBS		typo
+spotfy	ENTERTAINMENT_SUBS		typo
+hotstr	ENTERTAINMENT_SUBS		typo
+free fire dimonds	ENTERTAINMENT_SUBS		typo
+theatr	ENTERTAINMENT_SUBS		typo
+you tube premum	ENTERTAINMENT_SUBS		typo
+snookr	ENTERTAINMENT_SUBS		typo
+padam ticket	ENTERTAINMENT_SUBS		mixed
+theatre la padam	ENTERTAINMENT_SUBS		mixed
+friends kooda outing	ENTERTAINMENT_SUBS		mixed
+picture dekha	ENTERTAINMENT_SUBS		mixed
+2 movie tickets	ENTERTAINMENT_SUBS		multi
+turf booking 1 hour	ENTERTAINMENT_SUBS		multi
+sony liv 1 year	ENTERTAINMENT_SUBS		multi
+birthday gift	SOCIAL_GIFTS		clean
+wedding gift	SOCIAL_GIFTS		clean
+donation	SOCIAL_GIFTS		clean
+temple	SOCIAL_GIFTS		clean
+treat to friends	SOCIAL_GIFTS	FOOD_MEALS	clean
+charity	SOCIAL_GIFTS		clean
+bday gft	SOCIAL_GIFTS		typo
+weding gift	SOCIAL_GIFTS		typo
+donaton	SOCIAL_GIFTS		typo
+templ archana	SOCIAL_GIFTS		typo
+tret for frnds	SOCIAL_GIFTS	FOOD_MEALS	typo
+greting card	SOCIAL_GIFTS		typo
+farewel contribution	SOCIAL_GIFTS		typo
+kovil undiyal	SOCIAL_GIFTS		mixed
+moi panam	SOCIAL_GIFTS		mixed
+kalyanam gift	SOCIAL_GIFTS		mixed
+nanban bday treat	SOCIAL_GIFTS		mixed
+mandir daan	SOCIAL_GIFTS		mixed
+gift for sister	SOCIAL_GIFTS		multi
+teachers day collection	SOCIAL_GIFTS		multi
+emi	TRANSFERS_FEES		clean
+lent to friend	TRANSFERS_FEES		clean
+bank charges	TRANSFERS_FEES		clean
+sent to mom	TRANSFERS_FEES		clean
+late fee	TRANSFERS_FEES		clean
+traffic fine	TRANSFERS_FEES		clean
+emi paymnt	TRANSFERS_FEES		typo
+lend to frnd	TRANSFERS_FEES		typo
+bnk chrgs	TRANSFERS_FEES		typo
+savngs	TRANSFERS_FEES		typo
+loan intrest	TRANSFERS_FEES		typo
+credt card bill	TRANSFERS_FEES		typo
+helmt fine	TRANSFERS_FEES		typo
+libary fine	TRANSFERS_FEES	EDUCATION_STATIONERY	typo
+kadan koduthen	TRANSFERS_FEES		mixed
+amma ku anupinen	TRANSFERS_FEES		mixed
+veetuku panam	TRANSFERS_FEES		mixed
+udhaar diya	TRANSFERS_FEES		mixed
+phone emi 3rd month	TRANSFERS_FEES		multi
+min balance penalty	TRANSFERS_FEES		multi
+abc	OTHER		junk
+misc	OTHER		junk
+xyz 123	OTHER		junk
+paid	OTHER		junk
+stuff	OTHER		junk
+asdf	OTHER		junk
+something	OTHER		junk
+test	OTHER		junk
+etc	OTHER		junk
+nothing	OTHER		junk

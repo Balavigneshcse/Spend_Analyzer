@@ -49,7 +49,8 @@ import org.slf4j.LoggerFactory;
  * like real words at all). Below the confidence bands the answer is OTHER, "please check".
  *
  * <p>Thread-safe. Everything is immutable except the trained model, which is published once
- * through an atomic reference; until then the lexicon answers alone.
+ * through an atomic reference; until then the lexicon answers alone, and only an exact, clear
+ * item is accepted without asking the user to check.
  */
 public final class CategorizerEngine {
 
@@ -109,6 +110,8 @@ public final class CategorizerEngine {
 	/**
 	 * Without any known word the model is guessing from letter patterns. Such a guess may pick the
 	 * category, but it stays just under {@link #ACCEPT} so the user is always asked to confirm it.
+	 * The same cap holds the other way round: a vague word or a repaired spelling that the model
+	 * could not confirm, because there is no trained model (yet).
 	 */
 	static final double MODEL_ONLY_CAP = 0.79;
 
@@ -172,9 +175,14 @@ public final class CategorizerEngine {
 
 	}
 
-	/** The blended probabilities and where they came from. */
+	/**
+	 * The blended probabilities and where they came from.
+	 *
+	 * @param strength how good the best lexicon or taught-word match is (1.0: an exact, clear item)
+	 * @param modelUsed the trained model took part in the probabilities
+	 */
 	private record Scored(double[] probability, double[] evidence, boolean modelOnly, Span[] bestSpan,
-			String taughtWord, int taughtClass, double familiarity) {
+			String taughtWord, int taughtClass, double familiarity, double strength, boolean modelUsed) {
 	}
 
 	private final Knowledge knowledge;
@@ -354,11 +362,11 @@ public final class CategorizerEngine {
 	/** The raw ranking of all categories for a text, without memory and confidence rules. */
 	public Ranking rank(String text, BigDecimal amount) {
 		AnalyzedText analyzed = analyzer.analyze(text);
-		if (!analyzed.hasContent()) {
-			return new Ranking(List.of());
-		}
 		LexiconMatcher.Result lexical = options.useLexicon() ? matcher.get().match(analyzed.tokens())
 				: LexiconMatcher.Result.EMPTY;
+		if (!analyzed.hasContent() && lexical.spans().isEmpty()) {
+			return new Ranking(List.of());
+		}
 		Scored scored = score(analyzed, lexical, Taught.NOTHING, amount);
 		if (scored == null) {
 			return new Ranking(List.of());
@@ -379,7 +387,8 @@ public final class CategorizerEngine {
 			return new Prediction(category, MEMORY_CONFIDENCE, item(lexical.spans(), category, cleaned),
 					Explanations.remembered(cleaned, category), false, List.of(), PredictionSource.USER_MEMORY);
 		}
-		if (!analyzed.hasContent()) {
+		// Fillers alone say nothing, unless together they are a known phrase ("credit card payment").
+		if (!analyzed.hasContent() && lexical.spans().isEmpty()) {
 			return abstain(cleaned, 0.0, Explanations.nothingToRead(), List.of());
 		}
 		Scored scored = score(analyzed, lexical, taught, amount);
@@ -390,6 +399,11 @@ public final class CategorizerEngine {
 		int[] order = order(p);
 		int top = order[0];
 		double confidence = scored.modelOnly() ? Math.min(p[top], MODEL_ONLY_CAP) : p[top];
+		if (!scored.modelUsed() && scored.taughtClass() < 0 && scored.strength() < 1.0) {
+			// A vague word or a repaired spelling needs the model to agree. While the model is not
+			// there (still training, training failed, switched off) the user is asked instead.
+			confidence = Math.min(confidence, MODEL_ONLY_CAP);
+		}
 		confidence = round(Math.max(0.0, Math.min(1.0, confidence)));
 		if (scored.modelOnly() && scored.familiarity() < MIN_FAMILIARITY) {
 			// letters that occur in no known word: the model's guess would be made up
@@ -518,7 +532,9 @@ public final class CategorizerEngine {
 		}
 		double[] fromModel = null;
 		ModelBootstrap.Trained trained = holder.trained;
-		if (options.useModel() && trained != null) {
+		// The model reads the letters and sounds of the meaningful words. A text made only of
+		// fillers ("credit card payment") has none, so there the known phrase answers alone.
+		if (options.useModel() && trained != null && analyzed.hasContent()) {
 			fromModel = trained.model().probabilities(extractor.extract(analyzed.tokens(), amount));
 		}
 
@@ -530,13 +546,13 @@ public final class CategorizerEngine {
 			// groceries) the lexicon still narrows the choice, and the model settles it at full voice.
 			double modelShare = 1.0 - lexiconShare * (1.0 - conflict(evidence));
 			return new Scored(pool(fromModel, modelShare, fromLexicon, lexiconShare), evidence, false, bestSpan,
-					taughtWord, taughtClass, 1.0);
+					taughtWord, taughtClass, 1.0, strength, true);
 		}
 		if (fromLexicon != null) {
-			return new Scored(fromLexicon, evidence, false, bestSpan, taughtWord, taughtClass, 1.0);
+			return new Scored(fromLexicon, evidence, false, bestSpan, taughtWord, taughtClass, 1.0, strength, false);
 		}
 		if (fromModel != null) {
-			return new Scored(fromModel, evidence, true, bestSpan, null, -1, familiarity(analyzed));
+			return new Scored(fromModel, evidence, true, bestSpan, null, -1, familiarity(analyzed), strength, true);
 		}
 		return null;
 	}
@@ -705,12 +721,10 @@ public final class CategorizerEngine {
 	/**
 	 * Remembers the user's choice for this text and credits its words, so similar texts follow.
 	 * A choice of OTHER that the user merely left untouched teaches nothing.
+	 * @param wasCorrection the choice differs from what the AI itself had said for the text
 	 */
 	public void learn(UUID userId, String text, Category category, boolean wasCorrection) {
 		if (userId == null || category == null) {
-			return;
-		}
-		if (category == Category.OTHER && !wasCorrection) {
 			return;
 		}
 		AnalyzedText analyzed;
@@ -724,14 +738,22 @@ public final class CategorizerEngine {
 		if (analyzed.tokens().isEmpty()) {
 			return;
 		}
-		store.remember(userId, analyzed.memoryKey(), category);
+		String key = analyzed.memoryKey();
+		// Changing one's mind is a correction too, also when the new choice is what the AI had said
+		// at first: undoing a mis-tap must also take back what the mis-tap taught about the words.
+		boolean correction = wasCorrection
+				|| store.recall(userId, key).filter(earlier -> earlier != category).isPresent();
+		if (category == Category.OTHER && !correction) {
+			return;
+		}
+		store.remember(userId, key, category);
 		Set<String> words = new LinkedHashSet<>(analyzed.contentWords());
 		if (category == Category.OTHER || words.isEmpty()) {
 			return;
 		}
 		// the credit is shared: one corrected word is certain, a word out of three much less so
-		double credit = (wasCorrection ? CORRECTION_CREDIT : CONFIRMATION_CREDIT) / words.size();
-		store.reinforce(userId, words, category, credit, MAX_WORD_WEIGHT, wasCorrection);
+		double credit = (correction ? CORRECTION_CREDIT : CONFIRMATION_CREDIT) / words.size();
+		store.reinforce(userId, words, category, credit, MAX_WORD_WEIGHT, correction);
 	}
 
 }

@@ -5,11 +5,11 @@ import java.time.Clock;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import com.spendanalyzer.model.Category;
@@ -23,6 +23,10 @@ import org.springframework.jdbc.core.simple.JdbcClient;
  * the caller's transaction, so a rolled-back expense also rolls back what the AI learned from it.
  * After each write the oldest rows beyond the per-user cap are deleted, which keeps one user's
  * data small no matter how much they type.
+ *
+ * <p>The word rows of one lesson are always written in alphabetical order. Two lessons of one user
+ * that overlap ("tea samosa" and "samosa tea") then queue up behind each other instead of each
+ * holding the row the other one needs.
  */
 public final class JdbcUserMemoryStore implements UserMemoryStore {
 
@@ -132,9 +136,12 @@ public final class JdbcUserMemoryStore implements UserMemoryStore {
 				""").params(userId, userId, maxWordRows).update();
 	}
 
-	/** The token column is VARCHAR(40); the engine never produces longer words, but be safe. */
+	/**
+	 * The words once each, sorted, so every caller takes the row locks in the same order. The token
+	 * column is VARCHAR(40); the engine never produces longer words, but be safe.
+	 */
 	private static Set<String> distinct(Collection<String> words) {
-		Set<String> tokens = new LinkedHashSet<>();
+		Set<String> tokens = new TreeSet<>();
 		for (String word : words) {
 			if (word != null && !word.isEmpty() && word.codePointCount(0, word.length()) <= 40) {
 				tokens.add(word);

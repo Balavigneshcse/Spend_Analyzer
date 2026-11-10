@@ -80,7 +80,7 @@ ev charging	S	ev charge, charging station, ather charging, ola electric charging
 engine oil	S	oil change, engine oil change, coolant, brake oil, chain lube, chain spray, 2t oil
 
 # ---- vehicle upkeep
-bike service	S	bike servicing, scooter service, scooty service, vehicle service, two wheeler service, general service, bike repair, bike work, vandi service, bike garage, activa service
+bike service	S	bike servicing, scooter service, scooty service, vehicle service, two wheeler service, general service, bike repair, bike work, vandi service, gaadi service, gaadi repair, bike garage, activa service
 water wash	S	bike wash, bike water wash, foam wash
 car wash	S
 mechanic	S	bike mechanic
@@ -100,7 +100,6 @@ helmet	S	helmat, helmet visor, new helmet
 parking	S	parking fee, parking charge, parking ticket, parking fees, bike parking, car parking, cycle stand, bike stand fee, two wheeler parking, stand fee
 toll	S	toll gate, toll fee, toll charge, tollgate, toll plaza, toll tax
 fastag	S	fastag recharge, fast tag, fastag topup, fasttag
-traffic fine	S	traffic challan, challan, e challan, traffic police fine, helmet fine, no parking fine, signal fine, rto fine
 vehicle insurance	S	bike insurance, two wheeler insurance, car insurance, scooty insurance
 pollution certificate	S	puc, puc certificate, emission test, emission certificate, fc renewal
 driving licence	S	driving license, licence fee, license test
@@ -115,6 +114,7 @@ royal brothers	S
 zoomcar	S	self drive car, car rental
 cycle rent	S	cycle rental
 cycle repair	S	cycle puncture, cycle service, bicycle repair, cycle tube, cycle tyre, cycle chain
+vehicle	W	gaadi
 lift	W	drop, pickup, pick up, drop charge, luggage charge, porter, coolie
 ticket	W	tiket, tickets, tikat, ticket booking
 pass	W	pass renewal, monthly pass

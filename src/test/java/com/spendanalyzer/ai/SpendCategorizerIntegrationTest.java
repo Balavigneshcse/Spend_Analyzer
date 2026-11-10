@@ -8,6 +8,11 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.spendanalyzer.ai.api.Categorizer;
 import com.spendanalyzer.ai.api.Prediction;
@@ -189,6 +194,60 @@ class SpendCategorizerIntegrationTest {
 		// trimming one user never touches another
 		assertThat(small.recall(other, "keep me")).contains(Category.SHOPPING);
 		assertThat(small.wordWeights(other, List.of("keep", "absent"))).containsOnlyKeys("keep");
+	}
+
+	@Test
+	void overlappingLessonsWithTheSameWordsQueueUpInsteadOfDeadlocking() throws Exception {
+		UUID user = TestData.createUser(jdbc).id();
+		JdbcUserMemoryStore store = new JdbcUserMemoryStore(jdbc, clock, 100, 100);
+		TransactionTemplate transaction = new TransactionTemplate(transactionManager);
+		ExecutorService pool = Executors.newSingleThreadExecutor();
+		AtomicReference<Future<?>> second = new AtomicReference<>();
+		try {
+			transaction.executeWithoutResult(status -> {
+				// this lesson has written "samosa" and still has "tea" to write ...
+				store.reinforce(user, List.of("samosa"), Category.SNACKS_BEVERAGES, 0.5, 3.0, false);
+				// ... when a second lesson of the same user brings the same words the other way round
+				second.set(pool.submit(() -> transaction.executeWithoutResult(inner -> store.reinforce(user,
+						List.of("tea", "samosa"), Category.SNACKS_BEVERAGES, 0.5, 3.0, false))));
+				awaitLockWait("ai_user_token_stats");
+				// Written in text order the second lesson would now hold "tea" and wait for "samosa",
+				// and this statement would wait for "tea": PostgreSQL would abort one of the two.
+				store.reinforce(user, List.of("tea"), Category.SNACKS_BEVERAGES, 0.5, 3.0, false);
+			});
+			second.get().get(30, TimeUnit.SECONDS);
+		}
+		finally {
+			pool.shutdownNow();
+		}
+
+		// both lessons arrived in full
+		assertThat(weight(user, "samosa", Category.SNACKS_BEVERAGES)).isEqualTo(1.0f);
+		assertThat(weight(user, "tea", Category.SNACKS_BEVERAGES)).isEqualTo(1.0f);
+	}
+
+	/** Waits until some database session is blocked on a row lock in a statement on this table. */
+	private void awaitLockWait(String table) {
+		long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(20);
+		while (System.nanoTime() < deadline) {
+			// inside a transaction PostgreSQL shows the same picture of the sessions until told otherwise
+			jdbc.sql("SELECT pg_stat_clear_snapshot()").query().listOfRows();
+			Integer waiting = jdbc.sql("""
+					SELECT count(*) FROM pg_stat_activity
+					WHERE datname = current_database() AND wait_event_type = 'Lock' AND query LIKE ?
+					""").param("%" + table + "%").query(Integer.class).single();
+			if (waiting > 0) {
+				return;
+			}
+			try {
+				Thread.sleep(20);
+			}
+			catch (InterruptedException ex) {
+				Thread.currentThread().interrupt();
+				throw new IllegalStateException(ex);
+			}
+		}
+		throw new AssertionError("no session ever waited for a lock on " + table);
 	}
 
 	private List<Map<String, Object>> memoryRows(UUID user) {

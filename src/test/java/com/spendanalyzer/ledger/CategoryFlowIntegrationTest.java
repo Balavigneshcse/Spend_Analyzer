@@ -148,6 +148,30 @@ class CategoryFlowIntegrationTest {
 	}
 
 	@Test
+	void puttingAMisTappedCategoryBackAlsoFixesOtherTextsWithTheWord() throws Exception {
+		AuthUser user = TestData.createUser(jdbc);
+		String id = api.created(user, expense("juice", "40", "UPI"));
+		assertThat(row(id)).containsEntry("category", "SNACKS_BEVERAGES");
+
+		// a mis-tap ...
+		api.edit(user, id, body("category", "FOOD_MEALS")).andExpect(status().isOk());
+		String during = api.created(user, expense("mango juice", "60", "UPI"));
+		assertThat(row(during)).containsEntry("category", "FOOD_MEALS");
+		// ... put back to what the AI had said at first: to the ledger this is not a correction
+		api.edit(user, id, body("category", "SNACKS_BEVERAGES")).andExpect(status().isOk());
+
+		// the word lesson of the mis-tap is taken back with it
+		String after = api.created(user, expense("mango juice", "60", "UPI"));
+		assertThat(row(after)).containsEntry("category", "SNACKS_BEVERAGES").containsEntry("ai_category", "SNACKS_BEVERAGES");
+		Float wrong = jdbc
+			.sql("SELECT weight FROM ai_user_token_stats WHERE user_id = ? AND token = 'juice' AND category = 'FOOD_MEALS'")
+			.param(user.id())
+			.query(Float.class)
+			.single();
+		assertThat(wrong).isEqualTo(0.5f);
+	}
+
+	@Test
 	void afterAUserChoiceANewDescriptionKeepsTheCategoryButRefreshesTheItem() throws Exception {
 		AuthUser user = TestData.createUser(jdbc);
 		Map<String, Object> request = expense("juse", "40", "UPI");

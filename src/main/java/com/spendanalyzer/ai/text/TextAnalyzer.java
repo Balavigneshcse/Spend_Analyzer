@@ -21,22 +21,29 @@ public final class TextAnalyzer {
 			"litre", "litres", "liter", "pc", "pcs", "piece", "pieces", "nos", "plate", "plates", "cup", "cups",
 			"glass", "pkt", "pkts", "packet", "packets", "set", "sets", "box", "dozen", "times");
 
+	/**
+	 * Words that say money went to somebody. In "gpay to gopi" or "paid 200 to senthil anna" the
+	 * word after "to" names who got it, not what was bought.
+	 */
+	private static final Set<String> PAYING = Set.of("gpay", "phonepe", "paytm", "bhim", "upi", "paid", "pay", "payed",
+			"sent", "send", "transferred", "transfer", "gave", "lent");
+
 	private final Set<String> stopWords;
 
 	private final Map<String, List<String>> aliases;
 
-	private final Predicate<String> knownMixedWord;
+	private final Predicate<String> knownWord;
 
 	/**
 	 * @param stopWords fillers that carry no category
 	 * @param aliases exact-token short forms and what they stand for (one or more words)
-	 * @param knownMixedWord tells whether a letter+digit token such as "a4" or "1mg" is a real word
-	 * and must not be split
+	 * @param knownWord tells whether a token is a word of the lexicon: a known letter+digit token
+	 * such as "a4" or "1mg" must not be split, and a known word is never taken for somebody's name
 	 */
-	public TextAnalyzer(Set<String> stopWords, Map<String, List<String>> aliases, Predicate<String> knownMixedWord) {
+	public TextAnalyzer(Set<String> stopWords, Map<String, List<String>> aliases, Predicate<String> knownWord) {
 		this.stopWords = Set.copyOf(stopWords);
 		this.aliases = Map.copyOf(aliases);
-		this.knownMixedWord = knownMixedWord;
+		this.knownWord = knownWord;
 	}
 
 	public AnalyzedText analyze(String raw) {
@@ -49,7 +56,7 @@ public final class TextAnalyzer {
 			if (chunk.isEmpty()) {
 				continue;
 			}
-			if (isMixed(chunk) && !knownMixedWord.test(chunk)) {
+			if (isMixed(chunk) && !knownWord.test(chunk)) {
 				splitAtDigitBoundaries(chunk, pieces);
 			}
 			else {
@@ -79,12 +86,38 @@ public final class TextAnalyzer {
 				}
 			}
 		}
-		List<Token> kept = dropUnits(tokens);
+		List<Token> kept = payeesAsFillers(dropUnits(tokens));
 		return new AnalyzedText(kept.size() > MAX_TOKENS ? kept.subList(0, MAX_TOKENS) : kept);
 	}
 
 	private Token word(String text, String typed) {
 		return new Token(text, stopWords.contains(text) ? Token.Kind.STOP : Token.Kind.WORD, typed);
+	}
+
+	/**
+	 * "gpay to gopi 500": an unknown word right after "to" that follows a paying word is a person
+	 * or a shop. It becomes a filler, like the first names in the stop list; otherwise the spelling
+	 * repair would read the name as an item ("gopi" is one letter from "gobi").
+	 */
+	private List<Token> payeesAsFillers(List<Token> tokens) {
+		boolean paying = false;
+		for (int i = 0; i + 1 < tokens.size(); i++) {
+			Token token = tokens.get(i);
+			if (PAYING.contains(token.text())) {
+				paying = true;
+			}
+			else if (paying && token.text().equals("to")) {
+				Token payee = tokens.get(i + 1);
+				if (payee.isWord() && !knownWord.test(payee.text())) {
+					tokens.set(i + 1, new Token(payee.text(), Token.Kind.STOP, payee.typed()));
+				}
+				paying = false;
+			}
+			else if (!token.isNumber()) {
+				paying = false; // only an amount may stand between the paying word and "to"
+			}
+		}
+		return tokens;
 	}
 
 	/** "milk 500 ml" keeps only "milk 500"; "2 x juice" loses the multiplication sign. */

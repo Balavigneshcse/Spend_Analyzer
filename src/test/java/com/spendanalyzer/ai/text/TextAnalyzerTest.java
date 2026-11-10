@@ -72,6 +72,34 @@ class TextAnalyzerTest {
 	}
 
 	@Test
+	void anUnknownWordAfterPaidToIsWhoWasPaidNotWhatWasBought() {
+		TextAnalyzer withLexicon = new TextAnalyzer(Set.of("gpay", "to", "paid", "for", "at"), Map.of(),
+				Set.of("canteen", "lent", "juice")::contains);
+		Token.Kind stop = Token.Kind.STOP;
+		Token.Kind word = Token.Kind.WORD;
+		Token.Kind number = Token.Kind.NUMBER;
+
+		AnalyzedText paid = withLexicon.analyze("gpay to gopi 500");
+		assertThat(paid.tokens()).extracting(Token::kind).containsExactly(stop, stop, stop, number);
+		assertThat(paid.hasContent()).isFalse();
+		// the name is still part of the key, so the user can teach "gpay to gopi" once
+		assertThat(paid.memoryKey()).isEqualTo("gpay to gopi");
+		assertThat(paid.cleanedItem()).isEqualTo("gpay to gopi");
+
+		// an amount may stand in between; a paying word that is itself an item ("lent") counts as well
+		assertThat(kinds(withLexicon, "paid 200 to gopi")).containsExactly(stop, number, stop, stop);
+		assertThat(kinds(withLexicon, "lent 500 to gopi")).containsExactly(word, number, stop, stop);
+		// only the word right after "to", and only when it is not a known word
+		assertThat(kinds(withLexicon, "gpay to gopi kadai")).containsExactly(stop, stop, stop, word);
+		assertThat(kinds(withLexicon, "gpay to canteen")).containsExactly(stop, stop, word);
+		// without a paying word before it, "to" says nothing about the next word
+		assertThat(kinds(withLexicon, "bus to salem")).containsExactly(word, stop, word);
+		assertThat(kinds(withLexicon, "paid for juice to gopi")).containsExactly(stop, stop, word, stop, word);
+		assertThat(kinds(withLexicon, "gpay gopi")).containsExactly(stop, word);
+		assertThat(kinds(withLexicon, "gpay to")).containsExactly(stop, stop);
+	}
+
+	@Test
 	void contentKeyAndItemLeaveOutNumbersAndFillers() {
 		AnalyzedText text = analyzer.analyze("Paid for JUSE 2 shop");
 		assertThat(text.contentWords()).containsExactly("juse");
@@ -117,7 +145,11 @@ class TextAnalyzerTest {
 	}
 
 	private List<Token.Kind> kinds(String raw) {
-		return analyzer.analyze(raw).tokens().stream().map(Token::kind).toList();
+		return kinds(analyzer, raw);
+	}
+
+	private static List<Token.Kind> kinds(TextAnalyzer with, String raw) {
+		return with.analyze(raw).tokens().stream().map(Token::kind).toList();
 	}
 
 }
