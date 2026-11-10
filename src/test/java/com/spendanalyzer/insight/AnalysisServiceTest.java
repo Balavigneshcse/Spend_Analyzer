@@ -16,7 +16,9 @@ import java.util.UUID;
 
 import com.spendanalyzer.insight.engine.Analysis;
 import com.spendanalyzer.insight.engine.Balances;
+import com.spendanalyzer.insight.engine.Debt;
 import com.spendanalyzer.insight.engine.Expense;
+import com.spendanalyzer.insight.engine.InsightType;
 import com.spendanalyzer.insight.engine.PeriodCode;
 import com.spendanalyzer.model.Category;
 import com.spendanalyzer.model.PaymentMode;
@@ -33,6 +35,8 @@ class AnalysisServiceTest {
 	private static final class FakeRepository extends AnalysisRepository {
 
 		final List<Expense> rows = new ArrayList<>();
+
+		final List<Debt> debts = new ArrayList<>();
 
 		LocalDate askedFrom;
 
@@ -62,6 +66,11 @@ class AnalysisServiceTest {
 		@Override
 		Balances balances(UUID userId) {
 			return new Balances(new BigDecimal("1000"), null, null); // no cash or card row yet
+		}
+
+		@Override
+		List<Debt> debts(UUID userId) {
+			return debts;
 		}
 
 	}
@@ -107,6 +116,27 @@ class AnalysisServiceTest {
 		assertThat(analysis.totals().spent()).isEqualTo("200.00"); // Monday and Tuesday
 		assertThat(analysis.runway().available()).isEqualTo("1000.00"); // missing accounts count as zero
 		assertThat(analysis.runway().daysLeft()).isEqualTo(10);
+	}
+
+	@Test
+	void theDebtsOfTheRepositoryReachTheEngine() {
+		FakeRepository repository = new FakeRepository();
+		for (LocalDate day = LocalDate.parse("2026-11-01"); !day.isAfter(LocalDate.parse("2026-11-10")); day = day.plusDays(1)) {
+			repository.add(day.toString(), "100");
+		}
+		AnalysisService service = service(repository, "2026-11-10T06:00:00Z", 20000);
+		assertThat(service.analyse(USER, PeriodCode.THIS_MONTH).insights())
+			.noneMatch(insight -> insight.type() == InsightType.BORROWED);
+
+		repository.debts.add(new Debt("Ravi", new BigDecimal("400.00")));
+		Analysis analysis = service.analyse(USER, PeriodCode.THIS_MONTH);
+		assertThat(analysis.insights()).filteredOn(insight -> insight.type() == InsightType.BORROWED)
+			.singleElement()
+			.satisfies(insight -> assertThat(insight.text())
+				.isEqualTo("You owe Ravi ₹400. After paying it back you would have ₹600 in bank and cash."));
+		// owing money is not spending
+		assertThat(analysis.totals().spent()).isEqualTo("1000.00");
+		assertThat(analysis.runway().available()).isEqualTo("1000.00");
 	}
 
 	@Test

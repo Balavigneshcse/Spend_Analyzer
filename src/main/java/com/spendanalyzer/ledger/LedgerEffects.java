@@ -21,7 +21,7 @@ public final class LedgerEffects {
 
 	/**
 	 * @param account the entry's stored account: the account of the payment mode for an EXPENSE,
-	 * the chosen one for INCOME / CARD_PAYMENT / ADJUSTMENT, BANK for a WITHDRAWAL
+	 * the chosen one for INCOME / CARD_PAYMENT / ADJUSTMENT / BORROW / REPAY, BANK for a WITHDRAWAL
 	 * @param amount positive, except for ADJUSTMENT where it is the signed difference
 	 */
 	public static List<Effect> of(EntryType type, AccountType account, BigDecimal amount) {
@@ -37,6 +37,10 @@ public final class LedgerEffects {
 			case CARD_PAYMENT ->
 				List.of(new Effect(account, amount.negate()), new Effect(AccountType.CREDIT_CARD, amount.negate()));
 			case ADJUSTMENT -> List.of(new Effect(account, amount));
+			// A friend's money arrives in the bank (UPI) or in the hand (cash); paying back takes it out again.
+			// What is owed to the friend is not a balance: it is the sum of these entries themselves.
+			case BORROW -> List.of(new Effect(account, amount));
+			case REPAY -> List.of(new Effect(account, amount.negate()));
 		};
 	}
 
@@ -44,7 +48,7 @@ public final class LedgerEffects {
 	public static List<AccountType> touched(EntryType type, AccountType account) {
 		checkAccount(type, account);
 		return switch (type) {
-			case EXPENSE, INCOME, ADJUSTMENT -> List.of(account);
+			case EXPENSE, INCOME, ADJUSTMENT, BORROW, REPAY -> List.of(account);
 			case WITHDRAWAL -> List.of(AccountType.BANK, AccountType.CASH);
 			case CARD_PAYMENT -> List.of(account, AccountType.CREDIT_CARD);
 		};
@@ -87,7 +91,7 @@ public final class LedgerEffects {
 		}
 		boolean allowed = switch (type) {
 			case EXPENSE, ADJUSTMENT -> true;
-			case INCOME, CARD_PAYMENT -> account != AccountType.CREDIT_CARD;
+			case INCOME, CARD_PAYMENT, BORROW, REPAY -> account != AccountType.CREDIT_CARD;
 			case WITHDRAWAL -> account == AccountType.BANK;
 		};
 		if (!allowed) {

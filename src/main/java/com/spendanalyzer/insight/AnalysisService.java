@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
- * Loads one user's expenses and balances and hands them to the {@link InsightEngine}. All the
+ * Loads one user's expenses, balances and debts and hands them to the {@link InsightEngine}. All the
  * thinking is in the engine; this class only decides which dates to load.
  */
 @Service
@@ -78,7 +78,8 @@ public class AnalysisService {
 		Balances balances = repository.balances(userId);
 		// Stable per user, so the wording of the summary does not change on refresh.
 		long seed = userId.getMostSignificantBits() ^ userId.getLeastSignificantBits();
-		return engine.analyse(LedgerSnapshot.of(window, today, rows, firstExpense, balances, seed, now));
+		return engine
+			.analyse(LedgerSnapshot.of(window, today, rows, firstExpense, balances, repository.debts(userId), seed, now));
 	}
 
 }

@@ -71,7 +71,8 @@ public class BalanceService {
 				continue;
 			}
 			EntryRow row = new EntryRow(UUID.randomUUID(), userId, UUID.randomUUID(), EntryType.ADJUSTMENT, difference,
-					account, null, OPENING_DESCRIPTION, null, null, null, null, null, false, false, today, now, now);
+					account, null, null, null, OPENING_DESCRIPTION, null, null, null, null, null, false, false, today, now,
+					now);
 			entries.insertIfAbsent(row);
 			accounts.apply(userId, row.effects());
 		}

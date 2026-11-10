@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.spendanalyzer.insight.engine.Balances;
+import com.spendanalyzer.insight.engine.Debt;
 import com.spendanalyzer.insight.engine.Expense;
 import com.spendanalyzer.model.AccountType;
 import com.spendanalyzer.model.Category;
@@ -57,6 +58,22 @@ class AnalysisRepository {
 		});
 		return new Balances(byType.get(AccountType.BANK), byType.get(AccountType.CASH),
 				byType.get(AccountType.CREDIT_CARD));
+	}
+
+	/**
+	 * What the user still owes each friend: borrowed minus paid back, per friend, only where
+	 * something is left. The name is the spelling of the friend's first entry. This is the only
+	 * place BORROW and REPAY rows are read here; they are never spending.
+	 */
+	List<Debt> debts(UUID userId) {
+		return jdbc.sql("""
+				SELECT (array_agg(person ORDER BY created_at, id))[1] AS name,
+					SUM(CASE WHEN type = 'BORROW' THEN amount ELSE -amount END) AS owed
+				FROM entries
+				WHERE user_id = ? AND type IN ('BORROW', 'REPAY')
+				GROUP BY person_key
+				HAVING SUM(CASE WHEN type = 'BORROW' THEN amount ELSE -amount END) > 0
+				""").param(userId).query((rs, row) -> new Debt(rs.getString("name"), rs.getBigDecimal("owed"))).list();
 	}
 
 	private static Expense expense(ResultSet rs, int row) throws SQLException {

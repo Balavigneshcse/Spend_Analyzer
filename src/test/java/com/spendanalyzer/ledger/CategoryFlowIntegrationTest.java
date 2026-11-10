@@ -65,6 +65,9 @@ class CategoryFlowIntegrationTest {
 	BalanceReader balanceReader;
 
 	@Autowired
+	DebtRepository debts;
+
+	@Autowired
 	Clock clock;
 
 	@Autowired
@@ -82,7 +85,7 @@ class CategoryFlowIntegrationTest {
 	void setUp() {
 		api = new LedgerApi(mvc);
 		recording = new RecordingCategorizer();
-		ledger = new LedgerService(entries, accounts, new SafeCategorizer(recording), balanceReader, clock);
+		ledger = new LedgerService(entries, accounts, new SafeCategorizer(recording), balanceReader, debts, clock);
 		tx = new TransactionTemplate(transactionManager);
 	}
 
@@ -343,9 +346,9 @@ class CategoryFlowIntegrationTest {
 	void entriesThatAreNotSpendsNeverReachTheAi() {
 		AuthUser user = TestData.createUser(jdbc);
 		create(user, new NewEntry(UUID.randomUUID(), EntryType.INCOME, LocalDate.of(2026, 1, 2), new BigDecimal("500.00"),
-				AccountType.BANK, null, "pocket money", null, null));
+				AccountType.BANK, null, "pocket money", null, null, null));
 		create(user, new NewEntry(UUID.randomUUID(), EntryType.ADJUSTMENT, LocalDate.of(2026, 1, 2), null,
-				AccountType.CASH, null, null, null, new BigDecimal("75.00")));
+				AccountType.CASH, null, null, null, new BigDecimal("75.00"), null));
 		assertThat(recording.asked).isEmpty();
 		assertThat(recording.learned).isEmpty();
 	}
@@ -399,7 +402,7 @@ class CategoryFlowIntegrationTest {
 
 	private static NewEntry newExpense(String description, String amount, PaymentMode mode, Category category) {
 		return new NewEntry(UUID.randomUUID(), EntryType.EXPENSE, LocalDate.of(2026, 1, 2), new BigDecimal(amount),
-				mode.account(), mode, description, category, null);
+				mode.account(), mode, description, category, null, null);
 	}
 
 	private static Prediction prediction(Category category, double confidence, String item, boolean needsReview) {

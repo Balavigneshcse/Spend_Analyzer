@@ -22,7 +22,8 @@ public class ExportService {
 	public record UserView(String name, String email, String phoneMasked) {
 	}
 
-	public record Export(String exportedAt, UserView user, BalancesView balances, List<EntryView> entries) {
+	public record Export(String exportedAt, UserView user, BalancesView balances, DebtsView debts,
+			List<EntryView> entries) {
 	}
 
 	private final JdbcClient jdbc;
@@ -31,16 +32,20 @@ public class ExportService {
 
 	private final BalanceReader balances;
 
+	private final DebtReader debts;
+
 	private final Clock clock;
 
-	public ExportService(JdbcClient jdbc, EntryRepository entries, BalanceReader balances, Clock clock) {
+	public ExportService(JdbcClient jdbc, EntryRepository entries, BalanceReader balances, DebtReader debts,
+			Clock clock) {
 		this.jdbc = jdbc;
 		this.entries = entries;
 		this.balances = balances;
+		this.debts = debts;
 		this.clock = clock;
 	}
 
-	/** One snapshot for all three reads, so the balances in the file match the entries in the file. */
+	/** One snapshot for all the reads, so the balances and debts in the file match the entries in the file. */
 	@Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
 	public Export export(UUID userId) {
 		UserView user = jdbc.sql("SELECT name, email, phone FROM users WHERE id = :uid")
@@ -52,7 +57,8 @@ public class ExportService {
 			.stream()
 			.map(EntryView::of)
 			.toList();
-		return new Export(clock.instant().truncatedTo(ChronoUnit.SECONDS).toString(), user, balances.read(userId), items);
+		return new Export(clock.instant().truncatedTo(ChronoUnit.SECONDS).toString(), user, balances.read(userId),
+				debts.read(userId), items);
 	}
 
 	/** "+919876543210" becomes "+91 ••••••3210": enough to recognise the number, not enough to use it. */

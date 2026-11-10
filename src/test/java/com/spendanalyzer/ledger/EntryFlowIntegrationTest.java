@@ -87,7 +87,7 @@ class EntryFlowIntegrationTest {
 
 		ResultActions result = api.create(user, expense("juse", "40", "UPI"))
 			.andExpect(status().isCreated())
-			.andExpect(jsonPath("$.entry.length()").value(15))
+			.andExpect(jsonPath("$.entry.length()").value(16))
 			.andExpect(jsonPath("$.entry.id").isString())
 			.andExpect(jsonPath("$.entry.type").value("EXPENSE"))
 			.andExpect(jsonPath("$.entry.amount").value("40.00"))
@@ -162,7 +162,7 @@ class EntryFlowIntegrationTest {
 			.andExpect(jsonPath("$.entry.aiConfidence").value(nullValue()))
 			.andExpect(jsonPath("$.entry.aiSource").value(nullValue()))
 			.andExpect(jsonPath("$.entry.needsReview").value(false))
-			.andExpect(jsonPath("$.entry.length()").value(15))
+			.andExpect(jsonPath("$.entry.length()").value(16))
 			.andExpect(jsonPath("$.balances.bank").value("6500.00"));
 		api.create(user, income("200", "CASH"))
 			.andExpect(status().isCreated())

@@ -10,7 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -218,7 +220,7 @@ class AnalysisIntegrationTest {
 			assertThat(insight.keySet()).containsOnly("id", "type", "severity", "title", "text");
 			assertThat((String) insight.get("severity")).isIn("ALERT", "WARN", "INFO", "GOOD");
 			assertThat((String) insight.get("type")).isIn("SMALL_LEAK", "UNUSUAL_SPEND", "PERIOD_CHANGE", "RUNWAY",
-					"FORECAST", "RECURRING", "WEEK_PATTERN", "NEEDS_WANTS", "TOP_CATEGORY", "REVIEW_NEEDED", "CREDIT_CARD",
+					"FORECAST", "RECURRING", "WEEK_PATTERN", "NEEDS_WANTS", "TOP_CATEGORY", "REVIEW_NEEDED", "CREDIT_CARD", "BORROWED",
 					"POSITIVE");
 		}
 		List<Map<String, Object>> tips = list(json, "$.tips");
@@ -428,6 +430,106 @@ class AnalysisIntegrationTest {
 		String strangersView = analysis(stranger, "ALL_TIME");
 		assertThat(object(strangersView, "$.totals")).containsEntry("spent", "9999.00").containsEntry("count", 1);
 		assertThat(strangersView).doesNotContain("juice").doesNotContain("shoes");
+	}
+
+	// ------------------------------------------------------------------ borrowing from friends
+
+	private void debtEntry(AuthUser user, LocalDate date, String type, String person, String amount, String account) {
+		jdbc.sql("""
+				INSERT INTO entries (id, user_id, client_id, type, amount, account, person, person_key, entry_date)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+				""")
+			.params(UUID.randomUUID(), user.id(), UUID.randomUUID(), type, new BigDecimal(amount), account, person,
+					person.toLowerCase(Locale.ROOT), date)
+			.update();
+	}
+
+	/** Every block of numbers in the answer; the words (insights, tips, summary) are left out. */
+	private static Map<String, Object> numbers(String json) {
+		Map<String, Object> blocks = new LinkedHashMap<>();
+		for (String block : List.of("period", "totals", "byCategory", "byMode", "daily", "topItems", "needsWants", "runway",
+				"forecast", "health", "dataQuality")) {
+			blocks.put(block, JsonPath.read(json, "$." + block));
+		}
+		return blocks;
+	}
+
+	@Test
+	void borrowingAndPayingBackAreNeitherSpendingNorIncome() throws Exception {
+		AuthUser user = userWithLedger();
+		List<String> periods = List.of("THIS_WEEK", "THIS_MONTH", "LAST_MONTH", "LAST_30_DAYS", "ALL_TIME");
+		Map<String, Map<String, Object>> before = new LinkedHashMap<>();
+		for (String period : periods) {
+			before.put(period, numbers(analysis(user, period)));
+		}
+
+		LocalDate today = today();
+		LocalDate lastMonth15 = today.withDayOfMonth(1).minusMonths(1).withDayOfMonth(15);
+		debtEntry(user, today, "BORROW", "Ravi", "1000", "BANK");
+		debtEntry(user, lastMonth15, "BORROW", "ravi", "300", "CASH");
+		debtEntry(user, today, "REPAY", "RAVI", "500", "BANK");
+		debtEntry(user, today.withDayOfMonth(1).minusMonths(2), "BORROW", "Arun", "500", "CASH");
+		debtEntry(user, lastMonth15, "BORROW", "Kumar", "200", "BANK");
+		debtEntry(user, today, "REPAY", "Kumar", "200", "CASH");
+
+		for (String period : periods) {
+			String json = analysis(user, period);
+			assertShape(json, period);
+			// not a rupee of it counts as spending, in any period, in any block
+			assertThat(numbers(json)).as(period).isEqualTo(before.get(period));
+			// the friend who is paid back in full is not mentioned
+			assertThat(json).doesNotContain("Kumar");
+		}
+		assertThat(object(analysis(user, "THIS_MONTH"), "$.totals")).containsEntry("spent", "420.00").containsEntry("count", 8);
+		assertThat(object(analysis(user, "ALL_TIME"), "$.totals")).containsEntry("spent", "2220.00").containsEntry("count", 19);
+
+		// what is owed shows up as one insight about today: bank 3,000 + cash 500 against 800 + 500
+		List<Map<String, Object>> week = list(analysis(user, "THIS_WEEK"), "$.insights");
+		assertThat(week).extracting(insight -> insight.get("type"))
+			.containsExactlyInAnyOrder("SMALL_LEAK", "NEEDS_WANTS", "TOP_CATEGORY", "REVIEW_NEEDED", "CREDIT_CARD", "BORROWED");
+		assertThat(week).filteredOn(insight -> "BORROWED".equals(insight.get("type"))).singleElement().satisfies(insight -> {
+			assertThat(insight).containsEntry("id", "borrowed")
+				.containsEntry("severity", "INFO")
+				.containsEntry("title", "Money owed to friends")
+				.containsEntry("text", "You owe friends ₹1,300 in total: Ravi ₹800, Arun ₹500. "
+						+ "After paying everyone back you would have ₹2,200 in bank and cash.");
+		});
+		// last month is about last month, not about today
+		assertThat(list(analysis(user, "LAST_MONTH"), "$.insights")).extracting(insight -> insight.get("type"))
+			.doesNotContain("BORROWED", "CREDIT_CARD", "RUNWAY");
+	}
+
+	@Test
+	void aDebtLargerThanBankAndCashIsAWarning() throws Exception {
+		AuthUser user = TestData.createUser(jdbc);
+		account(user, "BANK", "100");
+		account(user, "CASH", "250.50");
+		debtEntry(user, today(), "BORROW", "Ravi <b>K</b>", "1000", "BANK");
+
+		String json = analysis(user, "THIS_MONTH");
+		assertShape(json, "THIS_MONTH");
+		assertThat(object(json, "$.totals")).containsEntry("spent", "0.00").containsEntry("count", 0);
+		assertThat(list(json, "$.insights")).singleElement().satisfies(insight -> {
+			assertThat(insight).containsEntry("type", "BORROWED").containsEntry("severity", "WARN");
+			// the name is the user's own text, passed on as it is: the page shows it with textContent
+			assertThat(insight).containsEntry("text",
+					"You owe Ravi <b>K</b> ₹1,000. That is more than the ₹350.50 you have in bank and cash.");
+		});
+
+		// paid back: nothing left to say
+		debtEntry(user, today(), "REPAY", "ravi <b>k</b>", "1000", "BANK");
+		assertThat(list(analysis(user, "THIS_MONTH"), "$.insights")).isEmpty();
+	}
+
+	@Test
+	void anotherUsersDebtsAreNeverIncluded() throws Exception {
+		AuthUser owner = userWithLedger();
+		AuthUser stranger = userWithLedger();
+		debtEntry(stranger, today(), "BORROW", "Zubeida", "7777", "BANK");
+
+		String ownersView = analysis(owner, "THIS_WEEK");
+		assertThat(ownersView).doesNotContain("Zubeida").doesNotContain("7,777").doesNotContain("BORROWED");
+		assertThat(analysis(stranger, "THIS_WEEK")).contains("Zubeida").contains("₹7,777");
 	}
 
 }

@@ -811,6 +811,205 @@ class InsightEngineLedgerTest {
 		assertThat(insight(analysis, InsightType.CREDIT_CARD)).isEmpty();
 	}
 
+	// ------------------------------------------------------------------ money owed to friends
+
+	/** Ten days of meals at ₹100, bank 5,200 and cash 340: ₹5,540 to spend. */
+	private static Ledger studentWithMoney() {
+		return Ledger.on("2026-11-10")
+			.everyDay("2026-11-01", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.balances("5200", "340", "0");
+	}
+
+	@Test
+	void owingTwoFriendsStatesTheTotalWhoAndWhatWouldBeLeft() {
+		Analysis analysis = studentWithMoney().owes("Arun", "500").owes("Ravi", "1000").analyse(PeriodCode.THIS_MONTH);
+
+		Analysis.Insight borrowed = insight(analysis, InsightType.BORROWED).orElseThrow();
+		assertThat(borrowed.id()).isEqualTo("borrowed");
+		assertThat(borrowed.severity()).isEqualTo(Severity.INFO);
+		assertThat(borrowed.title()).isEqualTo("Money owed to friends");
+		assertThat(borrowed.text()).isEqualTo("You owe friends ₹1,500 in total: Ravi ₹1,000, Arun ₹500. "
+				+ "After paying everyone back you would have ₹4,040 in bank and cash.");
+		assertThat(analysis.insights()).filteredOn(i -> i.type() == InsightType.BORROWED).hasSize(1);
+	}
+
+	@Test
+	void owingOneFriendNamesJustThatFriend() {
+		Analysis analysis = studentWithMoney().owes("Ravi", "250.50").analyse(PeriodCode.THIS_MONTH);
+		Analysis.Insight borrowed = insight(analysis, InsightType.BORROWED).orElseThrow();
+		assertThat(borrowed.severity()).isEqualTo(Severity.INFO);
+		assertThat(borrowed.text())
+			.isEqualTo("You owe Ravi ₹250.50. After paying it back you would have ₹5,289.50 in bank and cash.");
+	}
+
+	@Test
+	void theThreeLargestDebtsAreNamedAndTheOthersCounted() {
+		Analysis four = studentWithMoney().owes("Divya", "100")
+			.owes("Ravi", "1000")
+			.owes("Chitra", "300")
+			.owes("Arun", "600")
+			.analyse(PeriodCode.THIS_MONTH);
+		assertThat(insight(four, InsightType.BORROWED).orElseThrow().text())
+			.isEqualTo("You owe friends ₹2,000 in total: Ravi ₹1,000, Arun ₹600, Chitra ₹300 and 1 more. "
+					+ "After paying everyone back you would have ₹3,540 in bank and cash.");
+
+		Analysis six = studentWithMoney().owes("Divya", "100")
+			.owes("Ravi", "1000")
+			.owes("Chitra", "300")
+			.owes("Arun", "600")
+			.owes("Esha", "20")
+			.owes("Farid", "20.50")
+			.analyse(PeriodCode.THIS_MONTH);
+		assertThat(insight(six, InsightType.BORROWED).orElseThrow().text())
+			.isEqualTo("You owe friends ₹2,040.50 in total: Ravi ₹1,000, Arun ₹600, Chitra ₹300 and 3 more. "
+					+ "After paying everyone back you would have ₹3,499.50 in bank and cash.");
+
+		// exactly three: all named, nobody counted
+		Analysis three = studentWithMoney().owes("Ravi", "1000").owes("Chitra", "300").owes("Arun", "600")
+			.analyse(PeriodCode.THIS_MONTH);
+		assertThat(insight(three, InsightType.BORROWED).orElseThrow().text())
+			.startsWith("You owe friends ₹1,900 in total: Ravi ₹1,000, Arun ₹600, Chitra ₹300. After");
+	}
+
+	@Test
+	void aDebtAboveBankAndCashIsAWarningAndSaysSoPlainly() {
+		Analysis analysis = Ledger.on("2026-11-10")
+			.everyDay("2026-11-01", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.balances("500", "300", "0")
+			.owes("Ravi", "1000")
+			.owes("Arun", "500")
+			.analyse(PeriodCode.THIS_MONTH);
+		Analysis.Insight borrowed = insight(analysis, InsightType.BORROWED).orElseThrow();
+		assertThat(borrowed.severity()).isEqualTo(Severity.WARN);
+		assertThat(borrowed.text()).isEqualTo("You owe friends ₹1,500 in total: Ravi ₹1,000, Arun ₹500. "
+				+ "That is more than the ₹800 you have in bank and cash.");
+
+		Analysis one = Ledger.on("2026-11-10")
+			.everyDay("2026-11-01", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.balances("500", "300", "0")
+			.owes("Ravi", "800.01")
+			.analyse(PeriodCode.THIS_MONTH);
+		assertThat(insight(one, InsightType.BORROWED).orElseThrow().severity()).isEqualTo(Severity.WARN);
+		assertThat(insight(one, InsightType.BORROWED).orElseThrow().text())
+			.isEqualTo("You owe Ravi ₹800.01. That is more than the ₹800 you have in bank and cash.");
+	}
+
+	@Test
+	void aDebtOfExactlyWhatIsThereIsStillPayable() {
+		Analysis analysis = Ledger.on("2026-11-10")
+			.everyDay("2026-11-01", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.balances("500", "300", "0")
+			.owes("Ravi", "800")
+			.analyse(PeriodCode.THIS_MONTH);
+		Analysis.Insight borrowed = insight(analysis, InsightType.BORROWED).orElseThrow();
+		assertThat(borrowed.severity()).isEqualTo(Severity.INFO);
+		assertThat(borrowed.text()).isEqualTo("You owe Ravi ₹800. After paying it back you would have ₹0 in bank and cash.");
+	}
+
+	@Test
+	void owingFriendsWithNoMoneyAtAllIsAWarningWithoutANegativeFigure() {
+		for (String bank : new String[] { "0", "-150" }) {
+			Analysis analysis = Ledger.on("2026-11-10")
+				.everyDay("2026-11-01", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+				.balances(bank, "0", "0")
+				.owes("Ravi", "300")
+				.owes("Arun", "200")
+				.analyse(PeriodCode.THIS_MONTH);
+			Analysis.Insight borrowed = insight(analysis, InsightType.BORROWED).orElseThrow();
+			assertThat(borrowed.severity()).isEqualTo(Severity.WARN);
+			assertThat(borrowed.text()).isEqualTo("You owe friends ₹500 in total: Ravi ₹300, Arun ₹200. "
+					+ "You have no money in bank or cash to pay it back.");
+		}
+	}
+
+	@Test
+	void noBorrowedInsightWhenNothingIsOwed() {
+		assertThat(insight(studentWithMoney().analyse(PeriodCode.THIS_MONTH), InsightType.BORROWED)).isEmpty();
+		// a friend who is paid back in full is no debt
+		Analysis paidBack = studentWithMoney().owes("Ravi", "0").owes("Arun", "0.00").analyse(PeriodCode.THIS_MONTH);
+		assertThat(insight(paidBack, InsightType.BORROWED)).isEmpty();
+		// and is not named next to one who is still owed money
+		Analysis mixed = studentWithMoney().owes("Ravi", "0").owes("Arun", "75").analyse(PeriodCode.THIS_MONTH);
+		assertThat(insight(mixed, InsightType.BORROWED).orElseThrow().text()).startsWith("You owe Arun ₹75.");
+	}
+
+	@Test
+	void owingMoneyChangesNoNumberOfTheAnalysis() {
+		Analysis without = studentWithMoney().analyse(PeriodCode.THIS_MONTH);
+		Analysis with = studentWithMoney().owes("Ravi", "1000").owes("Arun", "500").analyse(PeriodCode.THIS_MONTH);
+
+		// borrowed money is not income and what is owed is not spending
+		assertThat(with.totals()).isEqualTo(without.totals());
+		assertThat(with.totals().spent()).isEqualTo("1000.00");
+		assertThat(with.byCategory()).isEqualTo(without.byCategory());
+		assertThat(with.byMode()).isEqualTo(without.byMode());
+		assertThat(with.daily()).isEqualTo(without.daily());
+		assertThat(with.topItems()).isEqualTo(without.topItems());
+		assertThat(with.needsWants()).isEqualTo(without.needsWants());
+		assertThat(with.runway()).isEqualTo(without.runway());
+		assertThat(with.forecast()).isEqualTo(without.forecast());
+		assertThat(with.health()).isEqualTo(without.health());
+		assertThat(with.dataQuality()).isEqualTo(without.dataQuality());
+		// the only difference is the one insight
+		List<Analysis.Insight> others = with.insights().stream().filter(i -> i.type() != InsightType.BORROWED).toList();
+		assertThat(without.insights()).containsAll(others);
+	}
+
+	@Test
+	void theOrderOfTheDebtsDoesNotMatterAndEqualDebtsGoByName() {
+		Ledger ledger = studentWithMoney().owes("bala", "300").owes("Chitra", "300").owes("Arun", "300").owes("Ravi", "900");
+		String text = insight(ledger.analyse(PeriodCode.THIS_MONTH), InsightType.BORROWED).orElseThrow().text();
+		assertThat(text).startsWith("You owe friends ₹1,800 in total: Ravi ₹900, Arun ₹300, bala ₹300 and 1 more.");
+		for (long shuffle = 1; shuffle <= 5; shuffle++) {
+			assertThat(insight(ledger.shuffled(shuffle).analyse(PeriodCode.THIS_MONTH), InsightType.BORROWED).orElseThrow()
+				.text()).isEqualTo(text);
+		}
+	}
+
+	@Test
+	void aFriendsNameIsOnlyEverPlainTextInTheSentence() {
+		// names that look like a slot of the template, like markup and like a rupee figure
+		Analysis analysis = studentWithMoney().owes("{total}", "300").owes("<b>Ravi</b> & {left}", "1000")
+			.analyse(PeriodCode.THIS_MONTH);
+		assertThat(insight(analysis, InsightType.BORROWED).orElseThrow().text())
+			.isEqualTo("You owe friends ₹1,300 in total: <b>Ravi</b> & {left} ₹1,000, {total} ₹300. "
+					+ "After paying everyone back you would have ₹4,240 in bank and cash.");
+		assertThat(analysis.totals().spent()).isEqualTo("1000.00");
+	}
+
+	@Test
+	void everyRupeeFigureOfTheBorrowedInsightIsAComputedFact() {
+		InsightEngine.Report report = studentWithMoney().owes("Ravi", "1000")
+			.owes("Arun", "600.75")
+			.owes("Chitra", "300")
+			.owes("Divya", "100")
+			.report(PeriodCode.THIS_MONTH);
+		assertThat(report.rupeeFacts()).contains("₹2,000.75", "₹1,000", "₹600.75", "₹300", "₹3,539.25");
+		// the fourth friend is counted, not named: her amount is not a figure of this sentence
+		String text = insight(report.analysis(), InsightType.BORROWED).orElseThrow().text();
+		assertThat(text).contains("and 1 more").doesNotContain("Divya").doesNotContain("₹100 ");
+	}
+
+	@Test
+	void theBorrowedInsightIsAboutTodaySoLastMonthLeavesItOut() {
+		Ledger ledger = Ledger.on("2026-11-10")
+			.everyDay("2026-09-01", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.balances("300", "0", "0")
+			.owes("Ravi", "9000");
+		assertThat(insight(ledger.analyse(PeriodCode.LAST_MONTH), InsightType.BORROWED)).isEmpty();
+		for (PeriodCode code : List.of(PeriodCode.THIS_WEEK, PeriodCode.THIS_MONTH, PeriodCode.LAST_30_DAYS, PeriodCode.ALL_TIME)) {
+			assertThat(insight(ledger.analyse(code), InsightType.BORROWED)).as(code.name()).isPresent();
+		}
+	}
+
+	@Test
+	void aUserWithNoSpendsYetStillSeesWhatIsOwed() {
+		Analysis analysis = Ledger.on("2026-11-10").balances("1000", "0", "0").owes("Ravi", "1000").analyse(PeriodCode.THIS_MONTH);
+		assertThat(analysis.totals().spent()).isEqualTo("0.00");
+		assertThat(insight(analysis, InsightType.BORROWED).orElseThrow().text())
+			.isEqualTo("You owe Ravi ₹1,000. After paying it back you would have ₹0 in bank and cash.");
+	}
+
 	// ------------------------------------------------------------------ the plain sums
 
 	@Test

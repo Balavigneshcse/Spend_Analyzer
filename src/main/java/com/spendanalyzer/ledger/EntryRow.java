@@ -11,11 +11,16 @@ import com.spendanalyzer.model.Category;
 import com.spendanalyzer.model.EntryType;
 import com.spendanalyzer.model.PaymentMode;
 
-/** One row of the {@code entries} table. Never built from request JSON, only by the service. */
+/**
+ * One row of the {@code entries} table. Never built from request JSON, only by the service.
+ *
+ * @param person BORROW and REPAY only: the friend's name as typed
+ * @param personKey BORROW and REPAY only: the lower-case form that identifies the friend
+ */
 public record EntryRow(UUID id, UUID userId, UUID clientId, EntryType type, BigDecimal amount, AccountType account,
-		PaymentMode paymentMode, String description, Category category, String item, Category aiCategory,
-		Float aiConfidence, String aiSource, boolean needsReview, boolean userCorrected, LocalDate date,
-		Instant createdAt, Instant updatedAt) {
+		String person, String personKey, PaymentMode paymentMode, String description, Category category, String item,
+		Category aiCategory, Float aiConfidence, String aiSource, boolean needsReview, boolean userCorrected,
+		LocalDate date, Instant createdAt, Instant updatedAt) {
 
 	/** What this entry did to the balances when it was applied. */
 	public List<Effect> effects() {

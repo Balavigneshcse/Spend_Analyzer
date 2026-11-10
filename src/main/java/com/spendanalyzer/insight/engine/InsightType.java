@@ -14,6 +14,7 @@ public enum InsightType {
 	TOP_CATEGORY,
 	REVIEW_NEEDED,
 	CREDIT_CARD,
+	BORROWED,
 	POSITIVE
 
 }

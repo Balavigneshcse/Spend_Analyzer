@@ -83,6 +83,51 @@ class LedgerEffectsTest {
 	}
 
 	@Test
+	void borrowingRaisesTheBalanceTheMoneyArrivedIn() {
+		// by UPI the friend's money lands in the bank, in cash it lands in the hand
+		assertThat(LedgerEffects.of(EntryType.BORROW, BANK, AMOUNT)).containsExactly(new Effect(BANK, AMOUNT));
+		assertThat(LedgerEffects.of(EntryType.BORROW, CASH, AMOUNT)).containsExactly(new Effect(CASH, AMOUNT));
+	}
+
+	@Test
+	void payingBackLowersTheBalanceItWasPaidFrom() {
+		assertThat(LedgerEffects.of(EntryType.REPAY, BANK, AMOUNT)).containsExactly(new Effect(BANK, MINUS));
+		assertThat(LedgerEffects.of(EntryType.REPAY, CASH, AMOUNT)).containsExactly(new Effect(CASH, MINUS));
+	}
+
+	@Test
+	void borrowingAndPayingBackTheSameSumLeavesNothingBehind() {
+		List<Effect> both = new ArrayList<>(LedgerEffects.of(EntryType.BORROW, BANK, AMOUNT));
+		both.addAll(LedgerEffects.of(EntryType.REPAY, BANK, AMOUNT));
+		assertThat(LedgerEffects.net(both)).isEmpty();
+		// borrowed by UPI, paid back in cash: the money has moved from cash to the bank
+		List<Effect> mixed = new ArrayList<>(LedgerEffects.of(EntryType.BORROW, BANK, AMOUNT));
+		mixed.addAll(LedgerEffects.of(EntryType.REPAY, CASH, AMOUNT));
+		assertThat(LedgerEffects.net(mixed)).containsExactly(new Effect(BANK, AMOUNT), new Effect(CASH, MINUS));
+	}
+
+	@Test
+	void aDebtToAFriendNeverTouchesTheCardDue() {
+		for (EntryType type : List.of(EntryType.BORROW, EntryType.REPAY)) {
+			assertThatThrownBy(() -> LedgerEffects.of(type, CREDIT_CARD, AMOUNT)).isInstanceOf(IllegalArgumentException.class);
+			assertThatThrownBy(() -> LedgerEffects.touched(type, CREDIT_CARD)).isInstanceOf(IllegalArgumentException.class);
+			assertThatThrownBy(() -> LedgerEffects.of(type, null, AMOUNT)).isInstanceOf(IllegalArgumentException.class);
+			for (AccountType account : List.of(BANK, CASH)) {
+				assertThat(LedgerEffects.of(type, account, AMOUNT)).extracting(Effect::account).containsExactly(account);
+				assertThat(LedgerEffects.touched(type, account)).containsExactly(account);
+			}
+		}
+	}
+
+	@Test
+	void deletingABorrowTakesTheMoneyBackOutAndDeletingAPayBackReturnsIt() {
+		assertThat(LedgerEffects.inverse(LedgerEffects.of(EntryType.BORROW, CASH, AMOUNT)))
+			.containsExactly(new Effect(CASH, MINUS));
+		assertThat(LedgerEffects.inverse(LedgerEffects.of(EntryType.REPAY, BANK, AMOUNT)))
+			.containsExactly(new Effect(BANK, AMOUNT));
+	}
+
+	@Test
 	void accountsThatMakeNoSenseAreRefused() {
 		assertThatThrownBy(() -> LedgerEffects.of(EntryType.INCOME, CREDIT_CARD, AMOUNT))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -172,7 +217,7 @@ class LedgerEffectsTest {
 	private static boolean allowed(EntryType type, AccountType account) {
 		return switch (type) {
 			case EXPENSE, ADJUSTMENT -> true;
-			case INCOME, CARD_PAYMENT -> account != CREDIT_CARD;
+			case INCOME, CARD_PAYMENT, BORROW, REPAY -> account != CREDIT_CARD;
 			case WITHDRAWAL -> account == BANK;
 		};
 	}

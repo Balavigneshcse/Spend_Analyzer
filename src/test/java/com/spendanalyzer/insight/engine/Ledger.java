@@ -22,6 +22,8 @@ final class Ledger {
 
 	private Balances balances = Balances.NONE;
 
+	private final List<Debt> debts = new ArrayList<>();
+
 	private long seed = 42;
 
 	private Ledger(LocalDate today) {
@@ -66,18 +68,27 @@ final class Ledger {
 		return this;
 	}
 
+	/** The user still owes this friend this much. */
+	Ledger owes(String friend, String amount) {
+		debts.add(new Debt(friend, new BigDecimal(amount)));
+		return this;
+	}
+
 	Ledger seed(long seed) {
 		this.seed = seed;
 		return this;
 	}
 
-	/** The same ledger with every amount and balance multiplied. */
+	/** The same ledger with every amount, balance and debt multiplied. */
 	Ledger times(int factor) {
 		BigDecimal by = BigDecimal.valueOf(factor);
 		Ledger copy = new Ledger(today);
 		copy.seed = seed;
 		copy.balances = new Balances(balances.bank().multiply(by), balances.cash().multiply(by),
 				balances.creditCardDue().multiply(by));
+		for (Debt debt : debts) {
+			copy.debts.add(new Debt(debt.name(), debt.owed().multiply(by)));
+		}
 		for (Expense row : rows) {
 			copy.rows.add(new Expense(row.date(), row.amount().multiply(by), row.category(), row.mode(), row.item(),
 					row.description(), row.needsReview()));
@@ -85,20 +96,22 @@ final class Ledger {
 		return copy;
 	}
 
-	/** The same ledger with the rows in another order. */
+	/** The same ledger with the rows and the debts in another order. */
 	Ledger shuffled(long shuffleSeed) {
 		Ledger copy = new Ledger(today);
 		copy.seed = seed;
 		copy.balances = balances;
 		copy.rows.addAll(rows);
 		Collections.shuffle(copy.rows, new Random(shuffleSeed));
+		copy.debts.addAll(debts);
+		Collections.shuffle(copy.debts, new Random(shuffleSeed));
 		return copy;
 	}
 
 	LedgerSnapshot snapshot(PeriodCode code) {
 		LocalDate first = rows.stream().map(Expense::date).filter(d -> !d.isAfter(today)).min(LocalDate::compareTo).orElse(null);
 		PeriodWindow window = PeriodWindow.resolve(code, today, first);
-		return LedgerSnapshot.of(window, today, rows, first, balances, seed, GENERATED_AT);
+		return LedgerSnapshot.of(window, today, rows, first, balances, debts, seed, GENERATED_AT);
 	}
 
 	InsightEngine.Report report(PeriodCode code) {

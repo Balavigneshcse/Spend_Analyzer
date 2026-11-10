@@ -65,7 +65,8 @@ class BalancesIntegrationTest {
 			.andExpect(jsonPath("$.creditCardDue").value("0.00"))
 			.andExpect(jsonPath("$.available").value("0.00"))
 			.andExpect(jsonPath("$.onboarded").value(false))
-			.andExpect(jsonPath("$.length()").value(5));
+			.andExpect(jsonPath("$.owedToFriends").value("0.00"))
+			.andExpect(jsonPath("$.length()").value(6));
 		api.balances(user).andExpect(status().isOk());
 		List<String> types = jdbc.sql("SELECT type FROM accounts WHERE user_id = ? ORDER BY type")
 			.param(user.id())

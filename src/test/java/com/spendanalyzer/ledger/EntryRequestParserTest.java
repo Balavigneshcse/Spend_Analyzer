@@ -35,7 +35,7 @@ class EntryRequestParserTest {
 
 	private static CreateEntryRequest expense(String description, String amount, String mode, String category,
 			String date) {
-		return new CreateEntryRequest(CLIENT_ID, "EXPENSE", date, description, amount, mode, category, null, null);
+		return new CreateEntryRequest(CLIENT_ID, "EXPENSE", date, description, amount, mode, category, null, null, null);
 	}
 
 	private static void assertRejected(String field, ThrowingCallable call) {
@@ -68,11 +68,11 @@ class EntryRequestParserTest {
 	@Test
 	void anExpenseCannotChooseItsAccount() {
 		CreateEntryRequest wrong = new CreateEntryRequest(CLIENT_ID, "EXPENSE", null, "juse", "40", "UPI", null,
-				"CREDIT_CARD", null);
+				"CREDIT_CARD", null, null);
 		assertRejected("account", () -> parser.parseCreate(wrong));
 		// stating the account the mode implies anyway is harmless
 		CreateEntryRequest same = new CreateEntryRequest(CLIENT_ID, "EXPENSE", null, "juse", "40", "UPI", null, "BANK",
-				null);
+				null, null);
 		assertThat(parser.parseCreate(same).account()).isEqualTo(AccountType.BANK);
 	}
 
@@ -102,16 +102,16 @@ class EntryRequestParserTest {
 		assertRejected("paymentMode", () -> parser.parseCreate(expense("juse", "40", null, null, null)));
 		assertRejected("category", () -> parser.parseCreate(expense("juse", "40", "UPI", "FOOD", null)));
 		assertRejected("type", () -> parser
-			.parseCreate(new CreateEntryRequest(CLIENT_ID, "SPEND", null, "juse", "40", "UPI", null, null, null)));
+			.parseCreate(new CreateEntryRequest(CLIENT_ID, "SPEND", null, "juse", "40", "UPI", null, null, null, null)));
 		assertRejected("type", () -> parser
-			.parseCreate(new CreateEntryRequest(CLIENT_ID, null, null, "juse", "40", "UPI", null, null, null)));
+			.parseCreate(new CreateEntryRequest(CLIENT_ID, null, null, "juse", "40", "UPI", null, null, null, null)));
 	}
 
 	@Test
 	void clientIdMustBeAUuid() {
 		for (String bad : new String[] { null, "", "abc", "1-1-1-1-1", CLIENT_ID + "0", "{" + CLIENT_ID + "}" }) {
 			assertRejected("clientId", () -> parser
-				.parseCreate(new CreateEntryRequest(bad, "EXPENSE", null, "juse", "40", "UPI", null, null, null)));
+				.parseCreate(new CreateEntryRequest(bad, "EXPENSE", null, "juse", "40", "UPI", null, null, null, null)));
 		}
 	}
 
@@ -167,49 +167,150 @@ class EntryRequestParserTest {
 	@Test
 	void incomeAndCardPaymentNeedBankOrCash() {
 		NewEntry income = parser.parseCreate(
-				new CreateEntryRequest(CLIENT_ID, "INCOME", null, " pocket money ", "500", null, null, "CASH", null));
+				new CreateEntryRequest(CLIENT_ID, "INCOME", null, " pocket money ", "500", null, null, "CASH", null, null));
 		assertThat(income.account()).isEqualTo(AccountType.CASH);
 		assertThat(income.description()).isEqualTo("pocket money");
 		assertThat(income.paymentMode()).isNull();
 		for (String type : new String[] { "INCOME", "CARD_PAYMENT" }) {
 			assertRejected("account", () -> parser
-				.parseCreate(new CreateEntryRequest(CLIENT_ID, type, null, null, "500", null, null, "CREDIT_CARD", null)));
+				.parseCreate(new CreateEntryRequest(CLIENT_ID, type, null, null, "500", null, null, "CREDIT_CARD", null, null)));
 			assertRejected("account", () -> parser
-				.parseCreate(new CreateEntryRequest(CLIENT_ID, type, null, null, "500", null, null, null, null)));
+				.parseCreate(new CreateEntryRequest(CLIENT_ID, type, null, null, "500", null, null, null, null, null)));
 			assertRejected("paymentMode", () -> parser
-				.parseCreate(new CreateEntryRequest(CLIENT_ID, type, null, null, "500", "UPI", null, "BANK", null)));
+				.parseCreate(new CreateEntryRequest(CLIENT_ID, type, null, null, "500", "UPI", null, "BANK", null, null)));
 			assertRejected("category", () -> parser
-				.parseCreate(new CreateEntryRequest(CLIENT_ID, type, null, null, "500", null, "SHOPPING", "BANK", null)));
+				.parseCreate(new CreateEntryRequest(CLIENT_ID, type, null, null, "500", null, "SHOPPING", "BANK", null, null)));
 		}
 	}
 
 	@Test
 	void withdrawalAlwaysUsesTheBank() {
 		NewEntry entry = parser
-			.parseCreate(new CreateEntryRequest(CLIENT_ID, "WITHDRAWAL", null, null, "500", null, null, null, null));
+			.parseCreate(new CreateEntryRequest(CLIENT_ID, "WITHDRAWAL", null, null, "500", null, null, null, null, null));
 		assertThat(entry.account()).isEqualTo(AccountType.BANK);
 		assertThat(entry.description()).isNull();
 		assertRejected("account", () -> parser
-			.parseCreate(new CreateEntryRequest(CLIENT_ID, "WITHDRAWAL", null, null, "500", null, null, "CASH", null)));
+			.parseCreate(new CreateEntryRequest(CLIENT_ID, "WITHDRAWAL", null, null, "500", null, null, "CASH", null, null)));
 	}
 
 	@Test
 	void adjustmentTakesAnAccountAndANewBalance() {
 		NewEntry entry = parser
-			.parseCreate(new CreateEntryRequest(CLIENT_ID, "ADJUSTMENT", null, null, null, null, null, "CREDIT_CARD", "0"));
+			.parseCreate(new CreateEntryRequest(CLIENT_ID, "ADJUSTMENT", null, null, null, null, null, "CREDIT_CARD", "0", null));
 		assertThat(entry.account()).isEqualTo(AccountType.CREDIT_CARD);
 		assertThat(entry.newBalance()).isEqualTo(new BigDecimal("0.00"));
 		assertThat(entry.amount()).isNull();
 		assertRejected("newBalance", () -> parser
-			.parseCreate(new CreateEntryRequest(CLIENT_ID, "ADJUSTMENT", null, null, null, null, null, "BANK", "-1")));
+			.parseCreate(new CreateEntryRequest(CLIENT_ID, "ADJUSTMENT", null, null, null, null, null, "BANK", "-1", null)));
 		assertRejected("newBalance", () -> parser
-			.parseCreate(new CreateEntryRequest(CLIENT_ID, "ADJUSTMENT", null, null, null, null, null, "BANK", null)));
+			.parseCreate(new CreateEntryRequest(CLIENT_ID, "ADJUSTMENT", null, null, null, null, null, "BANK", null, null)));
 		assertRejected("newBalance", () -> parser.parseCreate(
-				new CreateEntryRequest(CLIENT_ID, "ADJUSTMENT", null, null, null, null, null, "BANK", "1000000000")));
+				new CreateEntryRequest(CLIENT_ID, "ADJUSTMENT", null, null, null, null, null, "BANK", "1000000000", null)));
 		assertRejected("amount", () -> parser
-			.parseCreate(new CreateEntryRequest(CLIENT_ID, "ADJUSTMENT", null, null, "5", null, null, "BANK", "10")));
+			.parseCreate(new CreateEntryRequest(CLIENT_ID, "ADJUSTMENT", null, null, "5", null, null, "BANK", "10", null)));
 		assertRejected("newBalance", () -> parser
-			.parseCreate(new CreateEntryRequest(CLIENT_ID, "EXPENSE", null, "juse", "5", "UPI", null, null, "10")));
+			.parseCreate(new CreateEntryRequest(CLIENT_ID, "EXPENSE", null, "juse", "5", "UPI", null, null, "10", null)));
+	}
+
+	// ---------------------------------------------------------------- borrowing from friends
+
+	private static CreateEntryRequest debt(String type, String person, String amount, String account) {
+		return new CreateEntryRequest(CLIENT_ID, type, null, null, amount, null, null, account, null, person);
+	}
+
+	@Test
+	void borrowAndRepayTakeAFriendAnAmountAndBankOrCash() {
+		for (String type : new String[] { "BORROW", "REPAY" }) {
+			NewEntry entry = parser.parseCreate(new CreateEntryRequest(CLIENT_ID, type, "2026-11-09", " for the trip ", "500",
+					null, null, "CASH", null, "  Ravi   Kumar "));
+			assertThat(entry.type()).isEqualTo(EntryType.valueOf(type));
+			assertThat(entry.person()).isEqualTo("Ravi Kumar");
+			assertThat(entry.amount()).isEqualTo(new BigDecimal("500.00"));
+			assertThat(entry.account()).isEqualTo(AccountType.CASH);
+			assertThat(entry.description()).isEqualTo("for the trip");
+			assertThat(entry.date()).isEqualTo(LocalDate.of(2026, 11, 9));
+			assertThat(entry.paymentMode()).isNull();
+			assertThat(entry.category()).isNull();
+			assertThat(entry.newBalance()).isNull();
+
+			NewEntry byUpi = parser.parseCreate(debt(type, "Ravi", "49.5", "BANK"));
+			assertThat(byUpi.account()).isEqualTo(AccountType.BANK);
+			assertThat(byUpi.description()).isNull();
+			assertThat(byUpi.date()).isEqualTo(LocalDate.of(2026, 11, 11)); // today in India
+
+			assertRejected("person", () -> parser.parseCreate(debt(type, null, "500", "BANK")));
+			assertRejected("person", () -> parser.parseCreate(debt(type, "  ", "500", "BANK")));
+			assertRejected("person", () -> parser.parseCreate(debt(type, "x".repeat(41), "500", "BANK")));
+			assertRejected("amount", () -> parser.parseCreate(debt(type, "Ravi", "0", "BANK")));
+			assertRejected("amount", () -> parser.parseCreate(debt(type, "Ravi", null, "BANK")));
+			assertRejected("amount", () -> parser.parseCreate(debt(type, "Ravi", "1000000.01", "BANK")));
+			assertRejected("account", () -> parser.parseCreate(debt(type, "Ravi", "500", "CREDIT_CARD")));
+			assertRejected("account", () -> parser.parseCreate(debt(type, "Ravi", "500", null)));
+			assertRejected("account", () -> parser.parseCreate(debt(type, "Ravi", "500", "UPI")));
+			assertRejected("paymentMode", () -> parser.parseCreate(
+					new CreateEntryRequest(CLIENT_ID, type, null, null, "500", "UPI", null, "BANK", null, "Ravi")));
+			assertRejected("category", () -> parser.parseCreate(
+					new CreateEntryRequest(CLIENT_ID, type, null, null, "500", null, "SOCIAL_GIFTS", "BANK", null, "Ravi")));
+			assertRejected("newBalance", () -> parser.parseCreate(
+					new CreateEntryRequest(CLIENT_ID, type, null, null, "500", null, null, "BANK", "10", "Ravi")));
+			assertRejected("description", () -> parser.parseCreate(
+					new CreateEntryRequest(CLIENT_ID, type, null, "x".repeat(121), "500", null, null, "BANK", null, "Ravi")));
+			assertRejected("date", () -> parser.parseCreate(
+					new CreateEntryRequest(CLIENT_ID, type, "2026-11-13", null, "500", null, null, "BANK", null, "Ravi")));
+		}
+	}
+
+	@Test
+	void aFriendBelongsOnlyToBorrowAndRepay() {
+		assertRejected("person", () -> parser.parseCreate(
+				new CreateEntryRequest(CLIENT_ID, "EXPENSE", null, "juse", "40", "UPI", null, null, null, "Ravi")));
+		assertRejected("person", () -> parser
+			.parseCreate(new CreateEntryRequest(CLIENT_ID, "INCOME", null, null, "40", null, null, "BANK", null, "Ravi")));
+		assertRejected("person", () -> parser.parseCreate(
+				new CreateEntryRequest(CLIENT_ID, "CARD_PAYMENT", null, null, "40", null, null, "BANK", null, "Ravi")));
+		assertRejected("person", () -> parser
+			.parseCreate(new CreateEntryRequest(CLIENT_ID, "WITHDRAWAL", null, null, "40", null, null, null, null, "Ravi")));
+		assertRejected("person", () -> parser.parseCreate(
+				new CreateEntryRequest(CLIENT_ID, "ADJUSTMENT", null, null, null, null, null, "BANK", "10", "Ravi")));
+		// an empty or blank person is the same as none, like every other unused field
+		assertThat(parser.parseCreate(
+				new CreateEntryRequest(CLIENT_ID, "INCOME", null, null, "40", null, null, "BANK", null, " "))
+			.person()).isNull();
+	}
+
+	@Test
+	void aFriendsNameIsCleanedAndItsKeyIgnoresCaseAndExtraSpaces() {
+		assertThat(PersonName.parse("person", "Ravi")).isEqualTo("Ravi");
+		assertThat(PersonName.parse("person", "  Ravi \t  Kumar\n")).isEqualTo("Ravi Kumar");
+		// control characters go, a no-break or wide space is a space
+		assertThat(PersonName.parse("person", "Ra\u0000vi\u0007   Kumar ")).isEqualTo("Ravi Kumar");
+		// nothing else is touched: other scripts, emoji and markup stay exactly as typed
+		assertThat(PersonName.parse("person", "ரவி")).isEqualTo("ரவி");
+		assertThat(PersonName.parse("person", "<b>Ravi</b> & \"co\"")).isEqualTo("<b>Ravi</b> & \"co\"");
+		assertThat(PersonName.parse("person", "x".repeat(40))).hasSize(40);
+		assertThat(PersonName.parse("person", "😀".repeat(40))).isEqualTo("😀".repeat(40)); // 40 characters, 80 chars
+		assertThat(PersonName.parse("person", "A")).isEqualTo("A");
+
+		for (String same : new String[] { "Ravi Kumar", "ravi kumar", " RAVI   KUMAR ", "rAVI\tkUMAR" }) {
+			assertThat(PersonName.key(PersonName.parse("person", same))).isEqualTo("ravi kumar");
+		}
+		assertThat(PersonName.key("ÉMILE")).isEqualTo("émile");
+		assertThat(PersonName.key("Ravi")).isNotEqualTo(PersonName.key("Ravi K"));
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = { "", " ", " \t\r\n ", "\u0000", "\u0007\u001B", "  ", "​‍",
+			"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" })
+	void namesThatAreEmptyInvisibleOrTooLongAreRefused(String name) {
+		assertRejected("person", () -> PersonName.parse("person", name));
+	}
+
+	@Test
+	void aNameWhoseKeyWouldNotFitItsColumnIsRefused() {
+		assertRejected("person", () -> PersonName.parse("person", (String) null));
+		// "İ" becomes two characters in lower case: 40 of them are fine as a name but not as a key
+		assertRejected("person", () -> PersonName.parse("person", "İ".repeat(40)));
+		assertThat(PersonName.key(PersonName.parse("person", "İ".repeat(20))).codePointCount(0, 40)).isEqualTo(40);
 	}
 
 	// ---------------------------------------------------------------- patch, opening, list

@@ -18,7 +18,8 @@ import com.spendanalyzer.model.PaymentMode;
  * @param description required for an EXPENSE, otherwise optional
  * @param category EXPENSE only; {@code null} lets the AI choose
  * @param newBalance ADJUSTMENT only: what the balance should become
+ * @param person BORROW and REPAY only: the friend's cleaned name (see {@link PersonName})
  */
 public record NewEntry(UUID clientId, EntryType type, LocalDate date, BigDecimal amount, AccountType account,
-		PaymentMode paymentMode, String description, Category category, BigDecimal newBalance) {
+		PaymentMode paymentMode, String description, Category category, BigDecimal newBalance, String person) {
 }

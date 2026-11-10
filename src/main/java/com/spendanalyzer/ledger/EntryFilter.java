@@ -11,7 +11,7 @@ import com.spendanalyzer.model.PaymentMode;
  * filter on this".
  *
  * @param needsReviewOnly true to return only entries the AI was unsure about
- * @param text plain text that must occur in the description (any letter case)
+ * @param text plain text that must occur in the description or in the friend's name (any letter case)
  */
 public record EntryFilter(LocalDate from, LocalDate to, EntryType type, PaymentMode mode, Category category,
 		boolean needsReviewOnly, String text) {

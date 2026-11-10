@@ -122,7 +122,7 @@ class LedgerIsolationIntegrationTest {
 		assertThat(response.getContentType()).startsWith("application/json");
 
 		Map<String, Object> export = read(result, "$");
-		assertThat(export).containsOnlyKeys("exportedAt", "user", "balances", "entries");
+		assertThat(export).containsOnlyKeys("exportedAt", "user", "balances", "debts", "entries");
 		assertThat(Instant.parse((String) export.get("exportedAt"))).isBeforeOrEqualTo(Instant.now().plusSeconds(1));
 
 		Map<String, Object> user = read(result, "$.user");
@@ -139,7 +139,7 @@ class LedgerIsolationIntegrationTest {
 		assertThat(descriptions).containsExactlyInAnyOrder("alice lunch", "alice <b>bus</b>", "Opening balance",
 				"Opening balance");
 		List<Map<String, Object>> entries = read(result, "$.entries");
-		assertThat(entries).allSatisfy(entry -> assertThat(entry).hasSize(15));
+		assertThat(entries).allSatisfy(entry -> assertThat(entry).hasSize(16));
 		assertThat(LedgerApi.text(result)).doesNotContain("bob tea").doesNotContain(bob.email());
 
 		// Bob's export is Bob's

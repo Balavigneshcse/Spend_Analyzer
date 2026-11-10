@@ -29,8 +29,8 @@ import org.springframework.stereotype.Repository;
 public class EntryRepository {
 
 	private static final String COLUMNS = """
-			id, user_id, client_id, type, amount, account, payment_mode, description, category, item,
-			ai_category, ai_confidence, ai_source, needs_review, user_corrected, entry_date, created_at, updated_at
+			id, user_id, client_id, type, amount, account, person, person_key, payment_mode, description, category,
+			item, ai_category, ai_confidence, ai_source, needs_review, user_corrected, entry_date, created_at, updated_at
 			""";
 
 	/** Newest first; the id makes the order stable when two rows share a timestamp. */
@@ -50,10 +50,14 @@ public class EntryRepository {
 	 */
 	public boolean insertIfAbsent(EntryRow row) {
 		JdbcClient.StatementSpec spec = jdbc.sql("INSERT INTO entries (" + COLUMNS + ") VALUES ("
-				+ ":id, :uid, :clientId, :type, :amount, :account, :mode, :description, :category, :item, "
-				+ ":aiCategory, :aiConfidence, :aiSource, :needsReview, :userCorrected, :date, :createdAt, :updatedAt) "
-				+ "ON CONFLICT (user_id, client_id) DO NOTHING");
-		return bind(spec, row).param("clientId", row.clientId()).param("createdAt", timestamp(row.createdAt())).update() == 1;
+				+ ":id, :uid, :clientId, :type, :amount, :account, :person, :personKey, :mode, :description, :category, "
+				+ ":item, :aiCategory, :aiConfidence, :aiSource, :needsReview, :userCorrected, :date, :createdAt, "
+				+ ":updatedAt) ON CONFLICT (user_id, client_id) DO NOTHING");
+		return bind(spec, row).param("clientId", row.clientId())
+			.param("person", row.person(), Types.VARCHAR)
+			.param("personKey", row.personKey(), Types.VARCHAR)
+			.param("createdAt", timestamp(row.createdAt()))
+			.update() == 1;
 	}
 
 	public Optional<EntryRow> find(UUID userId, UUID id) {
@@ -84,7 +88,10 @@ public class EntryRepository {
 			.optional();
 	}
 
-	/** Writes the editable columns of an entry. The id, owner, client id, type and creation time never change. */
+	/**
+	 * Writes the editable columns of an entry. The id, owner, client id, type, friend and creation
+	 * time never change.
+	 */
 	public void update(EntryRow row) {
 		JdbcClient.StatementSpec spec = jdbc.sql("""
 				UPDATE entries SET amount = :amount, account = :account, payment_mode = :mode,
@@ -153,7 +160,8 @@ public class EntryRepository {
 			sql.append(" AND needs_review");
 		}
 		if (filter.text() != null) {
-			sql.append(" AND description ILIKE :text ESCAPE '!'");
+			// the friend's name is the "what" of a borrow or a pay-back, so the search looks there too
+			sql.append(" AND (description ILIKE :text ESCAPE '!' OR person ILIKE :text ESCAPE '!')");
 			params.put("text", "%" + escapeLike(filter.text()) + "%");
 		}
 		return sql.toString();
@@ -164,7 +172,7 @@ public class EntryRepository {
 		return text.replace("!", "!!").replace("%", "!%").replace("_", "!_");
 	}
 
-	/** Binds everything except client id and creation time (those are written once, on insert). */
+	/** Binds everything except client id, friend and creation time (those are written once, on insert). */
 	private static JdbcClient.StatementSpec bind(JdbcClient.StatementSpec spec, EntryRow row) {
 		return spec.param("id", row.id())
 			.param("uid", row.userId())
@@ -190,8 +198,9 @@ public class EntryRepository {
 		Float aiConfidence = rs.wasNull() ? null : confidence;
 		return new EntryRow(rs.getObject("id", UUID.class), rs.getObject("user_id", UUID.class),
 				rs.getObject("client_id", UUID.class), EntryType.valueOf(rs.getString("type")),
-				rs.getBigDecimal("amount"), AccountType.valueOf(rs.getString("account")),
-				enumOrNull(PaymentMode.class, rs.getString("payment_mode")), rs.getString("description"),
+				rs.getBigDecimal("amount"), AccountType.valueOf(rs.getString("account")), rs.getString("person"),
+				rs.getString("person_key"), enumOrNull(PaymentMode.class, rs.getString("payment_mode")),
+				rs.getString("description"),
 				enumOrNull(Category.class, rs.getString("category")), rs.getString("item"),
 				enumOrNull(Category.class, rs.getString("ai_category")), aiConfidence, rs.getString("ai_source"),
 				rs.getBoolean("needs_review"), rs.getBoolean("user_corrected"),

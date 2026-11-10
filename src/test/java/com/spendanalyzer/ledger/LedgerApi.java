@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -70,6 +71,16 @@ final class LedgerApi {
 		return body("type", "ADJUSTMENT", "account", account, "newBalance", newBalance);
 	}
 
+	/** Money from a friend: {@code account} is BANK (by UPI) or CASH. */
+	static Map<String, Object> borrow(String person, String amount, String account) {
+		return body("type", "BORROW", "person", person, "amount", amount, "account", account);
+	}
+
+	/** Paying a friend back: {@code account} is BANK (by UPI) or CASH. */
+	static Map<String, Object> repay(String person, String amount, String account) {
+		return body("type", "REPAY", "person", person, "amount", amount, "account", account);
+	}
+
 	static String json(Map<String, ?> body) {
 		return JSON.writeValueAsString(body);
 	}
@@ -121,6 +132,10 @@ final class LedgerApi {
 		return mvc.perform(get("/api/balances").with(TestData.as(user)));
 	}
 
+	ResultActions debts(AuthUser user) throws Exception {
+		return mvc.perform(get("/api/debts").with(TestData.as(user)));
+	}
+
 	ResultActions opening(AuthUser user, Map<String, ?> body) throws Exception {
 		return mvc.perform(put("/api/balances/opening").with(TestData.as(user))
 			.contentType(MediaType.APPLICATION_JSON)
@@ -156,6 +171,8 @@ final class LedgerApi {
 						WHEN type = 'WITHDRAWAL' THEN -amount
 						WHEN type = 'CARD_PAYMENT' AND account = 'BANK' THEN -amount
 						WHEN type = 'ADJUSTMENT' AND account = 'BANK' THEN amount
+						WHEN type = 'BORROW' AND account = 'BANK' THEN amount
+						WHEN type = 'REPAY' AND account = 'BANK' THEN -amount
 						ELSE 0 END), 0) AS bank,
 					COALESCE(SUM(CASE
 						WHEN type = 'EXPENSE' AND account = 'CASH' THEN -amount
@@ -163,6 +180,8 @@ final class LedgerApi {
 						WHEN type = 'WITHDRAWAL' THEN amount
 						WHEN type = 'CARD_PAYMENT' AND account = 'CASH' THEN -amount
 						WHEN type = 'ADJUSTMENT' AND account = 'CASH' THEN amount
+						WHEN type = 'BORROW' AND account = 'CASH' THEN amount
+						WHEN type = 'REPAY' AND account = 'CASH' THEN -amount
 						ELSE 0 END), 0) AS cash,
 					COALESCE(SUM(CASE
 						WHEN type = 'EXPENSE' AND account = 'CREDIT_CARD' THEN amount
@@ -175,6 +194,26 @@ final class LedgerApi {
 		assertThat(balanceInDb(jdbc, user, "CASH")).as("cash").isEqualByComparingTo((BigDecimal) sums.get("cash"));
 		assertThat(balanceInDb(jdbc, user, "CREDIT_CARD")).as("credit card due")
 			.isEqualByComparingTo((BigDecimal) sums.get("card"));
+	}
+
+	/**
+	 * The debt invariant: no friend is ever owed less than nothing. Spelled out in SQL here on
+	 * purpose, independent of the production code that guards it.
+	 * @return what the user owes all friends together, straight from the entries
+	 */
+	static BigDecimal assertNoFriendIsOwedLessThanNothing(JdbcClient jdbc, AuthUser user) {
+		List<Map<String, Object>> perFriend = jdbc.sql("""
+				SELECT person_key, SUM(CASE WHEN type = 'BORROW' THEN amount ELSE -amount END) AS owed
+				FROM entries WHERE user_id = ? AND type IN ('BORROW', 'REPAY')
+				GROUP BY person_key
+				""").param(user.id()).query().listOfRows();
+		BigDecimal total = BigDecimal.ZERO;
+		for (Map<String, Object> friend : perFriend) {
+			BigDecimal owed = (BigDecimal) friend.get("owed");
+			assertThat(owed).as("owed to %s", friend.get("person_key")).isGreaterThanOrEqualTo(BigDecimal.ZERO);
+			total = total.add(owed);
+		}
+		return total;
 	}
 
 	/** The stored balance; zero when the account row does not exist yet. */

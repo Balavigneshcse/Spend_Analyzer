@@ -55,18 +55,26 @@ public class EntryRequestParser {
 				refuse("paymentMode", request.paymentMode());
 				refuse("category", request.category());
 				refuse("newBalance", request.newBalance());
+				refuse("person", request.person());
 				BigDecimal amount = Money.parseEntryAmount("amount", request.amount());
-				AccountType account = Inputs.enumValue("account", request.account(), AccountType.class);
-				if (account == AccountType.CREDIT_CARD) {
-					throw ApiException.field("account", "Choose BANK or CASH.");
-				}
-				yield new NewEntry(clientId, type, date, amount, account, null,
-						Inputs.optionalText("description", request.description()), null, null);
+				yield new NewEntry(clientId, type, date, amount, bankOrCash(request.account()), null,
+						Inputs.optionalText("description", request.description()), null, null, null);
+			}
+			case BORROW, REPAY -> {
+				refuse("paymentMode", request.paymentMode());
+				refuse("category", request.category());
+				refuse("newBalance", request.newBalance());
+				String person = PersonName.parse("person", request.person());
+				BigDecimal amount = Money.parseEntryAmount("amount", request.amount());
+				// BANK = by UPI, CASH = in the hand. Money from a friend never moves through the card due.
+				yield new NewEntry(clientId, type, date, amount, bankOrCash(request.account()), null,
+						Inputs.optionalText("description", request.description()), null, null, person);
 			}
 			case WITHDRAWAL -> {
 				refuse("paymentMode", request.paymentMode());
 				refuse("category", request.category());
 				refuse("newBalance", request.newBalance());
+				refuse("person", request.person());
 				BigDecimal amount = Money.parseEntryAmount("amount", request.amount());
 				// An ATM withdrawal always comes out of the bank; stating that is fine, anything else is a mistake.
 				if (!Inputs.isBlank(request.account())
@@ -74,22 +82,33 @@ public class EntryRequestParser {
 					throw ApiException.field("account", "A withdrawal always comes from the bank account.");
 				}
 				yield new NewEntry(clientId, type, date, amount, AccountType.BANK, null,
-						Inputs.optionalText("description", request.description()), null, null);
+						Inputs.optionalText("description", request.description()), null, null, null);
 			}
 			case ADJUSTMENT -> {
 				refuse("paymentMode", request.paymentMode());
 				refuse("category", request.category());
 				refuse("amount", request.amount());
+				refuse("person", request.person());
 				AccountType account = Inputs.enumValue("account", request.account(), AccountType.class);
 				BigDecimal newBalance = Money.parseBalance("newBalance", request.newBalance());
 				yield new NewEntry(clientId, type, date, null, account, null,
-						Inputs.optionalText("description", request.description()), null, newBalance);
+						Inputs.optionalText("description", request.description()), null, newBalance, null);
 			}
 		};
 	}
 
+	/** The account of an entry that moves money the user has: the bank or cash, never the card due. */
+	private static AccountType bankOrCash(String raw) {
+		AccountType account = Inputs.enumValue("account", raw, AccountType.class);
+		if (account == AccountType.CREDIT_CARD) {
+			throw ApiException.field("account", "Choose BANK or CASH.");
+		}
+		return account;
+	}
+
 	private NewEntry expense(UUID clientId, LocalDate date, CreateEntryRequest request) {
 		refuse("newBalance", request.newBalance());
+		refuse("person", request.person());
 		String description = Inputs.requiredText("description", request.description(), "Type what you spent on.");
 		BigDecimal amount = Money.parseEntryAmount("amount", request.amount());
 		PaymentMode mode = Inputs.enumValue("paymentMode", request.paymentMode(), PaymentMode.class);
@@ -100,7 +119,7 @@ public class EntryRequestParser {
 			throw ApiException.field("account", "The account follows from the payment mode. Leave it out.");
 		}
 		return new NewEntry(clientId, EntryType.EXPENSE, date, amount, mode.account(), mode, description, category,
-				null);
+				null, null);
 	}
 
 	public EntryChange parsePatch(PatchEntryRequest request) {

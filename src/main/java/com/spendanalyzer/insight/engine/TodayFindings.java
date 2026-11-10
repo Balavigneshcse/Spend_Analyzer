@@ -15,10 +15,13 @@ import com.spendanalyzer.insight.engine.RecurringDetector.Recurring;
 
 /**
  * Detectors about the user's situation today: runway, month-end forecast, recurring bills, the
- * weekend pattern and the credit card due. They use the recent history and the current balances,
- * so they are only shown for periods that run up to today.
+ * weekend pattern, the credit card due and money owed to friends. They use the recent history, the
+ * current balances and the current debts, so they are only shown for periods that run up to today.
  */
 final class TodayFindings {
+
+	/** A sentence that lists more friends than this stops being readable; the rest are counted. */
+	static final int MAX_FRIENDS_NAMED = 3;
 
 	private TodayFindings() {
 	}
@@ -29,6 +32,7 @@ final class TodayFindings {
 		recurring(p, out);
 		weekPattern(p, out);
 		creditCard(p, out);
+		borrowed(p, out);
 	}
 
 	// ------------------------------------------------------------------ runway
@@ -293,6 +297,64 @@ final class TodayFindings {
 				: TipDraft.of("Set aside {due} for the credit card bill before other spending.", null, facts);
 		out.add(Finding.of("credit-card", InsightType.CREDIT_CARD, severity, "Credit card due", text, facts,
 				severity == Severity.INFO ? 0.4 : 1, 1, tip));
+	}
+
+	// ------------------------------------------------------------------ money owed to friends
+
+	/**
+	 * The total, the friends owed the most, and what would be left after paying everyone back.
+	 * A friend's name is the user's own text: it only ever enters the sentence as the value of a
+	 * slot (never as part of the template), so whatever it contains stays plain text.
+	 */
+	private static void borrowed(Picture p, List<Finding> out) {
+		List<Debt> debts = p.in().debts(); // only friends still owed money, the largest debt first
+		if (debts.isEmpty()) {
+			return;
+		}
+		BigDecimal total = BigDecimal.ZERO;
+		for (Debt debt : debts) {
+			total = total.add(debt.owed());
+		}
+		BigDecimal available = p.in().balances().available();
+		Facts facts = Facts.of().rupees("total", total).rupees("available", available);
+
+		StringBuilder text = new StringBuilder();
+		boolean oneFriend = debts.size() == 1;
+		if (oneFriend) {
+			facts.text("name0", debts.get(0).name());
+			text.append("You owe {name0} {total}.");
+		}
+		else {
+			text.append("You owe friends {total} in total: ");
+			int named = Math.min(debts.size(), MAX_FRIENDS_NAMED);
+			for (int i = 0; i < named; i++) {
+				facts.text("name" + i, debts.get(i).name()).rupees("owed" + i, debts.get(i).owed());
+				text.append(i == 0 ? "" : ", ").append("{name").append(i).append("} {owed").append(i).append('}');
+			}
+			if (debts.size() > named) {
+				facts.count("more", debts.size() - named);
+				text.append(" and {more} more");
+			}
+			text.append('.');
+		}
+
+		Severity severity;
+		if (available.signum() <= 0) {
+			severity = Severity.WARN;
+			text.append(" You have no money in bank or cash to pay it back.");
+		}
+		else if (total.compareTo(available) > 0) {
+			severity = Severity.WARN;
+			text.append(" That is more than the {available} you have in bank and cash.");
+		}
+		else {
+			severity = Severity.INFO;
+			facts.rupees("left", available.subtract(total));
+			text.append(oneFriend ? " After paying it back" : " After paying everyone back")
+				.append(" you would have {left} in bank and cash.");
+		}
+		out.add(Finding.of("borrowed", InsightType.BORROWED, severity, "Money owed to friends", text.toString(), facts,
+				severity == Severity.INFO ? 0.4 : 1, 1, null));
 	}
 
 }

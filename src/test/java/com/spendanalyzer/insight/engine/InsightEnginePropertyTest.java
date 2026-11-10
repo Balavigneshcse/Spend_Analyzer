@@ -70,7 +70,17 @@ class InsightEnginePropertyTest {
 			.balances("2000", "150.75", "0"));
 		ledgers.add(Ledger.on("2026-11-10").spend("2026-11-09", "99.99", Category.OTHER, "thing").balances("10", "0", "5"));
 		ledgers.add(Ledger.on("2026-11-10"));
+		// the same student owing friends: a debt that can be paid, one that cannot, and one with nothing else recorded
+		ledgers.add(indebtedLedger());
+		ledgers.add(indebtedLedger().balances("300", "50", "9000"));
+		ledgers.add(indebtedLedger().times(10));
+		ledgers.add(Ledger.on("2026-11-10").balances("1000", "0", "0").owes("Ravi", "400"));
 		return ledgers;
+	}
+
+	/** The busy student, who also owes five friends ₹2,159.50 in total. */
+	static Ledger indebtedLedger() {
+		return busyLedger().owes("Ravi", "1500").owes("Arun", "250.50").owes("Chitra", "300").owes("Divya", "99").owes("Esha", "10");
 	}
 
 	@Test
@@ -218,6 +228,47 @@ class InsightEnginePropertyTest {
 			assertThat(busyLedger().shuffled(1).analyse(code)).isEqualTo(base);
 			assertThat(busyLedger().shuffled(99).analyse(code)).isEqualTo(base);
 		}
+	}
+
+	@Test
+	void theOrderOfTheDebtsDoesNotMatterEither() {
+		for (PeriodCode code : PeriodCode.values()) {
+			Analysis base = indebtedLedger().analyse(code);
+			assertThat(indebtedLedger().shuffled(1).analyse(code)).isEqualTo(base);
+			assertThat(indebtedLedger().shuffled(99).analyse(code)).isEqualTo(base);
+		}
+	}
+
+	@Test
+	void owingFriendsMoneyChangesNoNumberOnlyTheWords() {
+		for (PeriodCode code : PeriodCode.values()) {
+			Analysis base = busyLedger().analyse(code);
+			Analysis indebted = indebtedLedger().analyse(code);
+			// neither spending nor income: every structured block is the same
+			assertThat(indebted.period()).isEqualTo(base.period());
+			assertThat(indebted.totals()).isEqualTo(base.totals());
+			assertThat(indebted.byCategory()).isEqualTo(base.byCategory());
+			assertThat(indebted.byMode()).isEqualTo(base.byMode());
+			assertThat(indebted.daily()).isEqualTo(base.daily());
+			assertThat(indebted.topItems()).isEqualTo(base.topItems());
+			assertThat(indebted.needsWants()).isEqualTo(base.needsWants());
+			assertThat(indebted.runway()).isEqualTo(base.runway());
+			assertThat(indebted.forecast()).isEqualTo(base.forecast());
+			assertThat(indebted.health()).isEqualTo(base.health());
+			assertThat(indebted.dataQuality()).isEqualTo(base.dataQuality());
+			// and a debt can only ever add the one BORROWED finding (never for last month)
+			long borrowed = indebted.insights().stream().filter(i -> i.type() == InsightType.BORROWED).count();
+			assertThat(borrowed).isLessThanOrEqualTo(code == PeriodCode.LAST_MONTH ? 0 : 1);
+			assertThat(base.insights()).noneMatch(i -> i.type() == InsightType.BORROWED);
+		}
+		// with more debt than money it is loud enough to be among the six that are shown
+		Analysis broke = indebtedLedger().balances("300", "50", "9000").analyse(PeriodCode.THIS_MONTH);
+		assertThat(broke.insights()).anySatisfy(insight -> {
+			assertThat(insight.type()).isEqualTo(InsightType.BORROWED);
+			assertThat(insight.severity()).isEqualTo(Severity.WARN);
+			assertThat(insight.text()).isEqualTo("You owe friends ₹2,159.50 in total: Ravi ₹1,500, Chitra ₹300, Arun ₹250.50 "
+					+ "and 2 more. That is more than the ₹350 you have in bank and cash.");
+		});
 	}
 
 	@Test

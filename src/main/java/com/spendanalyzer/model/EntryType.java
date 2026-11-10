@@ -8,10 +8,12 @@ package com.spendanalyzer.model;
  * <li>WITHDRAWAL: ATM. Lowers BANK, raises CASH.</li>
  * <li>CARD_PAYMENT: paying the credit card bill. Lowers BANK (or CASH) and lowers the CREDIT_CARD due.</li>
  * <li>ADJUSTMENT: the user corrected a balance. The amount is the signed difference.</li>
+ * <li>BORROW: money from a friend, by UPI (raises BANK) or in cash (raises CASH). The user now owes that friend.</li>
+ * <li>REPAY: paying a friend back, by UPI (lowers BANK) or in cash (lowers CASH). What is owed to that friend shrinks.</li>
  * </ul>
  */
 public enum EntryType {
 
-	EXPENSE, INCOME, WITHDRAWAL, CARD_PAYMENT, ADJUSTMENT
+	EXPENSE, INCOME, WITHDRAWAL, CARD_PAYMENT, ADJUSTMENT, BORROW, REPAY
 
 }
