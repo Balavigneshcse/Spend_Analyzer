@@ -49,7 +49,8 @@ final class SummaryWriter {
 
 		List<String> sentences = new ArrayList<>();
 		boolean early = Guardrails.nearMinimum(count, Guardrails.MIN_EXPENSES);
-		BigDecimal perDay = now.total().divide(BigDecimal.valueOf(p.period().days()), 2, RoundingMode.HALF_UP);
+		// the same divisor as totals.avgPerDay: the days tracked, not the whole calendar period
+		BigDecimal perDay = now.total().divide(BigDecimal.valueOf(p.trackedDays()), 2, RoundingMode.HALF_UP);
 		facts.about("perDay", perDay);
 		if (early) {
 			sentences.add(p.endsToday()
@@ -114,6 +115,9 @@ final class SummaryWriter {
 			return null;
 		}
 		double percent = comparison.changePercent();
+		if (percent <= -5 && p.tooEarlyForDown()) {
+			return null; // an unfinished today against a full day: "less" would be premature
+		}
 		facts.percent("change", percent).rupees("previousTotal", comparison.previousSpent()).text("previous", p.words().previous());
 		if (percent >= 5) {
 			return "That is {change} more than in {previous} ({previousTotal}).";

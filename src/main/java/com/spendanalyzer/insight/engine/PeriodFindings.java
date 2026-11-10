@@ -2,6 +2,7 @@ package com.spendanalyzer.insight.engine;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,7 +61,8 @@ final class PeriodFindings {
 	/** "Cap juice at 3 a week": half the current weekly rate, with the saving it gives per month. */
 	private static TipDraft leakTip(Picture p, ItemGroup leak) {
 		BigDecimal price = leak.typicalPrice();
-		int days = p.period().days();
+		// the rate per week comes from the days tracked, not from the whole calendar period
+		int days = p.trackedDays();
 		if (days < 14) {
 			// Too short a period to talk about "a month": say what half as many would have saved.
 			BigDecimal saving = Num.wholeRupees(price.multiply(BigDecimal.valueOf(leak.count() / 2)));
@@ -127,6 +129,12 @@ final class PeriodFindings {
 				|| delta.abs().compareTo(Guardrails.CHANGE_MIN_RUPEES) < 0) {
 			return;
 		}
+		if (delta.signum() < 0 && p.tooEarlyForDown()) {
+			return; // an unfinished today against a full day: "down" would be premature
+		}
+		if (!holdsWithoutBills(p, delta)) {
+			return;
+		}
 		Facts facts = Facts.of()
 			.percent("pct", percent)
 			.rupees("now", now.total())
@@ -156,7 +164,53 @@ final class PeriodFindings {
 		}
 	}
 
-	/** The category whose spending moved most, in rupees, against the previous period. */
+	/**
+	 * A recurring bill that fell inside one window and outside the other (rent paid on the 3rd last
+	 * month, not yet this month) can make the whole change on its own. The totals stay as they
+	 * are, but the change is only worth a sentence if it is still there, in the same direction,
+	 * once the known bills are left out of both windows.
+	 */
+	private static boolean holdsWithoutBills(Picture p, BigDecimal delta) {
+		if (p.recurring().isEmpty()) {
+			return true;
+		}
+		BigDecimal now = withoutBills(p.now(), p);
+		BigDecimal before = withoutBills(p.before(), p);
+		BigDecimal rest = now.subtract(before);
+		if (rest.signum() != delta.signum() || rest.abs().compareTo(Guardrails.CHANGE_MIN_RUPEES) < 0) {
+			return false;
+		}
+		// nothing but bills before: there is no everyday base to take a percentage of
+		return before.signum() > 0 && Math.abs(Num.changePercent(now, before)) >= Guardrails.CHANGE_MIN_PERCENT;
+	}
+
+	private static BigDecimal withoutBills(Tally tally, Picture p) {
+		BigDecimal sum = BigDecimal.ZERO;
+		for (Expense row : tally.rows()) {
+			if (!BurnModel.isBill(row, p.recurring())) {
+				sum = sum.add(row.amount());
+			}
+		}
+		return sum;
+	}
+
+	/** Categories that hold a recurring bill in either window: its pay date, not a habit, moves them. */
+	private static Set<Category> billCategories(Picture p) {
+		Set<Category> billed = EnumSet.noneOf(Category.class);
+		for (Tally tally : List.of(p.now(), p.before())) {
+			for (Expense row : tally.rows()) {
+				if (BurnModel.isBill(row, p.recurring())) {
+					billed.add(row.category());
+				}
+			}
+		}
+		return billed;
+	}
+
+	/**
+	 * The category whose spending moved most, in rupees, against the previous period. Categories
+	 * with a recurring bill are not compared, and early in a period to date only a rise counts.
+	 */
 	private static void categoryMover(Picture p, List<Finding> out) {
 		Comparison comparison = p.comparison();
 		Tally now = p.now();
@@ -168,8 +222,16 @@ final class PeriodFindings {
 		}
 		Category mover = null;
 		BigDecimal delta = BigDecimal.ZERO;
+		Set<Category> billed = billCategories(p);
+		boolean risesOnly = p.tooEarlyForDown();
 		for (Category category : Category.values()) {
+			if (billed.contains(category)) {
+				continue;
+			}
 			BigDecimal change = now.category(category).amount().subtract(before.category(category).amount());
+			if (risesOnly && change.signum() < 0) {
+				continue; // an unfinished today against a full day: "down" would be premature
+			}
 			if (change.abs().compareTo(delta.abs()) > 0) {
 				mover = category;
 				delta = change;
@@ -210,7 +272,8 @@ final class PeriodFindings {
 			text = up ? "{category} is {delta} higher than in {previous}: {now} against {before}."
 					: "{category} is {delta} lower than in {previous}: {now} against {before}.";
 		}
-		Severity severity = Severity.GOOD;
+		// Less spent on a need is not good news by itself: most likely it is not paid or not logged yet.
+		Severity severity = mover.needFlag() == NeedFlag.NEED ? Severity.INFO : Severity.GOOD;
 		if (up) {
 			boolean bigWant = mover.needFlag() == NeedFlag.WANT && Num.ratio(delta, now.total()) >= 0.10;
 			severity = bigWant ? Severity.WARN : Severity.INFO;

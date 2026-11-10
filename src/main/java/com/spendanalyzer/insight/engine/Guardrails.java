@@ -29,6 +29,9 @@ final class Guardrails {
 	/** A previous period counts as tracked when the first expense ever is at most this far into it. */
 	static final double TRACKING_SLACK = 0.15;
 
+	/** A period that runs to today must be this many days old before "less than before" is said. */
+	static final int TO_DATE_DOWN_MIN_DAYS = 4;
+
 	// ---- small leaks
 	static final int LEAK_MIN_COUNT = 5;
 

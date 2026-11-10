@@ -74,7 +74,7 @@ public final class InsightEngine {
 			rupeeFacts.addAll(tip.facts().rupeeStrings());
 		}
 
-		Analysis analysis = new Analysis(Breakdown.period(window), Breakdown.totals(now, window, comparison),
+		Analysis analysis = new Analysis(Breakdown.period(window), Breakdown.totals(now, picture.trackedDays(), comparison),
 				Breakdown.byCategory(now), Breakdown.byMode(now), Breakdown.daily(now, window), Breakdown.topItems(now),
 				Breakdown.needsWants(now), Breakdown.runway(runway), Breakdown.forecast(forecast), health,
 				List.copyOf(insights), List.copyOf(tipLines), summary.text(), dataQuality(picture),

@@ -116,7 +116,9 @@ final class HealthScorer {
 			note = "Nothing spent on wants in the last 30 days";
 		}
 		else if (Guardrails.percentAllowed(base, count)) {
-			note = "Wants are " + Math.round(share * 100) + "% of your spending";
+			// transfers and unknown spends are outside the split, so be exact about the base
+			String of = base.compareTo(recent.total()) == 0 ? "your spending" : "your spending on needs and wants";
+			note = "Wants are " + Math.round(share * 100) + "% of " + of;
 		}
 		else {
 			int balance = wants.amount().compareTo(needs.amount());

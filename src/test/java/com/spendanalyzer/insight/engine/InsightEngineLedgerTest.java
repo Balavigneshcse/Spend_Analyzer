@@ -3,8 +3,10 @@ package com.spendanalyzer.insight.engine;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,6 +73,35 @@ class InsightEngineLedgerTest {
 		Analysis.Tip tip = analysis.tips().stream().filter(t -> t.text().contains("juice")).findFirst().orElseThrow();
 		assertThat(tip.text()).isEqualTo("Cap juice at 1 a week: saves about ₹430 a month.");
 		assertThat(tip.saving()).isEqualTo("430.00");
+	}
+
+	@Test
+	void leakTipUsesTheRateSinceTrackingBegan() {
+		// six juices in five tracked days is about eight a week, not "1.4 a week" over 30 calendar days
+		Analysis analysis = Ledger.on("2026-11-10")
+			.everyDay("2026-11-06", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.everyDay("2026-11-06", "2026-11-10", "40", Category.SNACKS_BEVERAGES, "juice")
+			.spend("2026-11-10", "40", Category.SNACKS_BEVERAGES, "juice")
+			.analyse(PeriodCode.LAST_30_DAYS);
+
+		assertThat(insight(analysis, "leak-juice")).isPresent();
+		// under two tracked weeks there is no "a week" or "a month" to talk about
+		assertThat(analysis.tips()).extracting(Analysis.Tip::text)
+			.contains("Buying juice half as often would have saved about ₹120 in the last 30 days.")
+			.noneMatch(text -> text.contains("a week"));
+	}
+
+	@Test
+	void leakTipCapsAtHalfTheTrackedWeeklyRate() {
+		// 12 juices in 21 tracked days is 4 a week; cap at 2 saves 2 x 40 x 30/7 = 342.86 -> about 340 a month
+		Analysis analysis = Ledger.on("2026-11-21")
+			.everyDay("2026-11-01", "2026-11-21", "100", Category.FOOD_MEALS, "meals")
+			.everyDay("2026-11-01", "2026-11-12", "40", Category.SNACKS_BEVERAGES, "juice")
+			.analyse(PeriodCode.LAST_30_DAYS);
+
+		Analysis.Tip tip = analysis.tips().stream().filter(t -> t.text().contains("juice")).findFirst().orElseThrow();
+		assertThat(tip.text()).isEqualTo("Cap juice at 2 a week: saves about ₹340 a month.");
+		assertThat(tip.saving()).isEqualTo("340.00");
 	}
 
 	@Test
@@ -157,6 +188,69 @@ class InsightEngineLedgerTest {
 		assertThat(insight(analysis, InsightType.RUNWAY).orElseThrow().text()).contains("more than a year");
 	}
 
+	// ------------------------------------------------------------------ per-day average
+
+	@Test
+	void perDayAverageCountsOnlyTheDaysSinceTrackingBegan() {
+		// first entries ever on 8 Nov: twelve spends of 100 on 8, 9 and 10 Nov
+		Ledger ledger = Ledger.on("2026-11-10").balances("6000", "0", "0");
+		for (String day : List.of("2026-11-08", "2026-11-09", "2026-11-10")) {
+			for (String item : List.of("breakfast", "lunch", "tiffin", "dinner")) {
+				ledger.spend(day, "100", Category.FOOD_MEALS, item);
+			}
+		}
+		for (PeriodCode code : List.of(PeriodCode.THIS_MONTH, PeriodCode.LAST_30_DAYS)) {
+			Analysis analysis = ledger.analyse(code);
+			assertThat(analysis.totals().spent()).isEqualTo("1200.00");
+			assertThat(analysis.totals().avgPerDay()).as(code.name()).isEqualTo("400.00");
+			assertThat(analysis.summary()).as(code.name()).contains("about ₹400 a day");
+			// the same pace as the runway block and its sentence in the same response
+			assertThat(analysis.runway().dailyBurn()).isEqualTo("400.00");
+			assertThat(insight(analysis, InsightType.RUNWAY).orElseThrow().text()).contains("₹400 a day");
+		}
+		// the calendar period itself is reported as before
+		assertThat(ledger.analyse(PeriodCode.THIS_MONTH).period().days()).isEqualTo(10);
+		assertThat(ledger.analyse(PeriodCode.LAST_30_DAYS).period().days()).isEqualTo(30);
+	}
+
+	@Test
+	void lastMonthAveragesFromTheFirstTrackedDay() {
+		// first entry ever on 21 Oct: eleven tracked days of October
+		Analysis analysis = Ledger.on("2026-11-10")
+			.everyDay("2026-10-21", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.analyse(PeriodCode.LAST_MONTH);
+		assertThat(analysis.period().days()).isEqualTo(31);
+		assertThat(analysis.totals().spent()).isEqualTo("1100.00");
+		assertThat(analysis.totals().avgPerDay()).isEqualTo("100.00");
+		assertThat(analysis.summary()).contains("about ₹100 a day");
+	}
+
+	@Test
+	void perDayAverageIsAlwaysAPlainNumber() {
+		// tracking began after the chosen period: nothing was spent in it
+		Analysis afterwards = Ledger.on("2026-11-10")
+			.everyDay("2026-11-03", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.analyse(PeriodCode.LAST_MONTH);
+		assertThat(afterwards.totals().avgPerDay()).isEqualTo("0.00");
+
+		// input without a usable first-entry date falls back to the calendar days of the period
+		LocalDate today = LocalDate.parse("2026-11-10");
+		List<Expense> rows = Ledger.on("2026-11-10")
+			.everyDay("2026-11-06", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.rows();
+		for (LocalDate since : Arrays.asList(null, today.plusDays(5))) {
+			for (PeriodCode code : PeriodCode.values()) {
+				PeriodWindow window = PeriodWindow.resolve(code, today, since);
+				Analysis analysis = new InsightEngine()
+					.analyse(LedgerSnapshot.of(window, today, rows, since, Balances.NONE, 42, Ledger.GENERATED_AT));
+				BigDecimal expected = new BigDecimal(analysis.totals().spent()).divide(BigDecimal.valueOf(window.days()), 2,
+						RoundingMode.HALF_UP);
+				assertThat(analysis.totals().avgPerDay()).as("%s since %s", code, since).isEqualTo(expected.toPlainString());
+				assertThat(allText(analysis)).noneMatch(text -> text.contains("NaN") || text.contains("Infinity"));
+			}
+		}
+	}
+
 	// ------------------------------------------------------------------ sparse and empty
 
 	@Test
@@ -188,7 +282,8 @@ class InsightEngineLedgerTest {
 		Analysis analysis = Ledger.on("2026-11-10")
 			.everyDay("2026-11-07", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
 			.analyse(PeriodCode.THIS_MONTH);
-		assertThat(analysis.summary()).startsWith("So far there are 4 purchases this month: ₹400 in total, about ₹40 a day.")
+		// four tracked days (7 to 10 Nov), not the ten calendar days of the month so far
+		assertThat(analysis.summary()).startsWith("So far there are 4 purchases this month: ₹400 in total, about ₹100 a day.")
 			.endsWith("With more entries the picture will get sharper.");
 		assertThat(analysis.dataQuality().message()).isEqualTo("Add 1 more spend to unlock trends");
 		assertThat(allText(analysis)).noneMatch(text -> text.contains("%"));
@@ -514,6 +609,172 @@ class InsightEngineLedgerTest {
 		assertThat(insight(analysis, "change-overall")).isEmpty();
 	}
 
+	// ------------------------------------------------------------------ the first days of a week or month
+
+	/**
+	 * Meals at the same pace as last week: three so far on every day of this week (today is not over
+	 * yet), four on every full day of last week. 9 Nov 2026 is a Monday.
+	 */
+	private static Ledger samePaceLedger(String today) {
+		Ledger ledger = Ledger.on(today).spend("2026-10-01", "75", Category.FOOD_MEALS, "meals").balances("9000", "0", "0");
+		for (LocalDate day = LocalDate.parse("2026-11-02"); !day.isAfter(ledger.today()); day = day.plusDays(1)) {
+			for (int i = 0; i < (day.isBefore(LocalDate.parse("2026-11-09")) ? 4 : 3); i++) {
+				ledger.spend(day, "75", Category.FOOD_MEALS, "meals");
+			}
+		}
+		return ledger;
+	}
+
+	@Test
+	void noDownwardClaimInTheFirstThreeDaysOfAPeriodToDate() {
+		// Tuesday: 6 spends (₹450) against 8 (₹600) on last Monday and Tuesday
+		Analysis analysis = samePaceLedger("2026-11-10").analyse(PeriodCode.THIS_WEEK);
+
+		// the numbers are plain arithmetic and stay
+		assertThat(analysis.totals().spent()).isEqualTo("450.00");
+		assertThat(analysis.totals().previousSpent()).isEqualTo("600.00");
+		assertThat(analysis.totals().changePercent()).isEqualTo(-25.0);
+		// but an unfinished Tuesday against a full one is no reason to say "you are spending less"
+		assertThat(insight(analysis, "positive-spending-down")).isEmpty();
+		assertThat(insight(analysis, InsightType.PERIOD_CHANGE)).isEmpty();
+		assertThat(analysis.summary()).doesNotContain("less than in").doesNotContain("last week");
+		assertThat(allText(analysis)).noneMatch(text -> text.contains("is down") || text.contains("Early sign"));
+	}
+
+	@Test
+	void theDownwardClaimReturnsOnTheFourthDay() {
+		// Thursday: 12 spends (₹900) against 16 (₹1,200)
+		Analysis analysis = samePaceLedger("2026-11-12").analyse(PeriodCode.THIS_WEEK);
+
+		assertThat(analysis.totals().changePercent()).isEqualTo(-25.0);
+		Analysis.Insight down = insight(analysis, "positive-spending-down").orElseThrow();
+		assertThat(down.text()).contains("25%").contains("₹900").contains("₹1,200");
+		assertThat(analysis.summary()).contains("That is 25% less than in the same days last week (₹1,200).");
+	}
+
+	@Test
+	void earlyInAPeriodOnlyARisingCategoryIsReported() {
+		// Tuesday: food is behind last Monday and Tuesday (today is not over), snacks are new this week
+		Ledger ledger = Ledger.on("2026-11-10").spend("2026-10-01", "75", Category.FOOD_MEALS, "meals");
+		for (String day : List.of("2026-11-02", "2026-11-03")) {
+			for (int i = 0; i < 5; i++) {
+				ledger.spend(day, "75", Category.FOOD_MEALS, "meals");
+			}
+		}
+		for (String day : List.of("2026-11-09", "2026-11-10")) {
+			for (int i = 0; i < 3; i++) {
+				ledger.spend(day, "75", Category.FOOD_MEALS, "meals");
+			}
+			ledger.spend(day, "100", Category.SNACKS_BEVERAGES, "cake");
+		}
+		Analysis analysis = ledger.analyse(PeriodCode.THIS_WEEK);
+
+		assertThat(analysis.totals().spent()).isEqualTo("650.00");
+		assertThat(analysis.totals().previousSpent()).isEqualTo("750.00");
+		// food moved most in rupees (-300), but "down" is not said this early; the rise of 200 is
+		assertThat(insight(analysis, "change-food-meals")).isEmpty();
+		assertThat(insight(analysis, "change-snacks-beverages").orElseThrow().text()).isEqualTo(
+				"You spent ₹200 on Snacks & Beverages this week, and nothing on it in the same days last week.");
+	}
+
+	// ------------------------------------------------------------------ bills and the comparison
+
+	@Test
+	void anUnpaidNeedIsNotGoodNews() {
+		// rent was paid on 3 Oct; on 4 Nov this month's rent is not paid yet. One rent is not yet a known bill.
+		Analysis analysis = Ledger.on("2026-11-04")
+			.everyDay("2026-10-01", "2026-11-04", "100", Category.FOOD_MEALS, "meals")
+			.everyDay("2026-10-01", "2026-11-04", "100", Category.FOOD_MEALS, "dinner")
+			.spend("2026-10-03", "5000", Category.RENT_UTILITIES, "rent")
+			.balances("9000", "0", "0")
+			.analyse(PeriodCode.THIS_MONTH);
+
+		Analysis.Insight rent = insight(analysis, "change-rent-utilities").orElseThrow();
+		assertThat(rent.text())
+			.isEqualTo("You spent nothing on Rent & Utilities this month, against ₹5,000 in the same days last month.");
+		assertThat(rent.severity()).isEqualTo(Severity.INFO);
+	}
+
+	@Test
+	void lessOnAWantIsGoodNewsLessOnANeedIsOnlyStated() {
+		Ledger wants = Ledger.on("2026-11-20")
+			.everyDay("2026-10-01", "2026-11-20", "100", Category.FOOD_MEALS, "meals")
+			.balances("9000", "0", "0");
+		for (String day : List.of("2026-10-02", "2026-10-05", "2026-10-06", "2026-10-11", "2026-10-17")) {
+			wants.spend(day, "200", Category.ENTERTAINMENT_SUBS, "movie");
+		}
+		Analysis.Insight movies = insight(wants.analyse(PeriodCode.THIS_MONTH), "change-entertainment-subs").orElseThrow();
+		assertThat(movies.title()).isEqualTo("Entertainment & Subscriptions is down");
+		assertThat(movies.severity()).isEqualTo(Severity.GOOD);
+
+		Analysis needs = Ledger.on("2026-11-20")
+			.everyDay("2026-10-01", "2026-10-31", "150", Category.FOOD_MEALS, "meals")
+			.everyDay("2026-11-01", "2026-11-20", "100", Category.FOOD_MEALS, "meals")
+			.balances("9000", "0", "0")
+			.analyse(PeriodCode.THIS_MONTH);
+		Analysis.Insight food = insight(needs, "change-food-meals").orElseThrow();
+		assertThat(food.text()).isEqualTo("Food & Meals is down 33% on the same days last month: ₹2,000 against ₹3,000.");
+		assertThat(food.severity()).isEqualTo(Severity.INFO);
+	}
+
+	/** Meals twice a day since August and rent of ₹4,500 on the given days: a known monthly bill. */
+	private static Ledger billLedger(String today, String novemberMeal, String... rentDays) {
+		Ledger ledger = Ledger.on(today)
+			.everyDay("2026-08-01", "2026-10-31", "100", Category.FOOD_MEALS, "meals")
+			.everyDay("2026-08-01", "2026-10-31", "100", Category.FOOD_MEALS, "dinner")
+			.everyDay("2026-11-01", today, novemberMeal, Category.FOOD_MEALS, "meals")
+			.everyDay("2026-11-01", today, novemberMeal, Category.FOOD_MEALS, "dinner")
+			.balances("30000", "0", "0");
+		for (String day : rentDays) {
+			ledger.spend(day, "4500", Category.RENT_UTILITIES, "rent");
+		}
+		return ledger;
+	}
+
+	@Test
+	void aBillNotYetPaidDoesNotMakeSpendingLookDown() {
+		// 4 Nov: rent came on 3 Aug, 3 Sep and 3 Oct, but not yet this month; everyday spending is unchanged
+		Analysis analysis = billLedger("2026-11-04", "100", "2026-08-03", "2026-09-03", "2026-10-03")
+			.analyse(PeriodCode.THIS_MONTH);
+
+		// the totals are plain arithmetic and stay
+		assertThat(analysis.totals().spent()).isEqualTo("800.00");
+		assertThat(analysis.totals().previousSpent()).isEqualTo("5300.00");
+		assertThat(analysis.totals().changePercent()).isEqualTo(-84.9);
+		assertThat(insight(analysis, "recurring-rent")).isPresent();
+		// but the pay date of the rent is not a change in spending
+		assertThat(insight(analysis, "positive-spending-down")).isEmpty();
+		assertThat(insight(analysis, InsightType.PERIOD_CHANGE)).isEmpty();
+		assertThat(allText(analysis)).noneMatch(text -> text.contains("is down") || text.contains("spent nothing on"));
+	}
+
+	@Test
+	void aBillPaidEarlierThanLastMonthDoesNotMakeSpendingLookUp() {
+		// 4 Nov: this month's rent is already paid on the 2nd; last month it came on the 5th
+		Analysis analysis = billLedger("2026-11-04", "100", "2026-08-05", "2026-09-05", "2026-10-05", "2026-11-02")
+			.analyse(PeriodCode.THIS_MONTH);
+
+		assertThat(analysis.totals().spent()).isEqualTo("5300.00");
+		assertThat(analysis.totals().previousSpent()).isEqualTo("800.00");
+		assertThat(insight(analysis, "change-overall")).isEmpty();
+		assertThat(insight(analysis, InsightType.PERIOD_CHANGE)).isEmpty();
+	}
+
+	@Test
+	void aRealChangeIsStillReportedWhenTheSameBillFallsInBothPeriods() {
+		// 10 Nov: rent on the 3rd in both months, and everyday spending has doubled
+		Analysis analysis = billLedger("2026-11-10", "200", "2026-08-03", "2026-09-03", "2026-10-03", "2026-11-03")
+			.analyse(PeriodCode.THIS_MONTH);
+
+		assertThat(analysis.totals().changePercent()).isEqualTo(30.8); // 8,500 against 6,500, rent included
+		assertThat(insight(analysis, "change-overall").orElseThrow().text()).contains("31%").contains("₹8,500")
+			.contains("₹6,500");
+		// the category with the bill is not compared; the one that really moved is
+		assertThat(insight(analysis, "change-rent-utilities")).isEmpty();
+		assertThat(insight(analysis, "change-food-meals").orElseThrow().text())
+			.isEqualTo("Food & Meals is up 100% on the same days last month: ₹4,000 against ₹2,000.");
+	}
+
 	// ------------------------------------------------------------------ credit card
 
 	@Test
@@ -566,7 +827,8 @@ class InsightEngineLedgerTest {
 
 		assertThat(analysis.totals().spent()).isEqualTo("1000.00");
 		assertThat(analysis.totals().count()).isEqualTo(6);
-		assertThat(analysis.totals().avgPerDay()).isEqualTo("100.00");
+		assertThat(analysis.period().days()).isEqualTo(10);
+		assertThat(analysis.totals().avgPerDay()).isEqualTo("111.11"); // the first entry is on 2 Nov: nine tracked days
 
 		assertThat(analysis.byCategory()).extracting(Analysis.CategoryShare::category)
 			.containsExactly("FOOD_MEALS", "SHOPPING", "SNACKS_BEVERAGES", "TRANSFERS_FEES", "OTHER");
@@ -670,6 +932,27 @@ class InsightEngineLedgerTest {
 			.analyse(PeriodCode.THIS_MONTH);
 		assertThat(analysis.health()).isNotNull();
 		assertThat(analysis.health().provisional()).isTrue();
+	}
+
+	@Test
+	void theWantsNoteNamesItsBase() {
+		// last 30 days: needs ₹2,000, wants ₹1,000
+		Ledger ledger = Ledger.on("2026-11-10")
+			.everyDay("2026-10-22", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.everyDay("2026-11-01", "2026-11-10", "100", Category.SNACKS_BEVERAGES, "juice")
+			.balances("9000", "0", "0");
+		assertThat(needsWantsNote(ledger.analyse(PeriodCode.LAST_30_DAYS))).isEqualTo("Wants are 33% of your spending");
+
+		// ₹3,000 lent to a friend is spending too, but outside the split: wants are 16.7% of all spending
+		ledger.spend("2026-11-05", "3000", Category.TRANSFERS_FEES, "lent to friend");
+		Analysis analysis = ledger.analyse(PeriodCode.LAST_30_DAYS);
+		assertThat(needsWantsNote(analysis)).isEqualTo("Wants are 33% of your spending on needs and wants");
+		Analysis.CategoryShare snacks = analysis.byCategory().stream().filter(c -> c.category().equals("SNACKS_BEVERAGES")).findFirst().orElseThrow();
+		assertThat(snacks.percent()).isEqualTo(16.7);
+	}
+
+	private static String needsWantsNote(Analysis analysis) {
+		return analysis.health().components().stream().filter(c -> c.name().equals("Needs/wants")).findFirst().orElseThrow().note();
 	}
 
 	@Test

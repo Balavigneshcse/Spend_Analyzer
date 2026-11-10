@@ -31,8 +31,10 @@ final class Breakdown {
 				window.to().toString(), window.days());
 	}
 
-	static Analysis.Totals totals(Tally now, PeriodWindow window, Comparison comparison) {
-		BigDecimal perDay = now.total().divide(BigDecimal.valueOf(window.days()), 2, RoundingMode.HALF_UP);
+	/** @param trackedDays the days of the period since tracking began ({@link Picture#trackedDays()}) */
+	static Analysis.Totals totals(Tally now, int trackedDays, Comparison comparison) {
+		// at least one day, so an odd window can never divide by zero
+		BigDecimal perDay = now.total().divide(BigDecimal.valueOf(Math.max(1, trackedDays)), 2, RoundingMode.HALF_UP);
 		return new Analysis.Totals(Money.format(now.total()), now.count(), Money.format(perDay), biggestDay(now),
 				biggestSpend(now), Money.format(comparison.previousSpent()), comparison.changePercent());
 	}
