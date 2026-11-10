@@ -1,0 +1,50 @@
+# Mobile & Internet: recharges, data packs, broadband, DTH and phone repairs.
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+recharge	S	rechrge, recharg, rechage, richarge, recharje, reacharge, recharge pack, mobile recharge, phone recharge, cell recharge, sim recharge, prepaid recharge, number recharge, recharge plan, monthly recharge, recharge done, recharge panninen, recharge kiya, mobile ka recharge, phone ku recharge
+jio recharge	S	jio, jio pack, jio plan, jio prepaid, jio sim recharge, jio topup, myjio, jio 239, jio 299, jio 199, jio 349, jio number recharge
+airtel recharge	S	airtel, airtell, airtal, airtel pack, airtel plan, airtel prepaid, airtel thanks, airtel 299, airtel 199, airtel number recharge
+vi recharge	S	vi, vi pack, vi plan, vodafone, vodafone idea, voda, vodaphone, idea recharge, vodafone recharge, vi prepaid
+bsnl recharge	S	bsnl, bsnl pack, bsnl plan, bsnl prepaid, bsnl sim, bsnl topup
+data pack	S	data, data recharge, net pack, netpack, internet pack, data plan, data booster, data add on, data addon, 1gb data, 2gb data, extra data, data voucher, net recharge, net card, internet recharge, mobile data, 4g pack, 5g pack, daily data, night data
+unlimited pack	S	unlimited plan, unlimited recharge, unlimited calls pack, 28 days pack, 84 days pack, 84 days recharge, 56 days pack, annual plan, yearly recharge, yearly plan, 365 days pack, validity recharge, validity pack, validity extension, validity
+talktime	S	talk time, top up, topup, balance recharge, main balance, talktime recharge, full talktime, ec recharge, easy recharge, flexi recharge
+sms pack	S	sms recharge, message pack, isd pack, roaming pack, international roaming
+postpaid bill	S	postpaid, post paid, postpaid payment, jio postpaid, airtel postpaid, vi postpaid, mobile bill, phone bill, cell bill, mobile bill payment, airtel bill, jio bill
+sim card	S	sim, new sim, sim change, sim replacement, duplicate sim, esim, sim port, mnp, port sim, sim activation, 5g sim, sim upgrade
+wifi	S	wi fi, wifi bill, wifi recharge, wifi payment, wifi plan, wifi share, wify, wiffi, vifi, wifi connection, wifi router rent, hostel wifi, room wifi, pg wifi
+broadband	S	broadband bill, broad band, internet bill, net bill, internet, inernet, internet connection, fiber, fibre, fiber bill, fibernet, optical fiber, ftth, internet charges, net connection, isp bill
+jio fiber	S	jiofiber, jio fibre, jio airfiber, airfiber, jio air fiber
+airtel xstream	S	airtel fiber, airtel xstream fiber, airtel broadband, airtel wifi, xstream fiber
+act fibernet	S	act, act broadband, act fiber, act internet, you broadband, spectra, kerala vision, tata play fiber, cherrinet, tactv
+hathway	S	hathway broadband
+tikona	S
+excitel	S
+railwire	S
+bsnl broadband	S	bsnl fiber, bsnl ftth
+hotspot	S	hotspot pack, jiofi, jio fi, dongle recharge, dongle, data card, pocket wifi, airtel dongle
+dth recharge	S	dth, dth pack, dish recharge, set top box recharge, setup box recharge, cable recharge, tv recharge
+tata play	S	tata sky, tatasky
+sun direct	S	sundirect
+dish tv	S	dishtv
+airtel dtv	S	airtel digital tv
+d2h	S	videocon d2h
+mobile repair	S	phone repair, mobile service, phone service, cell repair, mobile servicing, speaker repair, mobile water damage, software flash, phone unlock, service center, service centre
+display change	S	display replacement, screen replacement, screen change, touch change
+battery replacement	S	battery change
+charging port repair	S	charging pin change
+laptop repair	S	laptop service, laptop servicing, system service, pc repair, os install, os installation, windows install, laptop keyboard change, laptop battery, laptop charger repair, laptop cleaning, ram upgrade, ssd upgrade, hard disk repair, data recovery
+cloud storage	S	onedrive, dropbox, extra storage
+google one	S	google storage, google drive storage
+icloud	S	icloud storage
+domain	S	domain name, domain renewal, namecheap, vps, server rent
+hosting	S	web hosting, hostinger, godaddy
+aws bill	S	cloud bill, digitalocean
+vpn	S	vpn subscription, nordvpn
+antivirus	S	anti virus, quick heal, kaspersky, mcafee
+caller tune	S	callertune, hello tune, jio tune, value added service, vas pack
+international call	S	isd call, std booth, pco, phone booth, coin phone
+landline bill	S	landline, telephone bill, bsnl landline
+truecaller premium	S	truecaller, true caller
+app recharge	S	paytm recharge, phonepe recharge, gpay recharge, amazon recharge, amazon pay recharge, mobile shop recharge, recharge kadai
+net	W	network, signal booster, pack, plan, plan renewal, renewal pack

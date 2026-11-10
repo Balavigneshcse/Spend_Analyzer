@@ -1,0 +1,158 @@
+# Hand-labelled phrases used ONLY to tune how sure the model may be (its "temperature").
+# They are never used as training examples, and the test gold set does not repeat them.
+# Columns (TAB separated): text | CATEGORY | amount (optional)
+lemon tea	SNACKS_BEVERAGES	15
+tea and vadai	SNACKS_BEVERAGES	30
+cofy	SNACKS_BEVERAGES	20
+chay biskut	SNACKS_BEVERAGES
+samsa 2	SNACKS_BEVERAGES	24
+egg pufs	SNACKS_BEVERAGES	20
+lays packet	SNACKS_BEVERAGES	10
+dairymilk silk	SNACKS_BEVERAGES	80
+icecreem cone	SNACKS_BEVERAGES	40
+sugercane juice	SNACKS_BEVERAGES	20
+mosambi joos	SNACKS_BEVERAGES	40
+ilaneer	SNACKS_BEVERAGES	50
+bovonto half litre	SNACKS_BEVERAGES	25
+kurkure	SNACKS_BEVERAGES	20
+panipoori	SNACKS_BEVERAGES	30
+gulab jamoon	SNACKS_BEVERAGES	40
+rose milk	SNACKS_BEVERAGES	30
+maggie	SNACKS_BEVERAGES	35
+chiken biriyani	FOOD_MEALS	150
+parota 3 salna	FOOD_MEALS	60
+idly 4	FOOD_MEALS	40
+masal dosai	FOOD_MEALS	60
+mess bil	FOOD_MEALS	2800
+lunch at canteen	FOOD_MEALS	70
+nite dinner	FOOD_MEALS	120
+egg fried rise	FOOD_MEALS	90
+chapathi kurma	FOOD_MEALS	50
+shawarma roll	FOOD_MEALS	100
+swiggy dinner	FOOD_MEALS	240
+zomato order pizza	FOOD_MEALS	320
+poori set	FOOD_MEALS	45
+veg meals	FOOD_MEALS	80
+gobi manchurian	FOOD_MEALS	70
+saapadu	FOOD_MEALS	70
+noodels	FOOD_MEALS	80
+omlet	FOOD_MEALS	20
+kfc bucket	FOOD_MEALS	499
+milk 2 packet	GROCERIES	60
+curd packet	GROCERIES	20
+egs 6	GROCERIES	42
+rice 5 kg	GROCERIES	320
+onion tomato	GROCERIES	60
+kaikari	GROCERIES	120
+maligai saman	GROCERIES	850
+dmart shopping	GROCERIES	1340
+zepto order	GROCERIES	260
+banana 1 dozen	GROCERIES	60
+bread and jam	GROCERIES	95
+atta 1kg	GROCERIES	55
+sunflower oil	GROCERIES	150
+vegitable	GROCERIES	90
+blinkit	GROCERIES	310
+bus pass	TRANSPORT_FUEL	300
+auto to college	TRANSPORT_FUEL	40
+share auto 2	TRANSPORT_FUEL	30
+petrol 100	TRANSPORT_FUEL	100
+rapido ride	TRANSPORT_FUEL	65
+train tkt	TRANSPORT_FUEL	45
+metro card recharge	TRANSPORT_FUEL	200
+ola cab	TRANSPORT_FUEL	180
+bike puncher	TRANSPORT_FUEL	80
+tnstc ticket	TRANSPORT_FUEL	220
+uber auto	TRANSPORT_FUEL	70
+redbus booking	TRANSPORT_FUEL	650
+bike servise	TRANSPORT_FUEL	600
+parking	TRANSPORT_FUEL	20
+diesal	TRANSPORT_FUEL	500
+blue pen 2	EDUCATION_STATIONERY	20
+pencil eraser	EDUCATION_STATIONERY	15
+long size note	EDUCATION_STATIONERY	60
+zerox 20 pages	EDUCATION_STATIONERY	20
+print out	EDUCATION_STATIONERY	30
+record note 2	EDUCATION_STATIONERY	120
+exam fees	EDUCATION_STATIONERY	1200
+a4 sheets	EDUCATION_STATIONERY	50
+spiral binding	EDUCATION_STATIONERY	40
+calculater	EDUCATION_STATIONERY	650
+semester fee	EDUCATION_STATIONERY	4500
+udemy course	EDUCATION_STATIONERY	449
+graph sheet	EDUCATION_STATIONERY	5
+text book	EDUCATION_STATIONERY	380
+tution fees	EDUCATION_STATIONERY	1500
+rent	RENT_UTILITIES	4000
+hostel fees	RENT_UTILITIES	9000
+current bill	RENT_UTILITIES	640
+water can	RENT_UTILITIES	35
+gas cylinder	RENT_UTILITIES	950
+maintenance	RENT_UTILITIES	500
+pg rent	RENT_UTILITIES	6500
+room advance	RENT_UTILITIES	5000
+electricity bill	RENT_UTILITIES	870
+jio 239	MOBILE_INTERNET	239
+airtel recharge	MOBILE_INTERNET	299
+net pack	MOBILE_INTERNET	61
+wifi bill	MOBILE_INTERNET	500
+rechrge	MOBILE_INTERNET	199
+vi recharge	MOBILE_INTERNET	249
+data booster	MOBILE_INTERNET	19
+mobile bill	MOBILE_INTERNET	399
+broadband	MOBILE_INTERNET	700
+tablet	HEALTH_MEDICINE	30
+dolo	HEALTH_MEDICINE	30
+medical shop	HEALTH_MEDICINE	140
+doctor fees	HEALTH_MEDICINE	300
+blood test	HEALTH_MEDICINE	450
+marundhu	HEALTH_MEDICINE	85
+gym fees	HEALTH_MEDICINE	800
+cough syrup	HEALTH_MEDICINE	95
+hospital	HEALTH_MEDICINE	500
+dental	HEALTH_MEDICINE	700
+hair cut	PERSONAL_CARE	100
+saloon	PERSONAL_CARE	120
+shampoo sachet	PERSONAL_CARE	5
+soap 2	PERSONAL_CARE	70
+tooth paste	PERSONAL_CARE	55
+laundry	PERSONAL_CARE	150
+facewash	PERSONAL_CARE	120
+detergent powder	PERSONAL_CARE	60
+deo	PERSONAL_CARE	199
+ironing	PERSONAL_CARE	40
+amazon order	SHOPPING	599
+flipkart shoes	SHOPPING	899
+tshirt	SHOPPING	350
+earphones	SHOPPING	399
+charger cable	SHOPPING	150
+jeans pant	SHOPPING	900
+back cover	SHOPPING	120
+chappal	SHOPPING	250
+college bag	SHOPPING	700
+watch	SHOPPING	1200
+movie	ENTERTAINMENT_SUBS	190
+netflix	ENTERTAINMENT_SUBS	149
+bookmyshow	ENTERTAINMENT_SUBS	420
+spotify premium	ENTERTAINMENT_SUBS	59
+turf booking	ENTERTAINMENT_SUBS	150
+hotstar subscription	ENTERTAINMENT_SUBS	299
+bgmi uc	ENTERTAINMENT_SUBS	75
+trip share	ENTERTAINMENT_SUBS	1500
+birthday gift	SOCIAL_GIFTS	400
+treat for friends	SOCIAL_GIFTS	600
+temple	SOCIAL_GIFTS	50
+donation	SOCIAL_GIFTS	100
+moi	SOCIAL_GIFTS	500
+flowers	SOCIAL_GIFTS	40
+class fund	SOCIAL_GIFTS	200
+crackers	SOCIAL_GIFTS	500
+lent to friend	TRANSFERS_FEES	500
+emi	TRANSFERS_FEES	1500
+atm charges	TRANSFERS_FEES	25
+sent home	TRANSFERS_FEES	2000
+fine	TRANSFERS_FEES	100
+credit card bill	TRANSFERS_FEES	3200
+chit	TRANSFERS_FEES	1000
+sip	TRANSFERS_FEES	500
+late fee	TRANSFERS_FEES	50

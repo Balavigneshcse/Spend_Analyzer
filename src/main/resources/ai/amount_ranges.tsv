@@ -1,0 +1,16 @@
+# The usual price range (rupees) of one spend in each category. Only a weak hint for the model:
+# "ticket 30" leans towards a bus, "ticket 190" towards a movie.
+# Columns (TAB separated): CATEGORY | low | high
+FOOD_MEALS	30	400
+SNACKS_BEVERAGES	5	150
+GROCERIES	20	1500
+TRANSPORT_FUEL	10	800
+EDUCATION_STATIONERY	5	5000
+RENT_UTILITIES	100	12000
+MOBILE_INTERNET	19	1200
+HEALTH_MEDICINE	20	2000
+PERSONAL_CARE	10	600
+SHOPPING	100	5000
+ENTERTAINMENT_SUBS	50	1500
+SOCIAL_GIFTS	20	2000
+TRANSFERS_FEES	50	10000

@@ -1,0 +1,56 @@
+# Gifts, Treats & Donations: money spent on other people and on occasions.
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+# ---- gifts
+gift	S	gifts, gif, giftt, gft, gift item, gift purchase, gift shop, present, parisu, parisu porul, tohfa, uphaar, surprise gift, gift for friend, friend gift, gift wrap, gift wrapping, gift paper, gift box, gift hamper, hamper, gift card, gift voucher, archies, ferns n petals, fnp, igp
+birthday gift	S	bday gift, birthday present, b day gift, birthday gift for friend, pirandhanal parisu, janamdin gift, birthday surprise
+wedding gift	S	marriage gift, moi, moi panam, mohi, kalyana moi, kalyanam gift, shaadi gift, shagun, sagan, marriage moi, reception gift, wedding moi, engagement gift, kalyana parisu
+anniversary gift	S	anniversary, anniversary surprise, valentine gift, valentines gift, valentine, valentines day, rose day, propose day gift, girlfriend gift, gf gift, boyfriend gift, bf gift, lover gift, crush gift
+return gift	S	return gifts, baby shower gift, valaikappu gift, house warming gift, gruhapravesam gift, grahapravesam, housewarming, naming ceremony gift, ear piercing function, kadhu kuthu, function gift, function moi, seer varisai
+farewell gift	S	farewell, farewell fund, farewell party, farewell contribution, send off, sendoff, send off party, teachers day gift, teachers day, teacher gift, memento, momento, trophy, shield, mam gift, sir gift, hod gift, staff gift
+greeting card	S	greeting cards, greetings card, birthday card, wishes card, card for friend
+flowers	S	flower, poo, poovu, malligai poo, malli poo, jasmine, jasmine flowers, rose, roses, rose flower, phool, flower shop
+bouquet	S	flower bouquet, boquet, bokeh flowers
+garland	S	maalai, malai, poo malai, phool mala
+rakhi	S	rakhi gift, raksha bandhan, friendship band, friendship day
+
+# ---- treats and parties
+treat	S	treats, treet, treat for friends, friends treat, birthday treat, bday treat, b day treat, treat given, treat to friends, placement treat, job treat, result treat, success treat, mark treat, promotion treat, small treat, team treat, class treat, juniors treat, seniors treat, virundhu, daawat
+party	S	parties, birthday party, bday party, b day party, party share, party contribution, party fund, party expenses, celebration, celebrations, birthday celebration, bday celebration, get together, gettogether, reunion, bachelor party, house party, room party, success party, surprise party, new year party, kondattam
+birthday cake	S	bday cake, cake for birthday, cake cutting, birthday cake order, b day cake, surprise cake, birthday decoration, decoration, decorations, balloons, balloon, party popper, party poppers, snow spray, birthday cap, banner, ribbon, birthday banner, decoration items
+birthday	M	bday, b day, pirandhanal, janamdin
+paid for friends	S	paid for friend, friend food, friends food, food for friends, sponsored friend, sponsor, friend ku treat, bill for friends, lunch for friends, dinner for friends, tea for friends, juice for friends, snacks for friends, friend lunch, friends lunch, friends dinner
+dating	S	date, date night, dinner date, coffee date, movie date, outing with gf, outing with girlfriend, outing with bf
+
+# ---- contributions
+contribution	S	contributon, contibution, class contribution, class fund, class collection, fund collection, collection, collection amount, department fund, dept fund, function contribution, event contribution, fest contribution, culturals fund, symposium fund, onam contribution, pongal contribution, pongal celebration fund, ayudha pooja collection, ayudha pooja fund, hostel day fund, sports day fund, teachers day fund, welcome party fund, freshers party, freshers fund, freshers day
+donation	S	donations, donate, donated, donetion, doantion, nankodai, nan kodai, daan, dhaan, chanda, chandha, pm cares, ngo donation, orphanage, orphanage donation, old age home, ashram donation, crowdfunding, ketto, milaap, fund raiser, fundraiser, blood camp donation, helped a stranger, needy help
+charity	S	charity fund
+relief fund	S	flood relief, cm relief fund
+alms	S	beggar, pichai, bhiksha, bheek, gave to beggar, help poor, helped poor, dharmam, annadhanam, annadanam, food donation, anna daan
+
+# ---- temple and festival
+temple	S	kovil, koyil, kovil kanikkai, temple offering, temple donation, mandir, mandir daan, temple visit, temple ticket, abhishekam, prasadam, temple prasadam, vilakku, nei vilakku, ghee lamp, tirupati, tirupathi, palani, sabarimala, velankanni
+archanai	S	archana ticket, archanai ticket
+hundi	S	undiyal, hundial
+kanikkai	S	kaanikkai
+dakshina	S	dakshinai, thatchanai
+darshan ticket	S	special darshan, dharisanam ticket
+mottai	S	tonsure
+church offering	S	church, church donation, offering, offertory, tithe, church collection, candle offering, dargah, dargah offering, gurudwara, gurdwara donation
+zakat	S	sadaqah, sadaqa, fitra
+mosque donation	S	masjid donation
+pooja items	S	pooja, puja, pooja saman, pooja samagri, puja items, pooja things, poojai porul, pooja flowers, coconut and banana pooja, archanai thattu, pooja thattu, vibhuti, kumkumam, sandhanam, sambrani, dhoop, vetrilai paakku, betel leaves, banana leaf, thoranam, mango leaves, kolam powder, kolam maavu, rangoli
+festival	S	festival expenses, festival shopping share, pongal festival, vinayagar chaturthi, ganesh chaturthi, ganesh chanda, vinayagar chathurthi collection, navratri, golu, ayudha pooja, sankranti, karthigai deepam
+diwali	S	deepavali, diwali expenses
+onam	S
+christmas	S	xmas
+ramzan	S	ramadan, eid, bakrid
+holi	S	holi colours
+new year	S
+crackers	S	cracker, pattasu, pattaasu, patakha, patake, fireworks, diwali crackers, sivakasi crackers, sparklers, mathappu
+christmas gift	S	secret santa, secret santa gift, santa gift, christmas star, christmas tree, christmas cake gift, plum cake gift, eidi, eid gift, diwali gift, diwali sweets gift, sweet box gift, pongal gift, new year gift
+tips	S	tip, tipping, tips given, waiter tip, waiter tips, delivery tip, delivery boy tip, bakshish, baksheesh, inam, inaam, diwali bakshish, pongal inam, watchman inam, tip for delivery
+pocket money given	S	gave to brother, gave to sister, brother pocket money, sister pocket money, thambi ku, thangachi ku, gave to cousin, given to kid, kids ku kaasu, nephew gift money, gave to mom, gave to amma, amma ku, appa ku, for parents, for mom, for dad, gave to grandmother, paati ku
+condolence	S	funeral, funeral contribution, death contribution, condolence fund, wreath, final rites contribution
+social	W	function, functions, function expenses, occasion, ceremony, marriage, wedding, kalyanam, shaadi, reception, engagement, nichayathartham, visheshangal, vizha, thiruvizha

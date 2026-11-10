@@ -1,0 +1,104 @@
+# Entertainment & Subscriptions: movies, streaming, games, outings and paid apps.
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+# ---- movies
+movie ticket	S	movie, movies, movi, moive, muvie, film, film ticket, cinema, cinema ticket, sinema, padam, padam ticket, picture ticket, movie booking, movie show, first day first show, fdfs, fdfs ticket, night show, second show, matinee, morning show, movie night, theatre, theater, theatre ticket, thetre, theater ticket, cinema hall, multiplex, imax, 3d movie, 3d glass charge, movie with friends
+bookmyshow	S	book my show, bookmyshow ticket, bookmyshow booking, ticketnew, ticket new, paytm movies, justickets, district app
+pvr	S	pvr inox, pvr ticket, pvr cinemas, rohini theatre, vettri theatre, kamala cinemas, kg cinemas, luxe, escape cinemas, miraj cinemas, carnival cinemas
+inox	S	inox ticket
+cinepolis	S
+sathyam cinemas	S	sathyam, spi cinemas
+ags cinemas	S	ags
+mayajaal	S
+theatre snacks	S	theatre popcorn, movie popcorn, movie snacks, interval snacks, pvr popcorn, theatre parking
+
+# ---- streaming and music
+netflix	S	netflix subscription, netflix plan, netflix monthly, netflix recharge, netflx, netfix, netflix share
+hotstar	S	disney hotstar, disney plus hotstar, hotstar subscription, jiohotstar, jio hotstar, hotstar premium, hot star
+jiocinema	S	jio cinema, jiocinema premium
+amazon prime	S	prime, prime video, prime membership, prime subscription, amazon prime video, prime renewal, primevideo, amazon prime membership
+sun nxt	S	sunnxt, sun next, voot, alt balaji, lionsgate play, discovery plus, mubi, hoichoi, ott subscription, ott, ott plan, streaming subscription
+zee5	S	zee 5
+sonyliv	S	sony liv
+aha	S	aha subscription, aha tamil
+mx player	S
+crunchyroll	S
+apple tv	S
+youtube premium	S	youtube, yt premium, youtube subscription, youtube music, youtube membership, channel membership, super chat
+spotify	S	spotify premium, spotify subscription, spotfy, spotify plan, spotify student, music subscription, music app
+gaana	S	gaana plus
+jiosaavn	S	jio saavn, saavn
+wynk	S	wynk music
+apple music	S
+amazon music	S
+subscription	M	subscriptions, subcription, subscripton, subscribtion, monthly subscription, app subscription, premium plan, premium subscription, membership, membership fee, renewal, auto renewal, auto debit subscription, in app purchase, app purchase, play store, playstore, google play, google play recharge, google play redeem code, redeem code, app store, itunes
+telegram premium	S	twitter blue, x premium, bumble premium, snapchat plus
+discord nitro	S	nitro
+linkedin premium	S
+tinder	S	tinder gold
+canva pro	S	canva
+audible	S	pratilipi, storytel, ebook, e book, comics, manga, webtoon coins
+kuku fm	S	kukufm
+pocket fm	S	pocketfm
+kindle unlimited	S
+
+# ---- games
+bgmi uc	S	bgmi, uc purchase, uc, pubg uc, pubg, bgmi royal pass, royal pass, royale pass, rp purchase
+free fire diamonds	S	free fire, freefire, ff diamonds, diamonds topup, diamond top up, free fire topup, ff topup, garena
+game purchase	S	game, games, gaming, game topup, game recharge, in game purchase, epic games, cod points, cp purchase, clash of clans gems, coc gems, fifa points, game cd, game skin, skin purchase
+steam	S	steam game, steam wallet
+playstation	S	ps5 game, ps plus
+xbox	S	xbox game pass, game pass
+valorant points	S	vp purchase
+robux	S
+minecraft	S
+gta	S
+gaming cafe	S	gaming zone, game zone, gaming centre, gaming center, ps5 cafe, ps4 gaming, playstation cafe, vr game, vr zone, game parlour, video game parlour, arcade, timezone, fun city, smaaash, console rent
+fantasy cricket	S	mpl, winzo, poker, ludo money
+dream11	S	dream 11
+my11circle	S
+rummy	S	rummy circle, junglee rummy, a23
+lottery	S	lottery ticket
+betting	S	bet
+bowling	S	bowling alley, trampoline park, laser tag, bungee
+snooker	S	pool game, billiards
+go karting	S	gokarting, karting
+paintball	S
+escape room	S
+turf	S	turf booking, turf fee, turf rent, turf share, turf match, box cricket, football turf, cricket turf, turf ground, ground booking, ground fee, court booking, badminton court, shuttle court, net practice, cricket nets, match fee, tournament fee, tournament entry
+
+# ---- outings
+trip	S	class trip, trip share, trip expense, trip expenses, trip contribution, iv trip, industrial visit trip, weekend trip, bike trip, road trip, goa trip, ooty trip, kodaikanal trip, munnar trip, pondy trip, pondicherry trip, yercaud trip, hill station trip, sight seeing, sightseeing, vacation, holiday trip, tourist
+tour	S	tour fee, college tour
+picnic	S
+trek	S	trekking
+camping	S
+outing	S	outing with friends
+hotel room	S	room booking, hotel booking, dormitory stay, zostel, treebo, fabhotel, goibibo hotel, makemytrip hotel
+lodge	S	lodge room
+resort	S	resort booking
+homestay	S	home stay
+oyo	S	oyo room, oyo booking
+airbnb	S
+entry ticket	S	entry fee, entrance ticket, entry tickets, park entry, park ticket, beach entry, monument ticket, fort entry, dam entry, falls entry, ropeway, cable car, toy train ride, camera ticket
+zoo	S	zoo ticket, zoo entry
+museum	S	museum ticket
+exhibition	S	exhibition ticket, expo ticket
+boating	S	boating ticket, boat ride
+planetarium	S
+aquarium	S
+theme park	S	amusement park, mgm dizzee world, kishkinta, imagica, snow world, ramoji, ride tickets, rides, giant wheel, fun fair, carnival, porutkatchi, exhibition rides
+water park	S	waterpark
+wonderla	S
+vgp	S	vgp universal kingdom
+queensland	S
+black thunder	S
+circus	S
+concert	S	concert ticket, live concert, music concert, show ticket, live show, event ticket, event pass, fest pass, culturals ticket, culturals pass, pro show, proshow ticket, cover charge
+standup comedy	S	stand up comedy, comedy show
+dj night	S	dj party entry
+pub	S	pub entry, club entry, night club, club
+match ticket	S	ipl ticket, ipl match, cricket match ticket, stadium ticket, csk match, isl ticket, kabaddi match ticket
+hobby class	S	hobby, hobbies, guitar class, guitar, guitar strings, keyboard class, drawing class, painting class, photography workshop, craft items, canvas board, acrylic paints
+fun	W	enjoyment, entertainment, chill, hangout, hang out, jolly, masti, leisure, recreation
+ticket	W	tickets, tiket

@@ -1,0 +1,101 @@
+# Personal Care: grooming, toiletries and laundry.
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+# ---- hair and salon
+haircut	S	hair cut, hair cutting, haircutting, hair kat, heir cut, haircutt, cutting hair, mudi vettu, mudi vetta, mudi cutting, baal katwaye, baal katai, hair trim, trimming, hair style, hair setting, cutting and shaving
+salon	S	saloon, salun, saloon shop, barber, barber shop, barbar, parlour, parlor, beauty parlour, beauty parlor, hair salon, mens salon, unisex salon, naturals salon, green trends, toni and guy, salon bill
+shaving	S	shave, shaving cream, shaving foam, shaving gel, shaving brush, beard trim, beard trimming, beard set, beard styling, dadi, shaving kit, after shave, aftershave
+razor	S	razer, blade, blades, gillette, gillette guard, gillette mach 3, shaving blade, disposable razor, razor blades, cartridge blades
+trimmer	S	beard trimmer, hair trimmer, trimmer blade, philips trimmer, mi trimmer, epilator
+hair colour	S	hair color, hair dye, hair colouring, hair coloring, mehndi, henna, hair spa, hair straightening, hair smoothening, keratin, hair treatment, head massage
+facial	S	face bleach, bleach, cleanup, clean up, face cleanup, face mask pack, de tan, detan, tan removal, nail art
+threading	S	eyebrow threading, eyebrow, eyebrows
+waxing	S	wax
+manicure	S
+pedicure	S	mani pedi
+nail polish	S
+nail cutter	S	nail clipper
+face pack	S
+massage	S	body massage, spa, spa session, foot massage, oil massage
+
+# ---- bath and body
+soap	S	soaps, bath soap, body soap, sabun, saabun, soap bar, dettol soap, margo, chandrika
+lifebuoy	S	lifeboy
+lux	S
+dove soap	S	dove
+cinthol	S
+hamam	S
+mysore sandal	S
+medimix	S
+pears	S
+santoor	S
+body wash	S	shower gel, bodywash, loofah, scrub, body scrub, bath gel
+shampoo	S	shampo, shampu, shampoo sachet, shampoo packet, shampoo bottle, dove shampoo, meera shampoo, anti dandruff shampoo, shampoo pouch
+clinic plus	S
+head and shoulders	S
+sunsilk	S
+pantene	S
+tresemme	S
+shikakai	S	seeyakai
+conditioner	S	hair conditioner, hair serum, serum, hair mask, hair gel, hair wax, hair cream, set wet, gatsby, brylcreem
+hair oil	S	coconut oil, parachute, parachute oil, thengai ennai, almond oil, castor oil, amla oil, navratna oil, indulekha, bhringraj oil, onion hair oil, hair tonic, vvd oil, thalai ennai
+face wash	S	facewash, face wash tube, himalaya face wash, himalaya facewash, garnier face wash, garnier, ponds face wash, clean and clear, cetaphil, cleanser, face cleanser, micellar water, neem face wash
+face cream	S	cream, fair and lovely, glow and lovely, cold cream, night cream, vicco
+vaseline	S	petroleum jelly
+moisturizer	S	moisturiser
+lotion	S	body lotion
+lip balm	S	lipbalm, lip care
+nivea	S	nivea cream
+ponds	S	ponds cream
+aloe vera gel	S
+sunscreen	S	sun screen, sunscreen lotion, spf 50, sunblock
+talcum powder	S	powder, talc, ponds powder, face powder, body powder, cuticura, nycil, prickly heat powder, yardley powder
+deodorant	S	deo, deodrant, deodarant, nivea deo, engage, park avenue, roll on
+perfume	S	perfum, scent, sent bottle, attar, cologne
+body spray	S
+fogg	S	fogg deo
+axe	S
+wild stone	S
+toothpaste	S	tooth paste, paste, toothpast, dant kanti, vicco vajradanti
+colgate	S	colgate paste
+pepsodent	S
+close up	S	closeup
+sensodyne	S
+dabur red	S
+tooth powder	S	pal podi
+toothbrush	S	tooth brush, brush, toothbrsh, oral b, colgate brush, tongue cleaner, mouthwash, mouth wash, listerine, dental floss
+handwash	S	hand wash, hand wash refill, dettol handwash, lifebuoy handwash, hand soap
+sanitary pads	S	pads, sanitary napkin, sanitary napkins, napkin, whisper, stayfree, sofy, sanitary pad, period pads, menstrual cup, tampons, tampon, panty liners, pad packet
+makeup	S	make up, cosmetics, cosmetic, compact, compact powder, bb cream, primer, makeup kit, kumkum, sindoor, nail paint, makeup remover, lakme, maybelline, sugar cosmetics, plum goodness
+lipstick	S
+kajal	S
+eyeliner	S	eye liner
+mascara	S
+foundation	S
+bindi	S	sticker pottu, pottu
+nykaa	S	nykaa order
+mamaearth	S
+comb	S	hair comb, seeppu, hair brush, rubber band, scrunchie, hair pins, kanghi
+hair band	S	hairband
+hair clip	S	hair clips, clips
+skin care	S	skincare, skin care products, face serum, vitamin c serum, toner, niacinamide, minimalist, the ordinary, derma co, dot and key, acne cream, pimple cream, pimple patch, anti acne gel
+ear buds cotton	S	cotton buds, ear cleaning buds, cotton swabs
+kerchief	S	handkerchief, hanky, hand kerchief, kerchif
+towel	S	bath towel, hand towel, thundu, thorthu, face towel
+bucket	S	mug, bucket and mug, bath bucket, soap box, soap case, bathroom slippers, bath stool
+hair dryer	S	dryer, hair straightener, straightener, curler
+
+# ---- laundry
+laundry	S	laundary, londry, laundry bill, laundry charge, laundry service, washing clothes, dhobi, dhobhi, dobi, washerman, vannan, clothes washing, wash and fold, wash and iron, laundromat, washing machine token, washing charge, dry clean, dry cleaning, drycleaning, dry wash
+ironing	S	iron, iron box charge, istri, isthri, ironing charge, press, clothes ironing, iron kadai, iron cart, pressing clothes, steam iron charge
+detergent	S	detergent powder, washing powder, wheel, henko, washing soap, detergent soap, detergent bar, liquid detergent, washing liquid, sabun powder, thuni soap
+surf excel	S	surf
+ariel	S
+tide	S
+rin	S	rin soap
+nirma	S
+comfort	S	fabric conditioner
+ujala	S
+shoe polish	S	shoe polishing, polish, shoe brush, cherry blossom, shoe cleaning, cobbler, shoe repair, chappal repair, seruppu thaikka, mochi, sole pasting, shoe stitching
+tailor	S	tailoring, tailor charge, stitching, stitching charge, alteration, pant alteration, blouse stitching, thaiyal, thaiyal kooli, darji, zip change, button stitching, dress alteration
+toiletries	S	toiletry, toilet items, bathroom items, personal care, personal items, grooming, grooming kit, hygiene products, hygiene, self care

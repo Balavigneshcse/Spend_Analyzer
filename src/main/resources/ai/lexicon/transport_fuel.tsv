@@ -1,0 +1,120 @@
+# Transport & Fuel: getting around (bus, auto, train, cab), fuel and looking after a vehicle.
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+# ---- bus
+bus ticket	S	bus tiket, bus tikat, bus fare, bus charge, bus charges, bus kattanam, bus kiraya, bus bhada, bus travel, bus journey, bus booking, bus
+bus pass	S	buspass, student bus pass, monthly bus pass, college bus pass, bus pass renewal, mtc pass
+college bus	S	college bus fee, college bus fees, clg bus, transport fee, transport fees, van fee, school van
+town bus	S	city bus, local bus, government bus, govt bus, private bus, mofussil bus
+mtc bus	S	mtc, mtc ticket
+mini bus	S	minibus
+share van	S
+tnstc	S	tnstc bus, tnstc ticket, st bus, state bus, roadways
+setc	S	setc bus, setc ticket
+ksrtc	S	ksrtc bus
+apsrtc	S
+tsrtc	S
+msrtc	S
+redbus	S	red bus, redbus ticket, redbus booking, makemytrip bus, paytm bus
+abhibus	S	abhi bus
+omni bus	S	omnibus, omni bus ticket, ac bus, travels, travels ticket
+sleeper bus	S
+volvo bus	S	volvo
+kpn travels	S	kpn
+srs travels	S
+parveen travels	S
+zingbus	S
+intrcity	S
+
+# ---- auto, cab, bike taxi
+auto	S	auto fare, auto charge, autorickshaw, auto rickshaw, auto riksha, rickshaw, riksha, auto kiraya, auto bhada, auto savari, auto ride, auto kaasu
+share auto	S	shareauto, share auto fare, sharing auto, shared auto, tempo, tata magic, vikram
+cab	S	cab fare, cab ride, cab booking, kaali peeli
+taxi	S	taxi fare, call taxi, prepaid taxi
+ola	S	ola cab, ola auto, ola ride, ola bike, ola cabs, ola trip
+uber	S	uber cab, uber auto, uber ride, uber moto, uber trip, ubar
+rapido	S	rapido bike, rapido ride, rapido auto, rapido captain, repido, rapidoo, bike taxi
+namma yatri	S	nammayatri
+indrive	S	in drive
+blusmart	S
+meru	S
+quick ride	S
+ride	W	trip fare, fare, travel, travelling, travel expense, commute, conveyance, savari, transport, tranport, transportation
+
+# ---- train and metro
+train ticket	S	train tiket, train fare, train, rail ticket, railway ticket, train booking, rail, rayil, rail ticket booking, 3ac ticket
+tatkal ticket	S	tatkal, train tatkal
+general ticket	S	unreserved ticket
+sleeper ticket	S
+irctc	S	irctc ticket, irctc booking, irtc, irctc tatkal, rail connect
+uts ticket	S	uts, uts app
+confirmtkt	S
+ixigo train	S
+local train	S	emu, emu ticket, suburban train, electric train, mrts, local train ticket
+season ticket	S	train pass, railway pass, railway season ticket, train season, monthly season ticket
+platform ticket	S	platform tkt
+metro	S	metro ticket, metro fare, metro train, metro ride, cmrl, chennai metro, namma metro, delhi metro, hyderabad metro, metro token, metro rail
+metro card	S	metro card recharge, metro recharge, metro pass, travel card recharge, smart card recharge, ncmc card, singara chennai card
+
+# ---- flight and long distance
+flight ticket	S	flight, flight booking, air ticket, airfare, flight tkt, plane ticket
+indigo	S	indigo flight
+air india	S
+spicejet	S
+akasa	S
+vistara	S
+airport cab	S	airport taxi, airport drop, airport pickup, station drop, railway station drop
+ferry	S	boat ticket, jetty, launch ticket
+
+# ---- fuel
+petrol	S	petrole, petrool, petral, patrol, pertol, petorl, petrol bunk, petrol pump, bike petrol, scooty petrol, petrol fill, tank full, full tank, bunk
+fuel	S	fuel fill
+indian oil	S	iocl
+hp petrol	S	hpcl
+bharat petroleum	S	bpcl
+shell	S
+nayara	S
+diesel	S	deisel, diesal, disel, car diesel
+cng	S	cng gas, cng fill, auto gas
+ev charging	S	ev charge, charging station, ather charging, ola electric charging, battery swap
+engine oil	S	oil change, engine oil change, coolant, brake oil, chain lube, chain spray, 2t oil
+
+# ---- vehicle upkeep
+bike service	S	bike servicing, scooter service, scooty service, vehicle service, two wheeler service, general service, bike repair, bike work, vandi service, bike garage, activa service
+water wash	S	bike wash, bike water wash, foam wash
+car wash	S
+mechanic	S	bike mechanic
+car service	S	car repair, car mechanic, car servicing
+puncture	S	puncher, punture, pancher, punchar, puncture shop, tyre puncture, tube puncture, tubeless puncture
+air filling	S	tyre air, air check, nitrogen air, air fill
+tyre	S	tyres, tire, new tyre, tyre change, tube, bike tube, tyre tube
+bike spare	S	spare parts, bike spares, indicator, headlight bulb
+brake pad	S	brake shoe
+clutch cable	S
+chain sprocket	S	bike chain
+spark plug	S
+bike battery	S
+side mirror	S	bike mirror
+bike seat cover	S
+helmet	S	helmat, helmet visor, new helmet
+parking	S	parking fee, parking charge, parking ticket, parking fees, bike parking, car parking, cycle stand, bike stand fee, two wheeler parking, stand fee
+toll	S	toll gate, toll fee, toll charge, tollgate, toll plaza, toll tax
+fastag	S	fastag recharge, fast tag, fastag topup, fasttag
+traffic fine	S	traffic challan, challan, e challan, traffic police fine, helmet fine, no parking fine, signal fine, rto fine
+vehicle insurance	S	bike insurance, two wheeler insurance, car insurance, scooty insurance
+pollution certificate	S	puc, puc certificate, emission test, emission certificate, fc renewal
+driving licence	S	driving license, licence fee, license test
+llr	S	llr fee
+driving school	S	driving class
+rto fee	S	rto
+bike rent	S	bike rental, rent a bike, scooty rent
+yulu	S
+bounce	S
+vogo	S
+royal brothers	S
+zoomcar	S	self drive car, car rental
+cycle rent	S	cycle rental
+cycle repair	S	cycle puncture, cycle service, bicycle repair, cycle tube, cycle tyre, cycle chain
+lift	W	drop, pickup, pick up, drop charge, luggage charge, porter, coolie
+ticket	W	tiket, tickets, tikat, ticket booking
+pass	W	pass renewal, monthly pass

@@ -1,0 +1,211 @@
+# Shopping: clothes, footwear, gadgets, accessories and things for the room; online stores.
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+# ---- online stores
+amazon	M	amazon order, amzon, amazn, amazone, amezon, amazon shopping, amazon purchase, amazon cod, amazon delivery
+flipkart	M	flipkart order, flipcart, flip kart, filpkart, flipkrt, flipkart shopping, flipkart cod, big billion days
+meesho	M	meesho order, mesho, meeshoo, misho
+myntra	M	myntra order, mintra, myntraa, mynthra
+ajio	M	ajio order, ajjio, shopclues, nykaa fashion, savana, aliexpress, jiomart fashion
+tata cliq	M	tatacliq
+snapdeal	M
+shopsy	M
+bewakoof	M
+souled store	M	the souled store
+urbanic	M
+shein	M
+temu	M
+online shopping	S	online order, online purchase, ecommerce order, cod order, courier cod, order delivery, online shoping
+shopping	W	shoping, shoppin, shopping mall, mall shopping, purchase, purchases
+
+# ---- clothes
+shirt	S	shirts, shrit, formal shirt, casual shirt, check shirt, sattai, chattai, kameez shirt, full hand shirt, half hand shirt
+tshirt	S	t shirt, tshirts, t shirts, tee shirt, round neck, polo tshirt, polo t shirt, collar tshirt, oversized tshirt, jersey, football jersey, cricket jersey, banian tshirt
+pant	S	pants, trouser, trousers, formal pant, cotton pant, cargo pant, cargo, chinos, track pant, track pants, trackpant, joggers, lower, night pant, pyjama, pajama
+jeans	S	jean, jeens, jeans pant, denim, denim jeans, slim fit jeans
+shorts	S	short, half pant, bermuda, three fourth, boxer, boxers
+dress	S	dresses, clothes, cloths, clothing, cloth, new dress, dress purchase, thuni, thunimani, dress material, kapda, kapde, apparel, garments, outfit, new clothes, pongal dress, diwali dress, festival dress, birthday dress
+kurta	S	kurtha, kurta pyjama, palazzo, jeggings
+kurti	S	kurthi, kurtis
+salwar	S	salwar kameez
+chudidar	S	churidar, chudithar
+leggings	S	legging
+dupatta	S
+shawl	S
+top	S	tops, crop top
+skirt	S
+frock	S
+gown	S
+lehenga	S
+saree	S	sari, selai, pattu saree, cotton saree, blouse, blouse piece, saree fall
+dhoti	S	veshti, vesti, lungi, kaili, mundu, pattu veshti
+innerwear	S	inner wear, inners, underwear, undergarments, trunks, bra, panties, lingerie
+banian	S	baniyan
+vest	S
+briefs	S
+socks	S	sock, ankle socks
+jockey	S
+jacket	S	jackets, jerkin, coat, suit, windcheater, thermal wear
+hoodie	S	hoody, hoodies
+sweater	S
+sweatshirt	S	sweat shirt
+blazer	S
+raincoat	S	rain coat
+night dress	S	nighty, night wear, nightwear, night suit
+uniform	S	college uniform, uniform cloth, uniform stitching, lab uniform, nss uniform, ncc uniform, tie, college tie, belt and tie
+pothys	M	rmkv, nalli, lifestyle, h and m, peter england, allen solly, van heusen, us polo, uniqlo, textile shop, textiles, thuni kadai, cloth shop, garments shop
+chennai silks	M	the chennai silks
+saravana stores	M
+max fashion	M	max
+trends	M	reliance trends
+zudio	M
+westside	M
+pantaloons	M
+decathlon	M
+zara	M
+levis	M
+
+# ---- footwear
+shoes	S	shoe, shoos, shooz, sports shoes, sport shoes, running shoes, formal shoes, casual shoes, sneakers, sneaker, canvas shoes, loafers, boots, juta, joote, kaalani, shoe pair
+slippers	S	slipper, seruppu, cheruppu, floaters, slides, paragon, vkc
+chappal	S	chappals, cheppal, chapal, hawai chappal
+sandals	S	sandal
+crocs	S
+flip flops	S	flipflops
+bata	M	campus shoes, sparx, asics, bata showroom, footwear shop, footwear, chappal kadai
+puma	M
+nike	M
+adidas	M
+reebok	M
+skechers	M
+woodland	M
+
+# ---- gadgets
+earphone	S	earphones, earfone, earphons, ear phone, ear phones, headset, head set, hedset, headphone, headphones, head phone, earbuds, ear buds, airpods, air pods, buds, tws, neckband, neck band, bluetooth headset, bluetooth earphones, wired earphones, boat, boat earphones, boat airdopes, airdopes, boat rockerz, realme buds, oneplus buds, noise buds, jbl, jbl earphones
+charger	S	mobile charger, phone charger, fast charger, charger cable, charging cable, c type charger, cable wire, charger wire, lightning cable, plug, multi plug, 3 pin plug
+usb cable	S	data cable
+type c cable	S	type c, c type cable
+adapter	S	adaptor, charger adapter
+laptop charger	S
+extension box	S	extension cord, spike box, spike guard
+otg cable	S	otg
+hdmi cable	S
+aux cable	S
+power bank	S	powerbank, power bank 10000, mi power bank
+back cover	S	phone cover, mobile cover, back case, phone case, mobile case, mobile pouch, pouch, flip cover, backcase, cover, silicone cover
+tempered glass	S	screen guard, screenguard, tempered, screen protector, temper glass, tampered glass, glass guard, scratch guard, camera lens guard
+pendrive	S	pen drive, usb drive, flash drive
+memory card	S	sd card, micro sd
+hard disk	S	hard drive, external hard disk
+ssd	S
+card reader	S
+usb hub	S
+mouse	S	wireless mouse, gaming mouse, keyboard mouse combo, laptop skin, laptop table
+keyboard	S	wireless keyboard, mechanical keyboard
+mouse pad	S	mousepad
+laptop stand	S
+webcam	S
+cooling pad	S
+speaker	S	bluetooth speaker, speakers, soundbar, sound bar, mini speaker, home theatre
+smart watch	S	smartwatch, fitness band, smart band, mi band, noise watch, fire boltt, boat watch, apple watch
+watch	S	wrist watch, wristwatch, watches, kadigaram, ghadi, fastrack, fastrack watch, titan, titan watch, sonata, casio watch, watch strap, watch battery, digital watch
+mobile phone	S	mobile, phone, new phone, new mobile, smartphone, smart phone, cellphone, cell phone, handset, moto, nothing phone, keypad phone, second hand phone, used phone, phone emi down payment
+iphone	S
+samsung	S	samsung phone
+redmi	S	redmi phone
+realme	S	realme phone
+oneplus	S
+vivo	S
+oppo	S
+poco	S
+laptop	S	new laptop, lap top, laptap, loptop, notebook laptop, chromebook, gaming laptop, tablet pc, tab, printer ink, ink cartridge, toner cartridge
+monitor	S
+printer	S
+ipad	S
+kindle	S
+macbook	S
+desktop	S	computer, pc, cpu
+camera	S	dslr, gopro, gimbal, lens cap
+tripod	S
+ring light	S
+selfie stick	S
+mic	S	microphone, collar mic
+electronics	M	electronic items, gadget, gadgets, accessories, mobile accessories, phone accessories, laptop accessories, electronics shop, croma, reliance digital, poorvika, sangeetha mobiles, vijay sales, mobile shop
+
+# ---- bags and accessories
+bag	S	bags, college bag, school bag, backpack, back pack, laptop bag, shoulder bag, travel bag, trolley, trolley bag, suitcase, luggage bag, duffle bag, sling bag, hand bag, handbag, tote bag, side bag, lunch bag, bagpack, wildcraft, skybags, american tourister, safari bag
+wallet	S	purse, money purse, card holder, wallet purchase, leather wallet, coin purse
+belt	S	leather belt, belts, waist belt
+cap	S	caps, hat, topi, thoppi, beanie, monkey cap, scarf, stole, muffler, bandana
+sunglasses	S	sun glasses, goggles, cooling glass, cooling glasses, coolers, shades, aviators
+jewellery	S	jewelry, jewellary, jewel, jewels, nose pin, mookuthi, fancy items, fancy store, fancy shop, imitation jewellery, hair accessories
+chain	S	silver chain
+ring	S	finger ring
+earrings	S	earring, studs, kammal, thodu
+bangles	S	bangle, valayal
+bracelet	S	kada
+anklet	S	kolusu
+necklace	S
+pendant	S	locket
+umbrella	S	umberlla, umbrela, kudai, chhata, chatri
+keychain	S	key chain, keychains, key ring, showpiece
+sticker	S	stickers, bike sticker, laptop sticker
+poster	S	posters, wall poster
+photo frame	S	frame
+
+# ---- for the room
+bedsheet	S	bed sheet, bedsheets, bed spread, bedspread, comforter, quilt, bed, bean bag
+pillow	S	pillows, thalaiyanai
+pillow cover	S	pillow covers
+blanket	S	blankets, kambali, razai
+mattress	S	matress, mattres, methai, foam bed
+cot	S	folding cot
+mat	S	paai, sleeping mat
+curtain	S	curtains, screen cloth
+door mat	S	floor mat
+cushion	S
+bottle	S	steel bottle, flask, thermos, milton bottle, sipper, shaker, tiffin box, lunch box steel, lunch carrier, tupperware, plastic box, container, containers, dabba box, storage box
+kettle	S	electric kettle, stove, gas stove, toaster, sandwich maker, air cooler
+induction stove	S	induction
+rice cooker	S
+pressure cooker	S	cooker
+mixie	S	mixer grinder, mixer
+iron box	S
+immersion rod	S	water heater, heater rod
+table fan	S	fan, pedestal fan
+torch	S	torch light
+emergency light	S	rechargeable light
+kitchen utensils	S	utensils, vessels, pathiram, paathiram, bartan, kadai vessel, frying pan, kadhai, chopping board, cups, mug cup, dinner set, ladle, karandi
+plate	S	plates, steel plate
+tumbler	S	glass tumbler
+spoon	S	spoons
+tawa	S	dosa kal
+knife	S
+bowl	S	bowls
+table	S	study table, clothes stand, drying stand
+chair	S	plastic chair, study chair
+stool	S
+shelf	S	rack, book shelf, bookshelf
+shoe rack	S
+cupboard	S	almirah, bero, wardrobe
+hanger	S	hangers, cloth hanger
+mirror	S
+wall clock	S	clock, alarm clock
+table lamp	S	study lamp, lamp
+dustbin	S
+broom	S	thodappam, jhadu
+mop	S
+lock	S	padlock, room lock, number lock
+cycle	S	bicycle, new cycle, cycle purchase, gear cycle, hero cycle
+cricket bat	S	bat, sports items, sports goods, skating shoes
+cricket ball	S	ball, tennis ball
+football	S	foot ball
+shuttle	S	shuttle cock, shuttlecock
+badminton racket	S	racket, shuttle bat
+volleyball	S
+basketball	S
+carrom board	S
+chess board	S
+toys	S	toy, soft toy, teddy, teddy bear, doll, puzzle, rubiks cube, cube, board game, playing cards, cards deck, uno cards, uno
+plants	S	plant, flower pot, pot, indoor plant, money plant, seeds, nursery plants
+order	W	orders, parcel order, cod, delivery charge, delivery charges, shipping charge, shipping

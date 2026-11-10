@@ -1,0 +1,77 @@
+# Transfers, Lending & Fees: money that moved but bought nothing (lent, repaid, saved, bank charges, fines, taxes).
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+# ---- lending and repaying
+lent to friend	S	lent, lend, lended, lent friend, lent money, gave loan, loan to friend, loan given, given loan, friend loan, kadan, kadan koduthen, kadan kuduthen, kai mathu, kaimaathu, kaimathu, hand loan, handloan, udhar, udhaar, udhar diya, udhari, borrowed by friend, friend borrowed, friend asked money, gave friend money, friend ku kaasu, friend ku panam, given to friend, dost ko diya
+loan repayment	S	repaid, repay, repayment, returned money, return money, returned to friend, paid back, payback, pay back, settle, settled, settlement, settle up, settled with friend, kadan adaithen, kadan thirumba, kadan return, udhar wapas, udhar chukaya, debt, debt paid, owed money, cleared dues, dues, due payment, pending dues, old balance, baki, baaki, baaki paid
+split bill	S	splitwise, split wise, split, bill split, split share, splitwise settle, share amount, my share, share paid, shared bill, go dutch
+emi	S	emi payment, monthly emi, phone emi, mobile emi, laptop emi, bike emi, emi due, emi paid, no cost emi, bajaj emi, bajaj finserv, bajaj finance, installment, instalment, monthly installment, thavanai, kist, kisht, emi card
+loan	S	loan emi, loan payment, loan due, loan closure, loan app, loan app repayment, kreditbee, moneyview, slice repayment, postpe
+education loan	S	education loan emi, education loan interest, study loan
+personal loan	S
+gold loan	S	gold loan interest
+loan interest	S	interest payment, interest, vatti, vaddi, byaj, vatti kaasu
+pay later	S	paylater, amazon pay later, flipkart pay later, bnpl
+lazypay	S	lazypay repayment
+simpl	S	simpl bill
+credit card bill	S	credit card payment, cc bill, cc payment, card bill, card bill payment, card payment, credit card due, credit card dues, card due, credit card emi, sbi card bill, hdfc card bill, icici card bill, axis card bill, onecard bill, cred, cred payment
+
+# ---- sending money
+sent home	S	sent to home, send home, money to home, sent to mom, sent to dad, sent to amma, sent to appa, sent to parents, veetuku anupinen, veetukku panam, ghar bheja, ghar paisa bheja, money sent home, family transfer, sent to family, sent to brother, sent to sister
+transfer	S	transferred, transfered, tranfer, money transfer, fund transfer, bank transfer, self transfer, own account transfer, account transfer, upi transfer, sent money, money sent, sent to friend, gpay sent, phonepe sent, paytm sent, moved to savings, moved money, to my other account
+neft	S	neft transfer
+imps	S	imps transfer
+rtgs	S
+wallet load	S	wallet topup, wallet recharge, add money, added money, paytm add money, paytm wallet, paytm wallet load, phonepe wallet, amazon pay balance, amazon pay load, amazon pay add money, mobikwik, freecharge wallet, upi lite, upi lite load, upi lite topup, load money, loaded wallet, metro wallet
+cash withdrawal	S	atm withdrawal, withdrawal, withdraw, withdrew, cash withdraw, atm cash, cash from atm, took cash, cash taken
+cash deposit	S	deposited cash, cash deposited, deposit to bank, cdm deposit, bank deposit
+
+# ---- savings and investments
+savings	S	saving, saved, semippu, bachat, savings deposit, savings transfer, piggy bank, undiyal savings, emergency fund, saved money
+sip	S	sip payment, upstox, angel one, coin sip, demat, jewellery scheme, nagai seettu
+mutual fund	S	mutual funds, mutual fund sip, mf sip
+groww	S	groww sip
+zerodha	S	zerodha fund
+stocks	S	stock purchase, shares, share market, share purchase
+trading	S	trading loss
+investment	S	invested, invest
+digital gold	S	gold savings, gold scheme
+recurring deposit	S	rd, rd payment, rd installment, rd deposit, post office rd, post office savings, sukanya
+fixed deposit	S	fd
+ppf	S	ppf deposit
+nps	S	nps contribution
+chit fund	S	chit, chitty, chit payment, chit installment, seettu, seetu, seettu kaasu, chit fund payment, kuri, bhishi, committee payment
+crypto	S	bitcoin, btc, usdt, crypto purchase, wazirx, coindcx, binance
+insurance	S	insurance premium, lic, lic premium, lic payment, life insurance, term insurance, policy premium, policy payment, premium payment, insurance payment, postal life insurance
+
+# ---- bank and service charges
+bank charges	S	bank charge, bank fee, bank fees, service charge, service charges, account charges, account maintenance charge, amc charges, debit card charges, debit card fee, atm card fee, card annual fee, annual fee, annual charges, joining fee card, sms charges, sms alert charges, cheque book charges, cheque book, minimum balance charge, minimum balance penalty, min balance charge, non maintenance charge, penalty charge, bank penalty, processing fee, processing charges, convenience fee, convenience charge, platform fee, handling fee, handling charges, transaction charge, transaction charges, transaction fee, gateway charges, surcharge, forex charges, markup fee
+atm fee	S	atm charge, atm charges, atm withdrawal charge, atm transaction fee, other bank atm charge, atm decline charge
+late fee	S	late fees, late payment fee, late payment charge, late charges, late fine, overdue charge, overdue fee, penalty, penalty fee, bounce charge, cheque bounce, auto debit bounce, nach bounce, emi bounce charge
+fine	S	fine paid, fine amount, fine payment, abaradham, abaratham, jurmana, dand, hostel fine, college fine, attendance fine, id card fine, dress code fine, mobile fine, discipline fine, late coming fine
+tax	S	taxes, tds, professional tax, advance tax, tax payment, ca fee, auditor fee
+income tax	S
+gst	S	gst payment
+itr filing	S	itr fee
+government fee	S	govt fee, e seva, eseva, e sevai, esevai, e sevai maiyam, community certificate, income certificate, nativity certificate, bond paper stamp, court fee, registration charges, document writer, birth certificate fee, police verification
+passport fee	S	passport application, passport renewal
+pan card	S	pan card fee, pan application
+aadhaar update	S	aadhar update, aadhaar card fee, aadhar card
+voter id	S
+stamp paper	S
+notary	S	notary fee
+affidavit	S
+courier	S	courier charge, courier charges, parcel charge, parcel booking, professional courier, india post, registered post, stamps, postal stamp, money order
+speed post	S
+post office	S	postage, post
+dtdc	S
+bluedart	S	blue dart
+delhivery	S
+commission	S	agent fee, agent commission, agency fee, consultancy fee, consultancy charges, placement consultancy, job consultancy fee
+lost money	S	lost, lost cash, money lost, cash lost, wallet lost, missing money, amount debited, debited, refund pending, double payment
+scam	S	scammed, fraud, cheated
+theft	S	stolen
+wrong transfer	S	sent wrongly, wrong upi
+failed transaction	S	payment failed
+charges	W	charge, chargess, dues payment, payment charges, extra charges, other charges
+cash given	W	gave, given, gave money, money given, cash to friend, lent cash, borrowed, borrow

@@ -1,0 +1,113 @@
+# Health & Medicine: medicines, doctors, tests, and keeping fit.
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+# ---- medicines
+medicine	S	medicines, medcine, medicin, medecine, medician, medisin, madicine, meds, marundhu, marunthu, marundu, dawa, dawai, davai, dava, mathirai, maathirai, tablet, tablets, tablat, tabletu, goli, capsule, capsules, pills, pill, tonic, drug, prescription medicine, medicine strip, tablet strip
+paracetamol	S	paracetmol, paracitamol, fever tablet, fever medicine, kaichal mathirai, bukhar ki dawa
+dolo 650	S	dolo, dolo650
+crocin	S
+calpol	S
+cold tablet	S	cold medicine, cold act, coldact, okacet, levocet, sali mathirai, sardi ki dawa
+cetirizine	S	cetrizine
+sinarest	S
+allegra	S
+montair	S	montek lc
+cough syrup	S	syrup, cough medicine, benadryl, ascoril, corex, honitus, cough tonic, irumal marundhu, khansi ki dawa, cough drops, strepsils, vicks cough drops
+headache tablet	S	headache medicine, thalaivali mathirai, sir dard ki goli, migraine tablet
+saridon	S
+aspirin	S	disprin
+combiflam	S
+ibuprofen	S	brufen
+pain killer	S	painkiller, pain tablet
+antibiotic	S	antibiotics, azithromycin, azithral, amoxicillin, augmentin, cefixime, antibiotic course
+acidity tablet	S	gas tablet, antacid, acidity medicine
+digene	S
+gelusil	S
+eno	S
+pan d	S	pantoprazole, pan 40
+rantac	S
+omez	S
+ors	S	electral, ors packet, ors powder, glucose powder, glucon c
+loose motion tablet	S	vomiting tablet, ondem, loperamide, sporlac, stomach pain tablet, vayiru vali mathirai, pet dard ki dawa, cyclopam, meftal spas, meftal
+pain balm	S	balm, pain relief spray, pain gel
+amrutanjan	S
+zandu balm	S
+tiger balm	S
+moov	S
+volini	S
+iodex	S
+vicks	S	vicks vaporub, vaporub
+inhaler	S
+nasal spray	S	otrivin, nasal drops
+ointment	S	cream ointment, skin ointment, candid, antifungal cream, itch guard, ring guard
+betadine	S
+soframycin	S
+burnol	S
+boroline	S
+dettol antiseptic	S	antiseptic, savlon
+bandage	S	band aid, bandaid, plaster, cotton, cotton roll, gauze, crepe bandage, surgical tape, first aid, first aid kit, dressing
+eye drops	S	eye drop, ear drops, refresh tears, itone
+vitamin tablets	S	vitamin, vitamins, vitamin d, supradyn, folic acid, omega 3, fish oil capsule, supplements, supplement
+multivitamin	S
+vitamin c	S	limcee
+b complex	S	becosules
+zincovit	S
+calcium tablet	S
+iron tablet	S
+protein powder	S	whey protein, whey, protein, creatine, mass gainer, bcaa, pre workout, protein shake powder, muscleblaze
+thermometer	S	bp machine, oximeter, glucometer, sugar test strips, weighing scale, hot water bag, heating pad, knee cap, crepe support, back support belt
+mask	S	face mask, n95 mask, surgical mask, masks, sanitizer, sanitiser, hand sanitizer, gloves
+ayurvedic medicine	S	ayurveda, ayurvedic, siddha medicine, naatu marundhu, nattu marunthu, homeopathy, homeo medicine, homeopathic, chyawanprash, kashayam, kabasura kudineer, nilavembu, patanjali medicine, himalaya tablet, ashwagandha, triphala
+contraceptive	S	condom, condoms, durex, manforce, ipill, i pill, pregnancy test kit, prega news
+
+# ---- pharmacy
+pharmacy	S	pharmacy bill, farmacy, pharmecy, pharmasy, pharma, medical shop, medical store, medicals, medical, medical kadai, chemist, drug store, medical bill, marundhu kadai, dawa dukan, dawai ki dukan
+apollo pharmacy	M	apollo, apollo medicals, wellness forever, muthu pharmacy, thulasi pharmacy, jan aushadhi, generic medical
+medplus	M	med plus
+netmeds	M
+pharmeasy	M	pharm easy
+1mg	M	tata 1mg, onemg
+truemeds	M
+
+# ---- doctor and hospital
+doctor fee	S	doctor, doctor fees, docter, doctar, dr fee, doctor visit, doctor consultation, consultation, consultation fee, consulting fee, consulting, op fee, op ticket, op charge, op chit, token fee doctor, clinic, clinic fee, clinic visit, physician, vaidyar, doctor kitta, online consultation, practo
+hospital	S	hospital bill, hospital fee, hospital charges, hospitl, hosptal, aspathiri, aspatal, hospital visit, gh, government hospital, emergency ward, casualty, admission hospital, ip bill, ward charges, hospital advance, nursing home
+dentist	S	dental, dental clinic, dental checkup, tooth extraction, root canal, rct, teeth cleaning, scaling, tooth filling, braces, braces emi, pal doctor, tooth pain treatment, dental xray
+eye checkup	S	eye test, eye doctor, eye hospital, eye check, vision test, kan doctor, aravind eye, vasan eye care, eye checkup fee
+spectacles	S	specs, spects, glasses, eye glasses, kannadi, chashma, power glass, new specs, lens, contact lens, contact lenses, lens solution, spectacle frame, frame change, lenskart, lenskart specs, titan eyeplus
+skin doctor	S	dermatologist, skin clinic, skin treatment, acne treatment, pimple treatment, hair fall treatment
+physiotherapy	S	physio, physiotherapist, physio session, chiropractor, massage therapy
+counselling	S	therapy, therapist, therapy session, psychologist, psychiatrist, counselor, counseling session
+blood test	S	blood check, blood checkup, lab test, test lab, diagnostic, diagnostics, diagnostic centre, cbc, cbc test, thyrocare, dr lal pathlabs, metropolis lab, hitech lab
+sugar test	S
+thyroid test	S
+urine test	S
+full body checkup	S	master health checkup, health checkup, health check up, body checkup
+covid test	S	rt pcr
+dengue test	S
+scan	S	scan centre, scan center, scan report
+xray	S	x ray, x ray scan
+ct scan	S
+mri	S	mri scan
+ultrasound	S	ultra sound
+ecg	S	echo test
+injection	S	injection charge, tt injection, tetanus, nebulizer, nebulisation
+vaccine	S	vaccination, rabies vaccine, hepatitis vaccine, flu shot
+drip	S	drips, glucose drip, saline
+ambulance	S	ambulance charge, 108 ambulance tips
+health insurance	S	medical insurance, mediclaim, health insurance premium, star health, insurance premium health, care health
+
+# ---- fitness
+gym	S	gym fee, gym fees, gym membership, gymm, jim, gym monthly, gym subscription, gym admission, fitness centre, fitness center, fitness, workout, golds gym, anytime fitness, crossfit
+cult fit	S	cultfit, cult pass
+personal trainer	S	gym trainer
+yoga class	S	yoga, yoga fee, pilates, meditation class, silambam class, martial arts class
+zumba	S	zumba class
+aerobics	S
+karate class	S
+boxing class	S
+swimming	S	swimming class, swimming pool, swimming fee, pool fee, pool entry
+sports coaching	S	badminton coaching, cricket coaching, football coaching, tennis coaching, sports academy fee
+gym gear	S	dumbbells, dumbbell, yoga mat, skipping rope, resistance band, hand gripper, gym gloves, shaker bottle, gym bag
+diet food	S	diet plan, dietician, nutritionist, healthify, healthifyme
+checkup	W	check up, treatment, health, medical expenses, medical expense, sick, fever, illness

@@ -1,0 +1,38 @@
+# Words that say nothing about what was bought. They are kept for phrase matching
+# ("ice cream", "for friends" inside a known phrase) but never start a guess on their own.
+# A word that is also a lexicon item is treated as that item: the lexicon wins.
+
+# English function words
+a an the for of to in on at by with from and or my me i we our us is was it its this that these those some any per each as so via
+
+# paying and buying
+paid pay payed payment payments bought buy buying purchased got took spent spend spending expense expenses expence cost costs price rate total amount amt rs inr rupees rupee rupay money cash upi gpay phonepe paytm bhim online offline card debit credit bank scanned qr
+
+# when
+today yesterday tomorrow morning evening night afternoon noon daily weekly monthly yearly month week day days now again last next early late sunday monday tuesday wednesday thursday friday saturday
+
+# how much, what kind
+new old small big large medium mini extra more less half full double single plain normal regular special hot cold fresh nos no qty quantity pack packs piece pieces one two three four five first second both only just also little few
+
+# who and where
+friend friends bro mate roommate roomie shop shops store stores stall near nearby outside inside home room college campus class office local street road area city town junction stop
+
+# Tanglish
+ku kku la le oda odu kooda vangi vanginen vaanginen vangiten vanguna sapten saapten saptan kudichen poten potten panninen pannen katinen kattinen selavu kaasu panam oru rendu moonu inniku indru netru nethu naalaiku kaalai maalai iravu kadai kadaila kadaiyil ah than dhan aana inga anga konjam periya chinna pudhu pazhaya
+
+# Hinglish
+ka ki ke ko se mein par pe liye liya diya diye kiya kharcha kharch paisa paise rupaye aaj kal subah shaam raat ek teen dukan dukaan wala wali wale bhai yaar khareeda kharida thoda bada chota naya purana
+
+# money coming in is not a spend
+salary stipend income credited received cashback refund bonus scholarship reward
+
+# family and other people: who it was for or paid to, never what was bought
+mom mum mummy mother dad daddy father amma appa anna akka thambi thangachi brother sister bhaiya didi uncle aunty aunt mama mami chithi chithappa periyappa periyamma paati thatha grandma grandpa cousin nanban dost sir madam mam maam boss owner
+
+# common first names ("gpay to ravi", "sent to priya"): without this list the spelling repair
+# would read them as items ("ravi" is one letter from "rava")
+aarav aditya ajay ajith akash akhil akshay amit anand anil anitha anjali ankit anu anusha aravind arjun arun arvind ashok ashwin asha aswin balaji bala bharath bhavya chandru chitra deepa deepak deepika devi dhanush dinesh divya durga ganesh gayathri geetha gokul gopal gowtham hari harini haris harish indhu jagan janani jaya jeeva jothi kala kalai kamal kannan karthi karthik kaviya kavya keerthi kiran kishore kokila krishna kumar lakshmi latha lokesh madhan madhu mahesh mani manoj meena mohan mohammed murali muthu nandhini naveen neha nisha nithin nithya pavithra pooja prabhu pradeep prakash prasanth praveen preethi prem priya priyanka rahul raj raja rajesh raju ram ramesh ramya ranjith rani ravi rekha revathi rohit sai sakthi sandhya sanjay santhosh saran saranya sathish sathya selvam senthil shankar shiva shreya shruthi siva sneha sowmya sri sridhar srinivas subash sudha suganya sunil suresh surya swathi tamil tharun uma varun vasanth veera venkat vicky vignesh vijay vimal vinoth vishal vishnu yogesh yuvaraj
+
+# junk and placeholders
+misc miscellaneous other others etc general random something anything nothing unknown na nil none test testing sample xyz abc lol ok okay hmm idk
+item items thing things stuff product products

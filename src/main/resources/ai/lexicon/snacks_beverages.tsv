@@ -1,0 +1,262 @@
+# Snacks & Beverages: tea-shop spends, bakery items, sweets, soft drinks and other small treats.
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+# ---- hot drinks
+tea	S	chai, chaya, chaai, tee, teaa, cha, chay, cutting chai, cutting, irani chai, tea kadai, tea shop, tea stall
+green tea	S
+lemon tea	S
+ginger tea	S	inji tea
+masala tea	S	masala chai
+black tea	S	sulaimani
+coffee	S	kaapi, kapi, kaafi, coffe, cofee
+filter coffee	S	filter kaapi
+black coffee	S
+cappuccino	S	capuccino
+latte	S
+espresso	S	americano, mocha
+cold coffee	S	iced coffee, frappe, ice coffee, cold cofee
+milk tea	S	paal tea, doodh chai
+boost	S	horlicks drink, bournvita milk
+badam milk	S	badam paal
+rose milk	S
+hot milk	S	masala milk, masala paal
+hot chocolate	S	hot choco
+
+# ---- cold drinks
+juice	S	joos, jucie, juce, fresh juice, fruit juice, jooce, juice kadai, juice shop
+lemon juice	S	lime juice, nimbu pani, elumichai juice, shikanji
+lemon soda	S	lime soda, fresh lime
+nannari sarbath	S	sarbath, sharbat
+orange juice	S	sathukudi juice, mosambi juice, mosambi, sathukudi
+mango juice	S	mango shake, frooti, maaza, mango milkshake
+watermelon juice	S	tharbusani juice
+sugarcane juice	S	karumbu juice, karumbu saaru, ganne ka ras, ganna juice, cane juice
+apple juice	S
+pomegranate juice	S	madhulai juice
+grape juice	S
+pineapple juice	S
+muskmelon juice	S
+carrot juice	S	abc juice
+tender coconut	S	ilaneer, elaneer, ilani, elani, coconut water, nariyal pani, karikku
+milkshake	S	milk shake, shake, thick shake
+falooda	S	faluda
+jigarthanda	S
+oreo shake	S
+chocolate shake	S	kitkat shake
+banana shake	S
+sharjah shake	S
+lassi	S	lassy, sweet lassi, mango lassi, lasi
+buttermilk	S	mor, moru, chaas, chach, masala mor, butter milk, neer mor
+smoothie	S	smoothy
+mojito	S	virgin mojito, mocktail
+iced tea	S	ice tea
+bubble tea	S	boba
+cool drinks	S	cool drink, cooldrinks, cooldrink, soft drink, cold drink, colddrink, thanda
+soda	S	goli soda, paneer soda
+kulukki sarbath	S	kulukki
+coke	S	coca cola, cocacola, coke can
+thums up	S	thumsup, thumbs up
+pepsi	S	pepsi can
+sprite	S
+fanta	S
+mirinda	S
+7up	S	seven up
+mountain dew	S	dew
+limca	S
+bovonto	S
+appy fizz	S	appy
+energy drink	S
+red bull	S	redbull
+sting	S	sting energy
+gatorade	S
+glucon d	S	glucose drink
+water bottle	S	water bottel, mineral water, drinking water bottle, water packet, thanni bottle, paani bottle, 1 litre water, water, thanni, thanneer, paani, pani
+bisleri	S
+kinley	S
+aquafina	S
+flavoured milk	S	flavored milk, milk bottle drink, amul kool, aavin flavoured milk, cavins, cavins milkshake
+soda water	S	club soda, tonic water
+beer	S	bira, kingfisher
+wine	S
+whisky	S	whiskey
+rum	S
+vodka	S
+liquor	S	alcohol, daru, daaru, sarakku, tasmac, bar bill, wine shop, booze
+cigarette	S	cigarettes, cigaret, sutta, smoke, fag, gold flake, classic milds
+beedi	S	bidi
+vape	S
+paan	S	pan, beeda, meetha paan, pan shop, paan shop
+pan masala	S	paan masala
+gutka	S	supari
+
+# ---- fried and tea-time snacks
+samosa	S	samsa, samossa, somasa, samoosa, samosa chaat, onion samosa
+puffs	S	puff, pups, pafs, paffs
+egg puffs	S	egg puff
+veg puffs	S	veg puff
+chicken puffs	S
+vada	S	vadai, wada
+medu vada	S	ulundu vadai
+masala vadai	S	paruppu vadai, masal vadai
+keerai vadai	S
+bajji	S	bajjii, baji, bhajji, bhajiya, bhaji
+molaga bajji	S	milagai bajji
+vazhakkai bajji	S
+onion bajji	S
+bonda	S	bondaa, potato bonda, urulai bonda, mysore bonda, egg bonda
+pakoda	S	pakora, pakkoda, pakodi, onion pakoda, pakauda, bhajia
+cutlet	S	cutlets, veg cutlet, chicken cutlet, katlet
+sundal	S	chundal, sundal masala
+peanuts	S	verkadalai, groundnut, kadalai, roasted peanuts, moongfali, boiled peanuts
+bhel puri	S	bhelpuri, bhel, churmuri
+sev puri	S
+masala puri	S
+dahi puri	S
+pani puri	S	panipuri, pani poori, golgappa, gol gappa, puchka, golgappe
+chaat	S	chat, chaat items
+aloo tikki	S
+dahi vada	S
+kachori	S	kachodi
+papdi chaat	S
+masala corn	S	sweet corn, corn, boiled corn, butter corn, bhutta, makka cholam, cholam
+snacks	S	snack, snaks, snax, evening snacks, tea snacks, theeni, norukku theeni, bites
+spring roll	S	springroll, veg spring roll
+kuzhi paniyaram	S	paniyaram, kuli paniyaram
+murukku	S	muruku, chakli
+thattai	S
+seedai	S
+mixture	S
+kara sev	S	karasev
+omapodi	S
+ribbon pakoda	S
+namkeen	S
+bhujia	S	aloo bhujia, sev
+banana chips	S	nendran chips, chips packet, tapioca chips, kappa chips
+chips	S	chip, potato chips, wafers, nachos chips
+lays	S	lay s
+kurkure	S
+bingo	S	bingo mad angles
+pringles	S
+doritos	S
+cheetos	S
+uncle chips	S
+popcorn	S	pop corn, popcon, butter popcorn, caramel popcorn
+maggi	S	magi, maggie, maggi noodles, instant noodles
+yippee	S	yippee noodles
+cup noodles	S
+top ramen	S
+wai wai	S
+biscuit	S	biscut, biskut, biscuits, biskit, bisket, cream biscuit, britannia, tiger biscuit
+cookies	S	cookie
+parle g	S	parleg
+good day	S
+marie	S	marie gold
+oreo	S
+hide and seek	S
+bourbon	S
+milk bikis	S
+jim jam	S
+rusk	S
+dark fantasy	S
+bun	S
+bun butter jam	S	bun butter, butter bun
+cream bun	S
+bun maska	S
+jam bun	S
+coconut bun	S
+bun samosa	S
+cake	S	cakes, cake piece
+pastry	S	pastries
+cupcake	S	cup cake
+plum cake	S
+muffin	S
+brownie	S
+black forest	S
+chocolate cake	S
+donut	S	doughnut, donuts
+bakery	M	bakery items, bakery snacks, backery, bekary, iyengar bakery, cake shop
+sweet bread	S	milk bread snack, rusk packet, toast biscuit
+dilpasand	S	dilkush
+honey cake	S
+tea cake	S
+khari	S
+tea and snacks	S	tea puffs, tea samosa, tea vadai, tea bajji, tea biscuit, tea bun, chai samosa, chai biscuit
+
+# ---- sweets and frozen
+chocolate	S	choclate, chocolates, choco, chocolat, chacolate, bar one, amul chocolate
+dairy milk	S	dairymilk, cadbury
+kitkat	S	kit kat
+5 star	S	five star
+munch	S
+perk	S
+snickers	S
+milkybar	S
+gems	S
+ferrero rocher	S
+toffee	S	eclairs
+candy	S	lollipop, kopiko
+ice cream	S	icecream, ice creem, icecreem, family pack ice cream, baskin robbins, naturals ice cream, arun ice cream, ibaco, amul ice cream
+cone ice	S	cone, cornetto
+kulfi	S	kulfy
+softy	S	softie
+sundae	S
+cup ice	S	ice cream cup
+chocobar	S	choco bar
+ice candy	S	kuchi ice, ice stick
+gelato	S
+sweets	S	sweet, mithai, meetha, inippu, sweet box
+laddu	S	ladoo, laddoo
+jalebi	S	jilebi
+gulab jamun	S	jamun
+mysore pak	S	mysurpa
+halwa	S	halva
+kesari	S
+rasgulla	S	rasagulla
+barfi	S	burfi
+peda	S
+palkova	S
+payasam	S	kheer
+soan papdi	S
+kaju katli	S
+athirasam	S	adhirasam
+kozhukattai	S
+boli	S	poli
+rasmalai	S
+chewing gum	S	gum, orbit, vicks candy
+bubble gum	S	bubblegum
+center fresh	S
+mentos	S
+mint	S
+halls	S
+dry fruits snack	S	dry fruits, mixed nuts, trail mix
+dates	S	khajoor
+cashew	S	cashews
+almonds	S	badam
+pista	S
+raisins	S	kismis
+peanut candy	S	kadalai mittai
+chikki	S
+kamarkat	S
+then mittai	S
+ellu urundai	S
+protein bar	S	energy bar, granola bar, peanut bar, cocoa bar
+fruit bowl	S	cut fruits, fruit cup, fruit chaat, fruit plate, guava slice, mango slice, pineapple slice
+bread toast	S	toast
+bread jam	S
+butter toast	S
+french toast	S
+garlic bread	S
+cheese toast	S
+quick bite	W	munchies, timepass, time pass, refreshments, refreshment
+
+# ---- cafes
+cafe	M	caffe, coffee shop, cafe bill, kafe, blue tokai, chai days
+starbucks	M	star bucks
+ccd	M	cafe coffee day, coffee day
+third wave	M
+chai kings	M
+chai point	M
+chaayos	M
+tea time	M
+tea boy	M
+juice world	M	fruit shop juice, lassi shop, juice junction, frozen bottle, makers of milkshakes, keventers, the thickshake factory

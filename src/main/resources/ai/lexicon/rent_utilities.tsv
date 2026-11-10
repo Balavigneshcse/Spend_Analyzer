@@ -1,0 +1,61 @@
+# Rent & Utilities: the room or hostel, and the bills that come with it (power, water, gas).
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+# ---- rent
+room rent	S	rent, rentt, rnt, ren, room rnt, rum rent, monthly rent, month rent, rent payment, rent share, my rent share, vaadagai, vadagai, room vaadagai, veetu vadagai, kiraya, room kiraya, makan kiraya, kamra kiraya, bhada room
+house rent	S	home rent, flat rent, apartment rent, portion rent, owner rent, house owner, rent to owner, landlord, land lord
+pg rent	S	pg, pg fee, pg fees, pg payment, paying guest, pg accommodation, pg charges, pg monthly, co living, coliving, stanza living, zolo, zolo stays
+hostel fee	S	hostel fees, hostel, hostal, hostel rent, hostel payment, hostel bill, hostel charges, hostal fees, hostel room, hostel admission, hostel monthly fee, viduthi kattanam, viduthi
+hostel mess fee	S	hostel and mess, hostel mess, hostel mess fees
+advance	S	rent advance, room advance, advance payment room, security deposit, deposit, caution deposit, caution money, token advance, house advance, pagdi
+brokerage	S	broker, broker fee, broker commission, brokerage fee, nobroker, no broker, house broker
+maintenance	S	maintenance charge, maintenance charges, maintenance fee, maintanance, maintainance, maintenence, apartment maintenance, society maintenance, flat maintenance, society fee, association maintenance
+shifting	S	room shifting, house shifting, packers and movers, packers, movers, shifting charge, tempo shifting, porter shifting, luggage shifting
+room cleaning	S	maid, maid salary, servant maid, house keeping, housekeeping, cleaning lady, sweeper, cleaning charge, room cleaning charge, urban company cleaning, velaikari
+cook salary	S	cook, samayal amma, cook amma, cooking maid
+watchman	S	security salary, watchman salary, watchman tips, security guard fee
+garbage fee	S	garbage collection, garbage, kuppai, waste collection, corporation garbage
+lift charge	S	lift maintenance, generator charge, generator fee, common area charge, motor charge, motor repair share
+property tax	S	house tax, water tax, corporation tax
+
+# ---- electricity
+eb bill	S	eb, e b bill, eb payment, eb charge, eb card, current bill, curent bill, currant bill, current charge, karant bill, electricity bill, electricity, electric bill, electricty bill, elecricity bill, light bill, power bill, bijli bill, bijli, minsara kattanam, minsaram, current, msedcl, bses, tata power, adani electricity, apspdcl, tsspdcl, eb share
+tneb bill	S	tneb, tangedco, tangedco bill
+bescom bill	S	bescom
+kseb bill	S	kseb
+prepaid meter recharge	S	meter recharge, electricity recharge
+inverter	S	inverter battery, ups battery, inverter service
+
+# ---- water
+water bill	S	water charge, water charges, metro water, metro water bill, cmwssb, water connection, bwssb, jal board, water tax bill
+water can	S	watercan, water cane, can water, water can 20l, 20 litre can, 20l water, bubble top, bubbletop, bubble top water, drinking water can, thanni can, thanni cane, paani can, water jar, bisleri can, aquafina can, water tin
+water tanker	S	tanker water, lorry water, water lorry, tanker, thanni lorry, water load
+
+# ---- gas
+gas cylinder	S	cylinder, gas, lpg, lpg cylinder, cooking gas, gas booking, gas refill, cylinder refill, cylinder booking, indane, indane gas, hp gas, bharat gas, bharatgas, silinder, cilinder, gas silinder, erivayu, samayal erivayu, gas delivery, gas bill
+piped gas	S	png bill, pipeline gas, igl bill, mahanagar gas, mgl bill
+gas stove repair	S	stove repair, stove service, regulator, gas regulator, gas tube, gas pipe
+
+# ---- repairs and fittings of the room
+plumber	S	plumbing, plumber charge, pipe repair, tap repair, tap change, leak repair, toilet repair, flush repair, drainage cleaning, drainage block
+electrician	S	electrician charge, switch repair, light repair, fuse, switch board repair, motor repair
+fan repair	S
+wiring	S	electrical work
+carpenter	S	carpenter work, door repair
+lock repair	S	lock change, new lock
+duplicate key	S	key duplicate, key making
+ac service	S	ac rent, ac installation, cooler rent, cooler repair
+ac repair	S	ac gas filling
+fridge repair	S
+washing machine repair	S
+geyser repair	S	heater repair
+ro service	S	water purifier service, purifier service, aquaguard service
+pest control	S	cockroach control, termite control, bed bug treatment
+house painting	S	painting work, whitewash, white wash, wall painting, painter
+furniture rent	S	bed rent, cot rent, fridge rent, washing machine rent, rentomojo, furlenco, appliance rent, cycle parking rent
+tube light	S	tubelight, night lamp bulb, fan regulator, tube light choke
+bulb	S	led bulb, light bulb, cfl, zero watt bulb
+switch	S	plug point
+room expenses	W	room expense, room share, room maintenance, house expenses, flat expenses, shared expenses, common expenses, room common fund
+bill	W	bills, billl, bil, utility bill, utilities, utility, monthly bills
+cable tv	W	cable bill, cable, cable operator, local cable, tv cable

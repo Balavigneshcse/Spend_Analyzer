@@ -1,0 +1,185 @@
+# Groceries & Essentials: things bought to cook or stock the room, and grocery delivery apps.
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+# ---- dairy and eggs
+milk	S	paal, pal, doodh, dudh, milk packet, milk pocket, aavin milk, aavin, amul milk, nandini milk, arokya milk, arokya, toned milk, milk pkt, paal packet
+curd	S	thayir, dahi, curd packet, curd cup, yogurt, yoghurt, thayir packet
+butter	S	amul butter, vennai, makhan
+ghee	S	nei, ghee packet, desi ghee
+paneer	S	panneer, panner, paneer packet
+cheese	S	cheese slice, cheese cubes, amul cheese
+eggs	S	egg, muttai, mutta, anda, ande, egg tray, dozen eggs, eggs tray, kodi guddu
+milk powder	S	condensed milk, milkmaid, dairy whitener, amulya
+
+# ---- staples
+rice	S	arisi, chawal, chaval, rice bag, ponni rice, basmati rice, basmati, boiled rice, raw rice, idli rice, puzhungal arisi
+wheat flour	S	atta, aata, godhumai maavu, wheat atta, aashirvaad atta, chakki atta
+maida	S	all purpose flour, maida maavu
+rava	S	ravai, sooji, suji, semolina
+idli batter	S	dosa batter, maavu, dosa maavu, idli maavu, batter, id batter
+dal	S	dhal, daal, paruppu, pulses
+toor dal	S	thuvaram paruppu
+moong dal	S	pasi paruppu
+urad dal	S	ulundhu
+chana dal	S	kadalai paruppu
+masoor dal	S
+sugar	S	sakkarai, cheeni, chini, sarkarai, sugar packet
+jaggery	S	vellam, gur
+salt	S	uppu, namak, salt packet, tata salt
+oil	S	cooking oil, ennai, tel, coconut oil cooking, refined oil, oil packet, gold winner, fortune oil
+sunflower oil	S
+groundnut oil	S	kadalai ennai
+gingelly oil	S	nallennai
+tea powder	S	tea dust, tea thool, chai patti, tea leaves, three roses, red label, tata tea, chakra gold
+coffee powder	S	coffee thool, bru, nescafe, sunrise coffee, instant coffee, filter coffee powder, narasus
+bread	S	bread packet, bred, milk bread, brown bread, wheat bread, modern bread, sandwich bread, pav, pao
+jam	S	kissan jam, fruit jam, mixed fruit jam
+sauce	S
+ketchup	S	tomato ketchup, tomato sauce
+soy sauce	S
+chilli sauce	S
+mayonnaise	S	mayo
+peanut butter	S
+nutella	S	chocolate spread
+honey	S
+cheese spread	S
+oats	S	quaker oats, saffola oats, masala oats
+muesli	S
+cornflakes	S	corn flakes, kelloggs
+chocos	S
+cereal	S
+noodles packet	S	atta noodles, pasta packet, vermicelli, semiya packet
+aval	S	flattened rice, puffed rice, pori, murmura
+health drink powder	S	boost powder, protinex
+horlicks	S
+bournvita	S
+complan	S
+masala powder	S	masala, chicken masala powder, sakthi masala, aachi masala, everest masala, mdh masala, spices
+chilli powder	S	milagai thool
+turmeric powder	S	manjal thool
+coriander powder	S	malli thool
+sambar powder	S
+rasam powder	S
+garam masala	S
+biryani masala	S
+mustard	S	kadugu
+jeera	S	seeragam, cumin
+pepper	S	milagu
+cardamom	S	elakkai
+cloves	S
+cinnamon	S
+fenugreek	S	vendhayam
+tamarind	S	puli, imli
+pickle	S	oorugai, achar, achaar, mango pickle, lemon pickle
+appalam	S	papad, pappad, vadam, vathal
+
+# ---- vegetables
+vegetables	S	vegetable, veggies, veg, vegitables, vegtables, kaikari, kaai kari, kaikarigal, sabzi, sabji, subzi, sabjee, tarkari, greens, keerai
+onion	S	onions, vengayam, pyaz, pyaaz, kanda, big onion, small onion, sambar onion, chinna vengayam
+tomato	S	tomatoes, thakkali, tamatar, tamaatar
+potato	S	potatoes, urulaikizhangu, urulai kizhangu, urulai, aloo, aalu, kizhangu
+carrot	S	carrots, gajar
+beetroot	S
+beans	S
+cabbage	S
+cauliflower	S	gobi
+brinjal	S	kathirikai
+ladies finger	S	vendakkai, bhindi
+drumstick	S	murungakkai
+radish	S
+capsicum	S
+pumpkin	S
+bottle gourd	S	sorakkai
+bitter gourd	S	pavakkai
+snake gourd	S
+peas	S	green peas
+green chilli	S	chilli, pachai milagai, mirchi, hari mirch
+ginger garlic	S	ginger garlic paste
+ginger	S	inji, adrak
+garlic	S	poondu, lahsun
+coriander leaves	S	kothamalli, kothamalli thazhai, dhaniya
+curry leaves	S	karuveppilai
+mint leaves	S	pudina
+lemon	S	lemons, elumichai, elumichampazham, nimbu
+coconut	S	thengai, nariyal, coconut piece
+mushroom	S	mushrooms, kaalan, button mushroom
+sweet potato	S	tapioca, kappa, maravalli kizhangu, yam, senai kizhangu
+
+# ---- fruits
+fruits	S	fruit, pazham, pazhangal, phal, fal, fruits shop
+banana	S	bananas, vazhaipazham, vazhai pazham, kela, plantain, nendran, poovan, robusta, rasthali
+apple	S	apples, seb, aapil
+orange	S	oranges, kamala orange, santra, kinnow
+mango	S	mangoes, mangos, maambazham, mambazham, aam
+grapes	S	grape, dratchai, thiratchai, angoor
+pomegranate	S	madhulai, mathulai, anar
+papaya	S	pappali, papita
+guava	S	koyya, koiya pazham, amrud, peru
+watermelon	S	tharbusani, tharpoosani, tarbooz, muskmelon
+pineapple	S	annasi, ananas
+chikoo	S	sapota
+custard apple	S	seethapazham
+jackfruit	S	palapazham
+kiwi	S
+strawberry	S
+dragon fruit	S
+avocado	S
+pear	S
+plum	S
+litchi	S
+
+# ---- meat and fish
+raw chicken	S	kozhi, koli, kozhi kari, broiler chicken, chicken kg, murgi, murga, chicken shop, chicken stall
+mutton	S	muton, aatu kari, aattu kari, goat meat, mutton kg, bakra
+fish	S	meen, machli, machhi, fish market, fresh fish, sea food, seafood, nethili, vanjaram, sankara, mathi
+meat	S	kari, gosht, meat shop, kari kadai
+beef	S
+pork	S
+kheema	S	keema
+prawns	S	eral, iraal, jhinga
+crab	S	nandu
+
+# ---- household essentials
+groceries	S	grocery, grocry, grosery, groceries shopping, provisions, provision, provision store, maligai, maligai saman, maligai samaan, malligai porul, kirana, ration, rashan, monthly groceries, monthly provisions, veetu saman, ghar ka saman, kirana saman
+supermarket	M	super market, departmental store, department store, hypermarket, mart
+dmart	M	d mart, dmart ready, kannan departmental, pothys super market, ratnadeep, lulu hypermarket, saravana stores grocery
+reliance fresh	M	reliance smart
+more supermarket	M
+spar	M
+big bazaar	M
+nilgiris	M
+spencers	M
+star bazaar	M
+blinkit	M	blinkit order, blink it, grofers
+zepto	M	zepto order, zeptto
+instamart	M	swiggy instamart, insta mart
+bigbasket	M	big basket, bb now, bbnow, bb daily
+jiomart	M	jio mart, flipkart minutes, flipkart grocery, otipy
+amazon fresh	M
+dunzo	M
+country delight	M
+licious	M
+freshtohome	M	fresh to home
+milkbasket	M
+dish wash	S	dishwash, vim, vim bar, vim gel, pril, dish wash bar, dishwash liquid, scrubber, scotch brite, steel scrub
+floor cleaner	S	domex, colin, bleaching powder
+lizol	S
+phenyl	S
+harpic	S	toilet cleaner
+room freshener	S	odonil, air freshener
+garbage bags	S	garbage bag, dustbin bags, trash bags, dustbin cover
+mosquito coil	S	mosquito repellent, mortein, kosu bathi, kosu vathi, hit spray
+good knight	S
+all out	S	allout
+mosquito bat	S
+odomos	S
+matchbox	S	match box, theepetti
+lighter	S
+candle	S	candles
+agarbatti	S	incense sticks
+camphor	S	karpooram
+tissue	S	tissues, tissue paper, napkins, paper napkin, kitchen towel, wet wipes kitchen, cling wrap
+toilet paper	S	toilet roll
+aluminium foil	S
+batteries	S	battery, aa battery, aaa battery, pencil cell, cell battery, duracell, eveready
+kitchen things	W	kitchen items, saman, samaan, household items, household, essentials, daily needs, home needs, stuff for room, room items

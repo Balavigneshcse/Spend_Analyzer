@@ -1,0 +1,439 @@
+# Gold set: phrases typed and labelled by hand, the way a student would log a spend.
+# NEVER used for training or calibration. Subsets: clean, typo (misspelt by hand), mixed
+# (Tanglish / Hinglish), multi (several words or with digits), junk (must go to OTHER).
+# Columns (TAB separated): text | expected CATEGORY | subset | amount (optional) | other acceptable CATEGORY (optional)
+
+# ---------------- clean
+filter coffee	SNACKS_BEVERAGES	clean	20
+masala dosa	FOOD_MEALS	clean	60
+veg puff	SNACKS_BEVERAGES	clean	15
+curd rice	FOOD_MEALS	clean	50
+chicken fried rice	FOOD_MEALS	clean	110
+lime soda	SNACKS_BEVERAGES	clean	25
+tender coconut	SNACKS_BEVERAGES	clean	50
+banana chips	SNACKS_BEVERAGES	clean	40
+ice cream	SNACKS_BEVERAGES	clean
+milkshake	SNACKS_BEVERAGES	clean	80
+egg dosa	FOOD_MEALS	clean
+parotta	FOOD_MEALS	clean	30
+full meals	FOOD_MEALS	clean	90
+burger	FOOD_MEALS	clean	120
+momos	FOOD_MEALS	clean
+dinner	FOOD_MEALS	clean	100
+zomato	FOOD_MEALS	clean	260
+dominos	FOOD_MEALS	clean
+vegetables	GROCERIES	clean	140
+eggs	GROCERIES	clean	42
+tomato	GROCERIES	clean
+cooking oil	GROCERIES	clean	160
+bigbasket	GROCERIES	clean	540
+sugar	GROCERIES	clean
+apple	GROCERIES	clean	120
+bread	GROCERIES	clean	40
+groceries	GROCERIES	clean	900
+train ticket	TRANSPORT_FUEL	clean	85
+metro	TRANSPORT_FUEL	clean	40
+uber	TRANSPORT_FUEL	clean
+diesel	TRANSPORT_FUEL	clean	500
+toll	TRANSPORT_FUEL	clean	65
+puncture	TRANSPORT_FUEL	clean	100
+bike service	TRANSPORT_FUEL	clean
+rapido	TRANSPORT_FUEL	clean	55
+irctc	TRANSPORT_FUEL	clean	410
+helmet	TRANSPORT_FUEL	clean	850	SHOPPING
+notebook	EDUCATION_STATIONERY	clean	45
+pencil	EDUCATION_STATIONERY	clean	5
+printout	EDUCATION_STATIONERY	clean
+exam fee	EDUCATION_STATIONERY	clean	1500
+textbook	EDUCATION_STATIONERY	clean	420
+calculator	EDUCATION_STATIONERY	clean
+lab record	EDUCATION_STATIONERY	clean	80
+college fee	EDUCATION_STATIONERY	clean	25000
+highlighter	EDUCATION_STATIONERY	clean	30
+project report	EDUCATION_STATIONERY	clean
+hostel fee	RENT_UTILITIES	clean	12000
+water bill	RENT_UTILITIES	clean	150
+electricity bill payment	RENT_UTILITIES	clean	780
+house rent	RENT_UTILITIES	clean	5500
+security deposit	RENT_UTILITIES	clean
+lpg cylinder	RENT_UTILITIES	clean	920
+airtel	MOBILE_INTERNET	clean	299
+data pack	MOBILE_INTERNET	clean	61
+wifi	MOBILE_INTERNET	clean	400
+sim card	MOBILE_INTERNET	clean
+dth recharge	MOBILE_INTERNET	clean	300
+postpaid bill	MOBILE_INTERNET	clean	499
+paracetamol	HEALTH_MEDICINE	clean	20
+doctor	HEALTH_MEDICINE	clean	300
+pharmacy	HEALTH_MEDICINE	clean
+x ray	HEALTH_MEDICINE	clean	400
+gym	HEALTH_MEDICINE	clean	1000
+eye drops	HEALTH_MEDICINE	clean
+spectacles	HEALTH_MEDICINE	clean	1200
+shampoo	PERSONAL_CARE	clean
+toothbrush	PERSONAL_CARE	clean	30
+shaving cream	PERSONAL_CARE	clean	75
+dry cleaning	PERSONAL_CARE	clean	200
+sanitary pads	PERSONAL_CARE	clean
+perfume	PERSONAL_CARE	clean	350
+beard trim	PERSONAL_CARE	clean	60
+flipkart	SHOPPING	clean	799
+shirt	SHOPPING	clean	650
+shoes	SHOPPING	clean
+power bank	SHOPPING	clean	999
+myntra	SHOPPING	clean	1299
+bedsheet	SHOPPING	clean
+umbrella	SHOPPING	clean	250
+movie ticket	ENTERTAINMENT_SUBS	clean	190
+amazon prime	ENTERTAINMENT_SUBS	clean	299
+spotify	ENTERTAINMENT_SUBS	clean	59
+water park	ENTERTAINMENT_SUBS	clean	900
+hotstar	ENTERTAINMENT_SUBS	clean
+wedding gift	SOCIAL_GIFTS	clean	500
+birthday party	SOCIAL_GIFTS	clean	700
+temple offering	SOCIAL_GIFTS	clean	100
+charity	SOCIAL_GIFTS	clean
+loan emi	TRANSFERS_FEES	clean	2200
+bank charges	TRANSFERS_FEES	clean	59
+insurance premium	TRANSFERS_FEES	clean
+mutual fund	TRANSFERS_FEES	clean	500
+courier	TRANSFERS_FEES	clean	80
+
+# ---------------- typo (misspelt by hand)
+cofffe	SNACKS_BEVERAGES	typo	15
+samosaa	SNACKS_BEVERAGES	typo	12
+biscit	SNACKS_BEVERAGES	typo
+choclet	SNACKS_BEVERAGES	typo	20
+icecrem	SNACKS_BEVERAGES	typo
+milkshke	SNACKS_BEVERAGES	typo	70
+lassii	SNACKS_BEVERAGES	typo	40
+popcron	SNACKS_BEVERAGES	typo
+chipss	SNACKS_BEVERAGES	typo	10
+jalabi	SNACKS_BEVERAGES	typo	30
+pepsii	SNACKS_BEVERAGES	typo
+bajjee	SNACKS_BEVERAGES	typo	20
+dossa	FOOD_MEALS	typo	40
+idlly	FOOD_MEALS	typo
+parrotta	FOOD_MEALS	typo	30
+chappathy	FOOD_MEALS	typo
+biriyanii	FOOD_MEALS	typo	140
+frid rice	FOOD_MEALS	typo	80
+nodles	FOOD_MEALS	typo
+burgur	FOOD_MEALS	typo	99
+sandwch	FOOD_MEALS	typo
+shawrma	FOOD_MEALS	typo	90
+pongl	FOOD_MEALS	typo	40
+luch	FOOD_MEALS	typo	70
+dinnar	FOOD_MEALS	typo
+breakfat	FOOD_MEALS	typo	45
+swiggyy	FOOD_MEALS	typo	210
+mlik	GROCERIES	typo	28
+onoin	GROCERIES	typo
+tomoto	GROCERIES	typo	30
+vegtable	GROCERIES	typo
+banan	GROCERIES	typo	40
+suger	GROCERIES	typo
+braed	GROCERIES	typo	40
+grocries	GROCERIES	typo	600
+ptrol	TRANSPORT_FUEL	typo	100
+petrl	TRANSPORT_FUEL	typo
+deesel	TRANSPORT_FUEL	typo	400
+auot	TRANSPORT_FUEL	typo	30
+rapdo	TRANSPORT_FUEL	typo
+metrro	TRANSPORT_FUEL	typo	30
+punchure	TRANSPORT_FUEL	typo
+parkng	TRANSPORT_FUEL	typo	20
+bus tickt	TRANSPORT_FUEL	typo	25
+trian ticket	TRANSPORT_FUEL	typo
+pencl	EDUCATION_STATIONERY	typo	10
+notebuk	EDUCATION_STATIONERY	typo
+xeroxx	EDUCATION_STATIONERY	typo	12
+prnt out	EDUCATION_STATIONERY	typo
+calclator	EDUCATION_STATIONERY	typo	600
+exam fes	EDUCATION_STATIONERY	typo
+stationry	EDUCATION_STATIONERY	typo	85
+recrd note	EDUCATION_STATIONERY	typo
+rom rent	RENT_UTILITIES	typo	4500
+hostl fee	RENT_UTILITIES	typo
+electrcity bill	RENT_UTILITIES	typo	640
+maintanence	RENT_UTILITIES	typo
+watr can	RENT_UTILITIES	typo	35
+rechareg	MOBILE_INTERNET	typo	239
+recharj	MOBILE_INTERNET	typo
+airtl	MOBILE_INTERNET	typo	199
+wifii	MOBILE_INTERNET	typo
+brodband	MOBILE_INTERNET	typo	600
+medicne	HEALTH_MEDICINE	typo	120
+tablt	HEALTH_MEDICINE	typo
+doctr	HEALTH_MEDICINE	typo	250
+hosptial	HEALTH_MEDICINE	typo
+pharmcy	HEALTH_MEDICINE	typo	180
+shmpoo	PERSONAL_CARE	typo
+harcut	PERSONAL_CARE	typo	100
+tothpaste	PERSONAL_CARE	typo
+laundri	PERSONAL_CARE	typo	120
+soapp	PERSONAL_CARE	typo	35
+amazom	SHOPPING	typo	450
+flipkar	SHOPPING	typo
+tshrit	SHOPPING	typo	399
+earphon	SHOPPING	typo
+chargr	SHOPPING	typo	250
+shos	SHOPPING	typo
+jens	SHOPPING	typo	899
+movei	ENTERTAINMENT_SUBS	typo	180
+netflik	ENTERTAINMENT_SUBS	typo
+spotifi	ENTERTAINMENT_SUBS	typo	59
+bokmyshow	ENTERTAINMENT_SUBS	typo
+gfit	SOCIAL_GIFTS	typo	300
+donaton	SOCIAL_GIFTS	typo
+birtday gift	SOCIAL_GIFTS	typo	450
+tempel	SOCIAL_GIFTS	typo
+trasfer	TRANSFERS_FEES	typo	1000
+insurence	TRANSFERS_FEES	typo
+corier	TRANSFERS_FEES	typo	60
+
+# ---------------- mixed (Tanglish / Hinglish in Latin letters)
+kaapi	SNACKS_BEVERAGES	mixed	15
+chaya	SNACKS_BEVERAGES	mixed
+karumbu juice	SNACKS_BEVERAGES	mixed	20
+mor	SNACKS_BEVERAGES	mixed
+vadai	SNACKS_BEVERAGES	mixed	10
+sundal	SNACKS_BEVERAGES	mixed
+mithai	SNACKS_BEVERAGES	mixed	60
+tea kadai	SNACKS_BEVERAGES	mixed	12
+juice kudichen	SNACKS_BEVERAGES	mixed	40
+chai pi liya	SNACKS_BEVERAGES	mixed
+sappadu	FOOD_MEALS	mixed	80
+thayir sadam	FOOD_MEALS	mixed
+kothu parotta	FOOD_MEALS	mixed	90
+khana	FOOD_MEALS	mixed
+nashta	FOOD_MEALS	mixed	40
+biryani sapten	FOOD_MEALS	mixed	150
+paal packet	GROCERIES	mixed	28
+muttai	GROCERIES	mixed
+thakkali vengayam	GROCERIES	mixed	60
+sabzi	GROCERIES	mixed
+doodh	GROCERIES	mixed	30
+arisi	GROCERIES	mixed
+kirana	GROCERIES	mixed	700
+sabji mandi	GROCERIES	mixed	150
+bus kattanam	TRANSPORT_FUEL	mixed	20
+auto kiraya	TRANSPORT_FUEL	mixed
+vandi service	TRANSPORT_FUEL	mixed	500
+petrol potten	TRANSPORT_FUEL	mixed	100
+puthagam	EDUCATION_STATIONERY	mixed
+kitab kharidi	EDUCATION_STATIONERY	mixed	300
+veetu vadagai	RENT_UTILITIES	mixed	5000
+bijli bill	RENT_UTILITIES	mixed
+thanni can	RENT_UTILITIES	mixed	35
+recharge panniten	MOBILE_INTERNET	mixed	239
+mathirai	HEALTH_MEDICINE	mixed
+dawai	HEALTH_MEDICINE	mixed	90
+mudi vettu	PERSONAL_CARE	mixed	100
+sabun	PERSONAL_CARE	mixed
+thuni	SHOPPING	mixed	800
+seruppu	SHOPPING	mixed
+kapde	SHOPPING	mixed	1200
+padam ticket	ENTERTAINMENT_SUBS	mixed	150
+kovil	SOCIAL_GIFTS	mixed
+kalyana moi	SOCIAL_GIFTS	mixed	501
+friend ku treat	SOCIAL_GIFTS	mixed	400
+kadan koduthen	TRANSFERS_FEES	mixed	500
+udhar	TRANSFERS_FEES	mixed
+veetuku anupinen	TRANSFERS_FEES	mixed	2000
+dost ko udhar diya	TRANSFERS_FEES	mixed	300
+
+# ---------------- multi (several words, or with digits)
+2 samosa 1 tea	SNACKS_BEVERAGES	multi	34
+idli 3 vada 1	FOOD_MEALS	multi	45	SNACKS_BEVERAGES
+pen 2 pencil 1	EDUCATION_STATIONERY	multi	25
+jio 299 plan	MOBILE_INTERNET	multi	299
+petrol 200 bike	TRANSPORT_FUEL	multi	200
+milk 1 litre curd	GROCERIES	multi	75
+xerox 15 pages and binding	EDUCATION_STATIONERY	multi	55
+amazon phone case	SHOPPING	multi	199
+flipkart tshirt 2	SHOPPING	multi	698
+swiggy chicken biryani	FOOD_MEALS	multi	230
+bus ticket to chennai	TRANSPORT_FUEL	multi	320
+room rent november	RENT_UTILITIES	multi	4500
+doctor fee and tablets	HEALTH_MEDICINE	multi	420
+haircut and shave	PERSONAL_CARE	multi	150
+movie ticket 2 popcorn	ENTERTAINMENT_SUBS	multi	560
+birthday cake for friend	SOCIAL_GIFTS	multi	450
+dosa2	FOOD_MEALS	multi	80
+199rs recharge	MOBILE_INTERNET	multi	199
+tea x2	SNACKS_BEVERAGES	multi	24
+medplus medicines 340	HEALTH_MEDICINE	multi	340
+eb bill 3 months	RENT_UTILITIES	multi	1900
+ola auto to station	TRANSPORT_FUEL	multi	110
+zepto milk bread eggs	GROCERIES	multi	180
+netflix 149 monthly	ENTERTAINMENT_SUBS	multi	149
+lent 500 to ravi	TRANSFERS_FEES	multi	500
+blue shirt meesho	SHOPPING	multi	420
+
+# ---------------- junk (expected OTHER, needs review)
+asdf	OTHER	junk
+qwerty	OTHER	junk	50
+misc	OTHER	junk	100
+paid	OTHER	junk	200
+200	OTHER	junk
+???	OTHER	junk
+xyz	OTHER	junk	30
+hjkl	OTHER	junk
+.	OTHER	junk
+12345	OTHER	junk	12345
+aaaa	OTHER	junk
+test	OTHER	junk	10
+....	OTHER	junk
+zzzz	OTHER	junk
+
+# ---------------- typo, second batch: heavier damage (two slips, spelt as it sounds)
+bryanee	FOOD_MEALS	typo	140
+chiken biryni	FOOD_MEALS	typo	160
+kofi	SNACKS_BEVERAGES	typo	15
+jus	SNACKS_BEVERAGES	typo	30
+choklate	SNACKS_BEVERAGES	typo
+biskt	SNACKS_BEVERAGES	typo	10
+jiuce	SNACKS_BEVERAGES	typo
+milk shak	SNACKS_BEVERAGES	typo	70
+ice crm	SNACKS_BEVERAGES	typo
+pizaa	FOOD_MEALS	typo	250
+burgr	FOOD_MEALS	typo
+chapti	FOOD_MEALS	typo	40
+parata	FOOD_MEALS	typo
+sambr rice	FOOD_MEALS	typo	50
+veg biryni	FOOD_MEALS	typo
+maggy	SNACKS_BEVERAGES	typo	30
+nudles	FOOD_MEALS	typo
+pani pori	SNACKS_BEVERAGES	typo	30
+lemon jus	SNACKS_BEVERAGES	typo
+watr botle	SNACKS_BEVERAGES	typo	20
+ciggaret	SNACKS_BEVERAGES	typo
+kurkuree	SNACKS_BEVERAGES	typo	20
+dairy milk choclate	SNACKS_BEVERAGES	typo
+rechrg	MOBILE_INTERNET	typo	199
+mobil recharge	MOBILE_INTERNET	typo
+internt bill	MOBILE_INTERNET	typo	500
+xerx	EDUCATION_STATIONERY	typo
+tution fes	EDUCATION_STATIONERY	typo	1500
+shampoe	PERSONAL_CARE	typo
+hair cutt	PERSONAL_CARE	typo	100
+tooth past	PERSONAL_CARE	typo
+detergnt	PERSONAL_CARE	typo	60
+medisan	HEALTH_MEDICINE	typo
+docter fes	HEALTH_MEDICINE	typo	300
+electricty bil	RENT_UTILITIES	typo	700
+hostal fes	RENT_UTILITIES	typo
+room rnet	RENT_UTILITIES	typo	4000
+gass cylindar	RENT_UTILITIES	typo
+moviee tikt	ENTERTAINMENT_SUBS	typo	190
+netflex	ENTERTAINMENT_SUBS	typo
+earfon	SHOPPING	typo	299
+t shrt	SHOPPING	typo
+slipers	SHOPPING	typo	200
+bagg	SHOPPING	typo
+wach	SHOPPING	typo	900
+bus pas	TRANSPORT_FUEL	typo	300
+shar auto	TRANSPORT_FUEL	typo
+petrrol	TRANSPORT_FUEL	typo	150
+trane tiket	TRANSPORT_FUEL	typo
+birthdy treat	SOCIAL_GIFTS	typo	500
+donashun	SOCIAL_GIFTS	typo
+gift for frend	SOCIAL_GIFTS	typo	350
+credt card bill	TRANSFERS_FEES	typo
+atm chrges	TRANSFERS_FEES	typo	25
+lone emi	TRANSFERS_FEES	typo
+vegitables n fruits	GROCERIES	typo	220
+egss	GROCERIES	typo
+ricee bag	GROCERIES	typo	1300
+panner	GROCERIES	typo
+atta packt	GROCERIES	typo	60
+
+# ---------------- mixed, second batch: with verbs and particles the word lists may not know
+auto la ponen	TRANSPORT_FUEL	mixed	40
+amma ku anupinen	TRANSFERS_FEES	mixed	1000	SOCIAL_GIFTS
+night sapadu hotel la	FOOD_MEALS	mixed	120
+bike ku petrol	TRANSPORT_FUEL	mixed
+exam fees kattiyachu	EDUCATION_STATIONERY	mixed	1200
+current bill kattinen	RENT_UTILITIES	mixed
+mobile ku recharge	MOBILE_INTERNET	mixed	239
+tea kudichom	SNACKS_BEVERAGES	mixed
+dosai saptom	FOOD_MEALS	mixed	50
+room ka kiraya	RENT_UTILITIES	mixed	4000
+chai aur samosa	SNACKS_BEVERAGES	mixed
+dawai li	HEALTH_MEDICINE	mixed	80
+doodh aur bread	GROCERIES	mixed
+bus la ticket	TRANSPORT_FUEL	mixed	20
+nanban ku treat	SOCIAL_GIFTS	mixed
+sabji li	GROCERIES	mixed	90
+
+# ---------------- multi, second batch
+2 parotta 1 omelette	FOOD_MEALS	multi	60
+maggi and tea at night	SNACKS_BEVERAGES	multi	50
+auto 40 and bus 15	TRANSPORT_FUEL	multi	55
+notebook 3 pens 5	EDUCATION_STATIONERY	multi	185
+soap shampoo paste	PERSONAL_CARE	multi	160
+shirt and pant from max	SHOPPING	multi	1400
+netflix and spotify	ENTERTAINMENT_SUBS	multi	208
+tablets for fever	HEALTH_MEDICINE	multi	45
+jio recharge 239 for mom	MOBILE_INTERNET	multi	239
+rent and eb	RENT_UTILITIES	multi	5200
+
+# ---------------- junk, second batch
+fgh	OTHER	junk
+lkjhg	OTHER	junk	20
+blah	OTHER	junk
+hmm	OTHER	junk	5
+ok	OTHER	junk
+1 2 3	OTHER	junk
+
+# ---------------- clean, second batch
+badam milk	SNACKS_BEVERAGES	clean	25
+ginger tea	SNACKS_BEVERAGES	clean
+pani puri	SNACKS_BEVERAGES	clean	30
+sweet corn	SNACKS_BEVERAGES	clean
+chocolate	SNACKS_BEVERAGES	clean	40
+fish fry	FOOD_MEALS	clean	120
+veg noodles	FOOD_MEALS	clean
+paneer butter masala	FOOD_MEALS	clean	160
+idli	FOOD_MEALS	clean	30
+lunch	FOOD_MEALS	clean
+canteen	FOOD_MEALS	clean	60
+curd	GROCERIES	clean
+potato	GROCERIES	clean	40
+dal	GROCERIES	clean
+fruits	GROCERIES	clean	150
+instamart	GROCERIES	clean	320
+cab	TRANSPORT_FUEL	clean
+flight ticket	TRANSPORT_FUEL	clean	4200
+fastag recharge	TRANSPORT_FUEL	clean	500
+bus fare	TRANSPORT_FUEL	clean
+stapler	EDUCATION_STATIONERY	clean	60
+online course	EDUCATION_STATIONERY	clean
+admission fee	EDUCATION_STATIONERY	clean	5000
+geometry box	EDUCATION_STATIONERY	clean
+maintenance charge	RENT_UTILITIES	clean	600
+plumber	RENT_UTILITIES	clean
+broadband bill	MOBILE_INTERNET	clean	707
+mobile recharge	MOBILE_INTERNET	clean
+dentist	HEALTH_MEDICINE	clean	500
+vitamin tablets	HEALTH_MEDICINE	clean
+hair oil	PERSONAL_CARE	clean	90
+face cream	PERSONAL_CARE	clean
+deodorant	PERSONAL_CARE	clean	220
+charger	SHOPPING	clean
+jeans	SHOPPING	clean	1100
+backpack	SHOPPING	clean
+pillow	SHOPPING	clean	300
+sunglasses	SHOPPING	clean
+youtube premium	ENTERTAINMENT_SUBS	clean	79
+turf	ENTERTAINMENT_SUBS	clean
+trip	ENTERTAINMENT_SUBS	clean	2500
+concert ticket	ENTERTAINMENT_SUBS	clean
+gift	SOCIAL_GIFTS	clean	300
+treat	SOCIAL_GIFTS	clean
+pooja items	SOCIAL_GIFTS	clean	120
+atm fee	TRANSFERS_FEES	clean
+fixed deposit	TRANSFERS_FEES	clean	5000
+chit fund	TRANSFERS_FEES	clean
+income tax	TRANSFERS_FEES	clean	1200

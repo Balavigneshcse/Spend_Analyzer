@@ -1,0 +1,165 @@
+# Food & Meals: proper meals and tiffin, restaurants and food delivery.
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+# Each spelling may hold a-z, 0-9 and single spaces only.
+
+# ---- rice meals
+biryani	S	briyani, biriyani, biriani, bryani, biryaani, biriyaani, beriyani, biryani rice
+chicken biryani	S	chicken briyani, chicken biriyani, kozhi biryani
+mutton biryani	S	mutton briyani, mutton biriyani
+egg biryani	S	egg briyani, muttai biryani
+veg biryani	S	veg briyani, vegetable biryani
+kuska	S	khuska, plain biryani
+meals	S	meal, full meals, veg meals, sappadu, saapadu, sapadu, saapaadu, soru, thali, veg thali
+non veg meals	S	nonveg meals, non veg thali, non veg, nonveg, non veg food, nv meals
+mini meals	S	limited meals, variety rice
+fried rice	S	friedrice, fried rise, veg fried rice
+chicken fried rice	S	chicken rice, chicken friedrice
+egg fried rice	S	egg rice, egg friedrice, muttai rice
+schezwan rice	S	schezwan fried rice, szechuan rice
+curd rice	S	thayir sadam, thayir sadham, dahi chawal, curdrice
+lemon rice	S	elumichai sadam, lemon sadam
+tomato rice	S	thakkali sadam, tomato sadam
+sambar rice	S	sambar sadam, sambar sadham, bisibelebath, bisi bele bath
+tamarind rice	S	puliyodharai, puliyogare, puli sadam
+coconut rice	S	thengai sadam
+ghee rice	S	nei soru, nei choru
+jeera rice	S	zeera rice
+pulao	S	pulav, veg pulao, pulaav, peas pulao
+khichdi	S	kichdi, khichadi, kichadi
+mandi	S	chicken mandi, mutton mandi, kuzhi mandhi, mandhi
+rice bowl	S	rice plate
+kanji	S	kanjee, rice kanji, koozh, kool
+
+# ---- tiffin
+dosa	S	dosai, thosai, dhosa, dosha, plain dosa
+masala dosa	S	masal dosa, masala dosai, masal dosai
+ghee roast	S	ghee dosa, nei roast, nei dosai, roast
+onion dosa	S	onion dosai, onion roast
+rava dosa	S	rava dosai, ravai dosai, onion rava
+podi dosa	S	podi dosai
+egg dosa	S	egg dosai, muttai dosai
+kal dosa	S	kal dosai, kari dosai, set dosa
+paneer dosa	S	cheese dosa, mushroom dosa
+uthappam	S	uttapam, uthapam, oothappam, onion uthappam
+idli	S	idly, idlee, iddli, idili, podi idli, ghee idli
+mini idli	S	sambar idli, mini idly
+idli vada	S	idly vada, idli vadai, idly vadai
+pongal	S	ven pongal, pongal vada, khara pongal
+poori	S	puri, poori masala, puri bhaji, poori kilangu, puri sabji
+chapati	S	chapathi, chappathi, chappati, sapathi, chapatti
+roti	S	rotti
+phulka	S
+parotta	S	parota, barotta, porotta, parotha, proota, purotta, parrota
+kothu parotta	S	kothu parota, kothu, koththu parotta, kotthu, chilli parotta, egg kothu
+veechu parotta	S	veechu, bun parotta, coin parotta, wheat parotta
+paratha	S	aloo paratha, parantha, aloo parantha, gobi paratha
+naan	S	butter naan, nan, garlic naan
+kulcha	S
+idiyappam	S	idiappam, string hoppers, noolappam
+appam	S	aappam, appam stew, palappam
+puttu	S	pittu, puttu kadala
+upma	S	uppuma, upuma, rava upma, uppittu
+adai	S	adai avial, adai dosai
+tiffin	S	tiffen, tifin, tiffan, tiffin items, nashta, nasta
+semiya	S	semiya upma, sevai, vermicelli upma
+poha	S	aval upma, avalakki
+bread omelette	S	bread omlet, bread omlette, bread egg
+omelette	S	omlet, omlette, omelet, amlet, double omelette, half boil, kalakki
+egg bhurji	S	egg podimas, muttai podimas, egg burji
+boiled egg	S	boil egg, avicha muttai
+
+# ---- curries and sides
+chicken curry	S	chicken gravy, chicken masala, kozhi kuzhambu, chicken kulambu
+butter chicken	S	chicken butter masala
+chicken 65	S	chicken65, chilli chicken, chicken chilli, pepper chicken
+chicken fry	S	chicken roast, fried chicken, kozhi varuval, chicken varuval
+grill chicken	S	grilled chicken, grill
+tandoori chicken	S	tandoori
+barbeque chicken	S	bbq chicken
+chicken lollipop	S	lollipop chicken, chicken wings, wings
+mutton curry	S	mutton gravy, mutton kuzhambu, mutton chukka, mutton sukka
+fish fry	S	fish curry, meen kuzhambu, meen varuval, fish meals
+prawn fry	S	prawn masala, eral varuval, prawn
+paneer butter masala	S	paneer masala, pbm, paneer tikka, kadai paneer, palak paneer
+gobi manchurian	S	gobi 65, gobi manjurian, manchurian, gobi fry, cauliflower fry
+mushroom masala	S	mushroom fry, mushroom gravy, kalan
+dal fry	S	dal tadka, dal rice, dal makhani
+kurma	S	korma, veg kurma, salna, chalna
+sambar	S	sambhar, saambar
+rasam	S	rasam rice, rasam sadam
+kootu	S	poriyal, aviyal, avial
+chole bhature	S	chole, chana masala, chole kulche, chana bhatura
+rajma chawal	S	rajma, rajma rice, kadhi chawal
+pav bhaji	S	pavbhaji, pao bhaji
+sabzi roti	S	roti sabji, roti sabzi
+egg curry	S	egg masala, muttai kuzhambu, egg gravy
+side dish	W	gravy, curry, sides
+
+# ---- fast food and world food
+noodles	S	noodels, noodle, veg noodles, hakka noodles, chowmein, chow mein
+chicken noodles	S	egg noodles, schezwan noodles
+shawarma	S	shawarama, shawerma, shavarma, shwarma, shawarma roll, shawarma plate
+burger	S	burgar, veg burger, chicken burger, zinger, zinger burger, whopper
+pizza	S	piza, pizzza, cheese pizza, veg pizza, chicken pizza, margherita
+sandwich	S	sandwitch, sandwhich, sanwich, veg sandwich, grilled sandwich, club sandwich
+frankie	S	franky, kathi roll, chicken roll, egg roll, veg roll, wrap
+momos	S	momo, chicken momos, veg momos, fried momos, dumplings
+pasta	S	white sauce pasta, macaroni, spaghetti
+french fries	S	fries, finger chips, peri peri fries
+biryani combo	S	combo meal, combo, bucket chicken, chicken bucket
+fried chicken bucket	S	chicken popcorn, popcorn chicken, chicken strips, nuggets
+barbecue	S	barbeque, bbq, kebab, kabab, seekh kebab, tikka
+soup	S	sup, hot soup, chicken soup, veg soup, tomato soup, sweet corn soup, mutton soup
+salad	S	fruit salad, veg salad, sprouts
+subway sub	S	sub sandwich
+hot dog	S	hotdog
+tacos	S	taco, burrito, nachos
+sushi	S	ramen, korean noodles
+dhokla	S	khaman, thepla, khakhra
+litti chokha	S	litti, sattu
+vada pav	S	vadapav, wada pav, vada pao
+misal pav	S	misal, usal pav
+thukpa	S	thupka
+
+# ---- meal words
+breakfast	S	break fast, brekfast, breakfst, morning tiffin, kaalai tiffin, kalai sapadu
+lunch	S	lunch box, lunchh, madhiyam sapadu, mathiya sapadu, afternoon meals, dopahar ka khana
+dinner	S	diner, dinnner, night food, night sapadu, iravu sapadu, raat ka khana, supper
+food	M	foods, fud, khana, khaana, sapad, unavu, saapad
+parcel	W	food parcel, parcel food, takeaway, take away
+buffet	S	unlimited meals
+curry rice	S	rice and curry, rice curry
+
+# ---- places that sell meals
+mess	S	mess food, mess meals, mess sapadu
+mess bill	S	mess fee, mess fees, mess token, mess coupon, mess advance, mess charge, mess card
+canteen	S	cantin, canteen food, college canteen, canten, cafeteria food
+hotel	M	hotel food, hotel sapadu, restaurant, restarant, resturant, restaraunt, dhaba, bhavan, eatery
+food court	S	foodcourt
+tiffin centre	S	tiffin center, tiffin kadai, idli kadai, kaiyendhi bhavan, thattu kadai, roadside food
+swiggy	M	swigy, swiggi, swiggy order, swiggy food
+zomato	M	zomoto, zometo, zomato order, zomatto
+eatsure	M	eat sure, faasos, behrouz, box8
+dominos	M	domino, dominoz, dominos pizza
+kfc	M	kfc chicken, kentucky
+mcdonalds	M	mcd, mc donalds, macdonalds, mcdonald, mc d
+burger king	M	burgerking, bk burger
+pizza hut	M	pizzahut
+subway	M	sub way
+a2b	M	adyar ananda bhavan
+saravana bhavan	M
+sangeetha	M
+annapoorna	M
+anjappar	M
+junior kuppanna	M
+thalappakatti	M	thalapakatti, dindigul thalappakatti
+ss hyderabad biryani	M	ss hyderabad
+salem rr	M	rr biryani
+ambur biryani	M
+star biryani	M
+paradise biryani	M	paradise, behrouz biryani, biryani blues
+haldirams meal	M	haldiram restaurant
+barbeque nation	M	bbq nation, absolute barbecue
+wow momo	M	wow momos
+tiffin service	S	dabba, tiffin dabba, dabba service, lunch dabba, carrier meals, home food
+chicken	S	chiken, chikken, chickn, chicken dish

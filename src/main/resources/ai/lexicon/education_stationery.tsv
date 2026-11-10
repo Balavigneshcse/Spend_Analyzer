@@ -1,0 +1,131 @@
+# Education & Stationery: college fees, books, stationery, printing and courses.
+# Columns (TAB separated): item | strength (S clear item, M shop or brand, W vague word) | other spellings and names
+
+# ---- writing things
+pen	S	pens, blue pen, black pen, red pen, pena, penn, reynolds, cello pen, pilot pen, uniball, butterflow, pen pack, use and throw pen
+gel pen	S
+ball pen	S	ballpen
+ink pen	S	fountain pen
+pen refill	S	refill
+pencil	S	pencils, pensil, pencile, pencel, pencil box, apsara, natraj, nataraj, mechanical pencil, micro tip pencil, pencil lead, lead box, hb pencil, drawing pencil
+eraser	S	rubber, erasor, eraiser, erazer, eraser and sharpener
+sharpener	S	sharpner, cutter, pencil sharpener
+scale	S	ruler, steel scale, plastic scale
+marker	S	marker pen, whiteboard marker, permanent marker, board marker, cd marker
+highlighter	S	highlighter pen, highliter, hilighter
+sketch pens	S	sketch pen, sketch, sketches, colour pens, color pens, brush pen
+crayons	S
+colour pencils	S	color pencils
+water colour	S	poster colour
+paint brush	S
+correction pen	S	whitener, white ink, correction tape
+geometry box	S	geometry, instrument box, compass box, camlin box
+compass	S
+protractor	S
+divider	S
+set square	S
+glue	S	gum bottle, stick file gum
+fevicol	S
+fevistick	S	glue stick
+fevikwik	S
+cello tape	S	sellotape, tape
+double side tape	S
+stapler	S	stapler pins, staple pin, stapler pin, pins
+paper clips	S	binder clips
+punching machine	S
+scissors	S	scissor, kathiri, paper cutter knife
+
+# ---- paper and books
+notebook	S	note book, notebooks, notbook, notebok, note, notes book, long size notebook, long note, classmate, classmate notebook, ruled notebook, unruled notebook, 200 pages note, spiral notebook, rough note, rough notebook, copy
+record note	S	record notebook, record, lab record, record book, practical record, observation note, observation notebook, observation, lab manual, manual, lab note
+a4 sheet	S	a4 sheets, a4 paper, a4, a4 bundle, a4 size paper, white sheet, white paper, paper bundle, bond paper, ruled sheet, ruled paper, paper, papers, sheets
+graph sheet	S	graph paper, graph, graph notebook, graph sheets
+chart	S	chart paper, charts, drawing sheet, drawing chart, thermocol, project chart, craft paper, colour paper
+drawing book	S	drawing note, drawing notebook, sketch book, sketchbook, ed sheet, engineering drawing sheet
+file	S	files, stick file, folder, project file, document file, plastic folder, file folder, clip file, office file, box file
+exam pad	S	writing pad, clip board, clipboard, exam board
+textbook	S	text book, textbooks, book, books, bok, puthagam, pusthagam, kitab, kitaab, reference book, guide, guide book, question bank, qb, previous year papers, local author book, second hand book, old books, novel, story book, local guide
+calculator	S	calci, calc, scientific calculator, casio, casio calculator, fx 991, calculater, caluclator
+drafter	S	mini drafter, drafting machine, t square, lab coat, labcoat, apron, lab apron, workshop uniform, workshop dress, safety shoes
+id card	S	id card fee, id card lanyard, lanyard, id tag, duplicate id card, college id
+stationery	S	stationary, stationery items, stationary items, stationery shop, stationary shop, stationeries, statinary, book shop, bookshop, book stall, fancy store stationery
+
+# ---- printing
+xerox	S	zerox, xerax, xerex, xeros, xrox, jerox, photocopy, photo copy, photostat, copies, xerox copy, xerox shop, notes xerox, book xerox, xerox kadai
+printout	S	print out, print, prints, printing, print outs, printouts, color print, colour printout, black and white print, bw print, project print, report print, a4 print
+spiral binding	S	spiral, binding, book binding, soft binding, hard binding, calico binding, project binding, comb binding, record binding
+lamination	S	laminate, id lamination, certificate lamination
+scanning	S	scan copy, document scan, scan and print
+browsing	S	browsing centre, browsing center, net centre, net cafe, internet cafe, cyber cafe, browsing charge
+project report	S	project work, project materials, project kit, project components, mini project, final year project, project expenses, model making, science project
+passport photo	S	passport size photo, photos passport, passport size photos, photo print, stamp size photo
+
+# ---- fees
+college fee	S	college fees, clg fee, clg fees, college fee payment, tuition fee, tuition fees, tution fee, tution fees, semester fee, semester fees, sem fee, sem fees, term fee, term fees, year fee, annual fees, fee payment, fees payment, school fee, school fees, kattanam, college kattanam
+exam fee	S	exam fees, examination fee, exam registration, supplementary fee, supply fee, backlog fee, photocopy of answer sheet, exam form, exam application
+arrear fee	S	arrear fees, arrear exam fee
+revaluation fee	S	revaluation
+hall ticket	S	hallticket
+admission fee	S	admission, admission fees, application fee, application form, form fee, registration fee, enrollment fee, counselling fee, prospectus, entrance exam fee, entrance fee
+lab fee	S	lab fees, breakage fee, association fee, event registration, paper presentation fee, department fee
+library fee	S	library fees, library card
+library fine	S
+symposium fee	S	symposium registration
+workshop fee	S	workshop registration
+seminar fee	S	conference fee
+hackathon fee	S
+placement fee	S	placement training fee, training fee
+internship fee	S
+iv fee	S	industrial visit fee
+certificate fee	S	certificate, degree certificate, marksheet fee, verification fee, attestation
+bonafide certificate	S	bonafide
+transcript	S	transcript fee
+tc fee	S
+convocation fee	S
+fee	W	fees, feez, fess
+
+# ---- courses and coaching
+tuition	S	tution, tuitions, tuition class, tution class, tuition center, class fee, classes fee, special class
+coaching	S	coaching class, coaching fee, coaching fees, coaching centre
+crash course	S
+test series	S	mock test
+gate coaching	S
+upsc coaching	S
+neet coaching	S
+jee coaching	S
+tnpsc coaching	S
+bank coaching	S
+online course	S	course, course fee, online class, geeksforgeeks course, gfg course, internshala course, certification course, certification exam, aws certification
+udemy	S	udemy course
+coursera	S	coursera course
+unacademy	S
+byjus	S
+physics wallah	S	pw batch
+nptel	S	nptel exam, nptel exam fee
+skillshare	S
+edx	S
+great learning	S
+simplilearn	S
+scaler	S
+coding ninjas	S
+language class	S	hindi class, german class, french class, gate application, gate exam fee, cat exam fee
+spoken english	S	spoken english class
+ielts	S	ielts fee
+toefl	S
+gre	S	gre fee
+typing class	S	typewriting class
+computer class	S
+tally class	S
+music class	S
+dance class	S
+leetcode premium	S	leetcode
+chegg	S
+grammarly	S
+turnitin	S	plagiarism check
+chatgpt plus	S	chatgpt
+github pro	S
+overleaf	S
+competitive exam form	S	tnpsc application, ssc application, bank exam fee, rrb application, upsc application, exam hall ticket print, online application
+study materials	S	school supplies, college supplies, study material, materials, material, notes, notes copy, class notes, printed notes, handwritten notes
+magazine	S	employment news, competition success
+newspaper	S	news paper, paper bill, the hindu
