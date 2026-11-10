@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#5b2d8e">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Track what you spend. Simple and private.">
+<title>Log in - Spend Analyzer</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/login.css">
+<script type="module" src="/js/login.js"></script>
+</head>
+<body class="login-page">
+
+<header class="topbar">
+	<div class="topbar-inner">
+		<a class="brand" href="/login.html"><img src="/img/logo.svg" alt="" width="28" height="28">Spend Analyzer</a>
+	</div>
+</header>
+
+<div id="wake" class="wake" role="status" hidden>Waking up the server, this can take a minute...</div>
+<div id="live" class="sr-only" role="status" aria-live="polite"></div>
+
+<main class="login-main">
+	<noscript><p class="notice problem">Please turn on JavaScript to use Spend Analyzer.</p></noscript>
+	<div class="login-card">
+
+		<!-- Log in -->
+		<section id="view-login" data-view="login" aria-labelledby="h-login">
+			<h1 id="h-login" tabindex="-1">Log in</h1>
+			<p class="lead">See your balances and your spends.</p>
+			<form id="form-login" novalidate>
+				<p class="notice form-notice" role="alert" hidden></p>
+				<div class="field">
+					<label for="login-email">Email</label>
+					<input class="input" id="login-email" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="254" aria-describedby="login-email-err">
+					<p class="field-error" id="login-email-err" hidden></p>
+				</div>
+				<div class="field">
+					<label for="login-password">Password</label>
+					<div class="reveal">
+						<input class="input" id="login-password" name="password" type="password" autocomplete="current-password" maxlength="128" aria-describedby="login-password-err">
+					</div>
+					<p class="field-error" id="login-password-err" hidden></p>
+				</div>
+				<button class="btn big block" type="submit">Log in</button>
+			</form>
+			<div class="login-links">
+				<button class="btn link" type="button" data-go="forgot">Forgot password?</button>
+				<button class="btn link" type="button" data-go="register" data-register-link>Create account</button>
+			</div>
+		</section>
+
+		<!-- Create account -->
+		<section id="view-register" data-view="register" aria-labelledby="h-register" hidden>
+			<h1 id="h-register" tabindex="-1">Create account</h1>
+			<p class="lead">We will send a code to your email.</p>
+			<form id="form-register" novalidate>
+				<p class="notice form-notice" role="alert" hidden></p>
+				<div class="field">
+					<label for="reg-name">Name</label>
+					<input class="input" id="reg-name" name="name" type="text" autocomplete="name" maxlength="60" aria-describedby="reg-name-err">
+					<p class="field-error" id="reg-name-err" hidden></p>
+				</div>
+				<div class="field">
+					<label for="reg-email">Email</label>
+					<input class="input" id="reg-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" aria-describedby="reg-email-err">
+					<p class="field-error" id="reg-email-err" hidden></p>
+				</div>
+				<div class="field">
+					<label for="reg-phone">Mobile number</label>
+					<input class="input" id="reg-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="98765 43210" aria-describedby="reg-phone-err reg-phone-hint">
+					<p class="field-hint" id="reg-phone-hint">Indian mobile number, 10 digits.</p>
+					<p class="field-error" id="reg-phone-err" hidden></p>
+				</div>
+				<div class="field">
+					<label for="reg-password">Password</label>
+					<div class="reveal">
+						<input class="input" id="reg-password" name="password" type="password" autocomplete="new-password" maxlength="128" aria-describedby="reg-password-err">
+					</div>
+					<p class="field-error" id="reg-password-err" hidden></p>
+					<div id="reg-rules"></div>
+				</div>
+				<button class="btn big block" type="submit">Create account</button>
+			</form>
+			<div class="login-links">
+				<span class="muted">Have an account?</span>
+				<button class="btn link" type="button" data-go="login">Log in</button>
+			</div>
+		</section>
+
+		<!-- Enter code (new account) -->
+		<section id="view-code" data-view="code" aria-labelledby="h-code" hidden>
+			<h1 id="h-code" tabindex="-1">Enter code</h1>
+			<p class="lead">If this email can receive a code, we have sent one to <strong id="code-email"></strong>. The code works for 10 minutes.</p>
+			<form id="form-code" novalidate>
+				<p class="notice form-notice" role="alert" hidden></p>
+				<div class="field">
+					<label for="code-input">6-digit code</label>
+					<input class="input code-input" id="code-input" name="code" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" maxlength="6" aria-describedby="code-input-err">
+					<p class="field-error" id="code-input-err" hidden></p>
+				</div>
+				<button class="btn big block" type="submit">Confirm</button>
+				<div class="resend">
+					<button class="btn link" type="button" id="code-resend" disabled>Send again</button>
+				</div>
+			</form>
+			<p class="spam-hint">Check your Spam folder if you cannot find the email.</p>
+			<div class="login-links">
+				<button class="btn link" type="button" data-go="register">Change my details</button>
+				<button class="btn link" type="button" data-go="login">Log in</button>
+			</div>
+		</section>
+
+		<!-- Forgot password: email -->
+		<section id="view-forgot" data-view="forgot" aria-labelledby="h-forgot" hidden>
+			<h1 id="h-forgot" tabindex="-1">Forgot password</h1>
+			<p class="lead">Enter your email. We will send a code to set a new password.</p>
+			<form id="form-forgot" novalidate>
+				<p class="notice form-notice" role="alert" hidden></p>
+				<div class="field">
+					<label for="forgot-email">Email</label>
+					<input class="input" id="forgot-email" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="254" aria-describedby="forgot-email-err">
+					<p class="field-error" id="forgot-email-err" hidden></p>
+				</div>
+				<button class="btn big block" type="submit">Send code</button>
+			</form>
+			<div class="login-links">
+				<button class="btn link" type="button" data-go="login">Back to log in</button>
+			</div>
+		</section>
+
+		<!-- Forgot password: code + new password -->
+		<section id="view-reset" data-view="reset" aria-labelledby="h-reset" hidden>
+			<h1 id="h-reset" tabindex="-1">Set a new password</h1>
+			<p class="lead">If this email can receive a code, we have sent one to <strong id="reset-email"></strong>. The code works for 10 minutes.</p>
+			<form id="form-reset" novalidate>
+				<p class="notice form-notice" role="alert" hidden></p>
+				<div class="field">
+					<label for="reset-code">6-digit code</label>
+					<input class="input code-input" id="reset-code" name="code" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" maxlength="6" aria-describedby="reset-code-err">
+					<p class="field-error" id="reset-code-err" hidden></p>
+				</div>
+				<div class="field">
+					<label for="reset-password">New password</label>
+					<div class="reveal">
+						<input class="input" id="reset-password" name="newPassword" type="password" autocomplete="new-password" maxlength="128" aria-describedby="reset-password-err">
+					</div>
+					<p class="field-error" id="reset-password-err" hidden></p>
+					<div id="reset-rules"></div>
+				</div>
+				<button class="btn big block" type="submit">Change password</button>
+				<div class="resend">
+					<button class="btn link" type="button" id="reset-resend" disabled>Send again</button>
+				</div>
+			</form>
+			<p class="spam-hint">Check your Spam folder if you cannot find the email.</p>
+			<div class="login-links">
+				<button class="btn link" type="button" data-go="login">Back to log in</button>
+			</div>
+		</section>
+
+	</div>
+	<p class="login-foot">Your spends stay in your account. Nobody else can see them.</p>
+</main>
+
+</body>
+</html>
