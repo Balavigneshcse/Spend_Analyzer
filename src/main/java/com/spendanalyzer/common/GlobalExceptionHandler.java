@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.spendanalyzer.security.SameOriginApiFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -45,12 +47,18 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler({ HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class })
-	public ResponseEntity<ErrorBody> handleUnreadable(Exception ex) {
+	public ResponseEntity<ErrorBody> handleUnreadable(Exception ex, HttpServletRequest request) {
+		if (bodyTooLarge(request)) {
+			return tooLarge();
+		}
 		return ResponseEntity.badRequest().body(ErrorBody.of("bad_request", "The request could not be read."));
 	}
 
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ErrorBody> handleOther(Exception ex) {
+	public ResponseEntity<ErrorBody> handleOther(Exception ex, HttpServletRequest request) {
+		if (bodyTooLarge(request)) {
+			return tooLarge();
+		}
 		if (ex instanceof ErrorResponse standard) {
 			// Spring's own errors (404 for unknown paths, 405, 415 ...) keep their status.
 			HttpStatusCode status = standard.getStatusCode();
@@ -62,6 +70,19 @@ public class GlobalExceptionHandler {
 		log.error("Unhandled error [{}]", reference, ex);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 			.body(ErrorBody.of("server_error", "Something went wrong. Please try again. (ref " + reference + ")"));
+	}
+
+	/**
+	 * True when reading the body was cut off at the size cap (a body sent without a Content-Length;
+	 * one with a length is refused by the filter itself). Whatever exception that surfaced as, the
+	 * cause is the size.
+	 */
+	private static boolean bodyTooLarge(HttpServletRequest request) {
+		return request.getAttribute(SameOriginApiFilter.BODY_TOO_LARGE_ATTRIBUTE) != null;
+	}
+
+	private static ResponseEntity<ErrorBody> tooLarge() {
+		return ResponseEntity.status(413).body(ErrorBody.of("too_large", "That request is too large."));
 	}
 
 }

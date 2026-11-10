@@ -21,12 +21,16 @@ import java.util.concurrent.Future;
 
 import org.junit.jupiter.api.Test;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MvcResult;
 
 /** Password guessing is slowed down, identically for addresses with and without an account. */
 class LoginThrottleIntegrationTest extends AuthIntegrationBase {
 
 	private static final String WRONG = "Wrong#Guess123";
+
+	@Autowired
+	LoginThrottle throttle;
 
 	private static long assertBlocked(MvcResult result, long maxSeconds) throws Exception {
 		assertError(result, 429, "too_many_requests");
@@ -144,6 +148,38 @@ class LoginThrottleIntegrationTest extends AuthIntegrationBase {
 		// exactly five passwords were checked, the rest were turned away
 		assertThat(statuses.stream().filter(status -> status == 401)).hasSize(5);
 		assertThat(statuses.stream().filter(status -> status == 429)).hasSize(guesses - 5);
+	}
+
+	@Test
+	void aCancelledAttemptIsNotCountedAsAWrongPassword() throws Exception {
+		String email = newEmail();
+		client.insertUser(email, PASSWORD);
+		String ip = newIp();
+
+		// more than either limit: attempts whose password could not be checked at all
+		for (int i = 0; i < LoginThrottle.EMAIL_LIMIT + 1; i++) {
+			long attempt = throttle.claim(email, ip);
+			assertThat(failures(email)).isEqualTo(1);
+			throttle.cancel(attempt);
+			assertThat(failures(email)).isZero();
+		}
+		assertStatus(client.tryLogin(email, PASSWORD, ip), 200);
+
+		// cancelling takes back that one attempt only: real wrong passwords stay counted
+		for (int i = 0; i < 4; i++) {
+			assertError(client.tryLogin(email, WRONG, ip), 401, "invalid_credentials");
+		}
+		throttle.cancel(throttle.claim(email, ip));
+		assertThat(failures(email)).isEqualTo(4);
+		assertError(client.tryLogin(email, WRONG, ip), 401, "invalid_credentials");
+		assertBlocked(client.tryLogin(email, PASSWORD, ip), 900);
+	}
+
+	private int failures(String email) {
+		return jdbc.sql("SELECT count(*) FROM login_attempts WHERE email = ? AND NOT success")
+			.param(email)
+			.query(Integer.class)
+			.single();
 	}
 
 	@Test

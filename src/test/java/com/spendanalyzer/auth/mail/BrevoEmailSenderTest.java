@@ -4,9 +4,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpConnectTimeoutException;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.time.Duration;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import javax.net.ssl.SSLSession;
 
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.JsonNode;
@@ -26,7 +40,7 @@ class BrevoEmailSenderTest {
 
 		assertThat(request.method()).isEqualTo("POST");
 		assertThat(request.uri().toString()).isEqualTo("https://brevo.invalid/v3/smtp/email");
-		assertThat(request.timeout()).contains(Duration.ofSeconds(8));
+		assertThat(request.timeout()).contains(Duration.ofSeconds(30));
 		assertThat(request.headers().map()).containsOnlyKeys("api-key", "accept", "content-type");
 		assertThat(request.headers().firstValue("api-key")).contains("xkeysib-test-key");
 		assertThat(request.headers().firstValue("accept")).contains("application/json");
@@ -54,9 +68,54 @@ class BrevoEmailSenderTest {
 	}
 
 	@Test
-	void theTimeoutsAreShort() {
-		assertThat(BrevoEmailSender.CONNECT_TIMEOUT).isEqualTo(Duration.ofSeconds(3));
-		assertThat(BrevoEmailSender.REQUEST_TIMEOUT).isEqualTo(Duration.ofSeconds(8));
+	void theTimeoutsLeaveRoomForAColdStart() {
+		// the first TLS handshake of a cold JVM on a tenth of a CPU takes several seconds
+		assertThat(BrevoEmailSender.CONNECT_TIMEOUT).isEqualTo(Duration.ofSeconds(15));
+		assertThat(BrevoEmailSender.REQUEST_TIMEOUT).isEqualTo(Duration.ofSeconds(30));
+	}
+
+	@Test
+	void aFailedConnectionIsTriedOnceMore() {
+		for (IOException failure : List.of(new ConnectException("refused"),
+				new HttpConnectTimeoutException("HTTP connect timed out"))) {
+			ScriptedSender scripted = new ScriptedSender(failure, accepted());
+
+			assertThatCode(() -> scripted.send(MAIL)).doesNotThrowAnyException();
+			assertThat(scripted.exchanges).isEqualTo(2);
+		}
+	}
+
+	@Test
+	void aConnectionThatFailsTwiceIsGivenUp() {
+		ScriptedSender scripted = new ScriptedSender(new ConnectException("refused"),
+				new HttpConnectTimeoutException("HTTP connect timed out"), accepted());
+
+		assertThatThrownBy(() -> scripted.send(MAIL)).isInstanceOf(EmailException.class)
+			.hasMessage("Brevo could not be reached: HttpConnectTimeoutException")
+			.hasNoCause();
+		// one retry, not a loop
+		assertThat(scripted.exchanges).isEqualTo(2);
+	}
+
+	@Test
+	void aFailureAfterTheConnectionIsNotRetried() {
+		// the request may have reached Brevo: sending it again could deliver the mail twice
+		for (IOException failure : List.of(new HttpTimeoutException("request timed out"),
+				new IOException("connection reset"))) {
+			ScriptedSender scripted = new ScriptedSender(failure, accepted());
+
+			assertThatThrownBy(() -> scripted.send(MAIL)).isInstanceOf(EmailException.class)
+				.hasMessageStartingWith("Brevo could not be reached");
+			assertThat(scripted.exchanges).isEqualTo(1);
+		}
+	}
+
+	@Test
+	void aRefusalByBrevoIsNotRetried() {
+		ScriptedSender scripted = new ScriptedSender(answer(401, "{\"message\":\"Key not found\"}"), accepted());
+
+		assertThatThrownBy(() -> scripted.send(MAIL)).isInstanceOf(EmailException.class).hasMessageContaining("HTTP 401");
+		assertThat(scripted.exchanges).isEqualTo(1);
 	}
 
 	@Test
@@ -99,6 +158,79 @@ class BrevoEmailSenderTest {
 	@Test
 	void theRealEndpointIsTheDefault() {
 		assertThat(BrevoEmailSender.DEFAULT_URL).isEqualTo("https://api.brevo.com/v3/smtp/email");
+	}
+
+	/** A sender without a network: every round trip gives the next scripted outcome. */
+	private static final class ScriptedSender extends BrevoEmailSender {
+
+		private final Deque<Object> outcomes;
+
+		int exchanges;
+
+		ScriptedSender(Object... outcomes) {
+			super("https://brevo.invalid/v3/smtp/email", "xkeysib-test-key", "noreply@example.com", "Spend Analyzer");
+			this.outcomes = new ArrayDeque<>(List.of(outcomes));
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
+		HttpResponse<String> exchange(HttpRequest request) throws IOException {
+			exchanges++;
+			Object outcome = outcomes.remove();
+			if (outcome instanceof IOException failure) {
+				throw failure;
+			}
+			return (HttpResponse<String>) outcome;
+		}
+
+	}
+
+	private static HttpResponse<String> accepted() {
+		return answer(201, "{\"messageId\":\"<abc@relay>\"}");
+	}
+
+	private static HttpResponse<String> answer(int status, String body) {
+		return new HttpResponse<>() {
+			@Override
+			public int statusCode() {
+				return status;
+			}
+
+			@Override
+			public String body() {
+				return body;
+			}
+
+			@Override
+			public HttpRequest request() {
+				return null;
+			}
+
+			@Override
+			public Optional<HttpResponse<String>> previousResponse() {
+				return Optional.empty();
+			}
+
+			@Override
+			public HttpHeaders headers() {
+				return HttpHeaders.of(Map.of(), (name, value) -> true);
+			}
+
+			@Override
+			public Optional<SSLSession> sslSession() {
+				return Optional.empty();
+			}
+
+			@Override
+			public URI uri() {
+				return URI.create("https://brevo.invalid/v3/smtp/email");
+			}
+
+			@Override
+			public HttpClient.Version version() {
+				return HttpClient.Version.HTTP_1_1;
+			}
+		};
 	}
 
 }

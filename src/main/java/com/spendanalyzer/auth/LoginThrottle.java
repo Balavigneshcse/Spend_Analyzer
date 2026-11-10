@@ -19,8 +19,8 @@ import org.springframework.transaction.support.TransactionTemplate;
  * The counts are by the email that was typed, whether or not it has an account.
  * <p>
  * A guess is written down as a failure BEFORE the password is checked and corrected afterwards
- * when it was right. Requests arriving together are therefore all counted before any of them gets
- * its answer and cannot outrun the limit.
+ * when it was right (or removed when the check could not run). Requests arriving together are
+ * therefore all counted before any of them gets its answer and cannot outrun the limit.
  */
 @Component
 class LoginThrottle {
@@ -47,7 +47,7 @@ class LoginThrottle {
 
 	/**
 	 * Takes one guess for this email from this address, or refuses with 429.
-	 * @return the id of the attempt, for {@link #succeeded(long)}
+	 * @return the id of the attempt, for {@link #succeeded(long)} or {@link #cancel(long)}
 	 */
 	long claim(String email, String ip) {
 		return tx.execute(status -> {
@@ -71,6 +71,15 @@ class LoginThrottle {
 	/** The password was right: the attempt no longer counts as a failure. */
 	void succeeded(long attemptId) {
 		jdbc.sql("UPDATE login_attempts SET success = TRUE WHERE id = ?").param(attemptId).update();
+	}
+
+	/**
+	 * The password was never compared (no free hashing slot, a database error): the attempt was not
+	 * a guess and must not count as a wrong one. A guess that was not checked reveals nothing, so
+	 * forgetting it gives nobody a free try.
+	 */
+	void cancel(long attemptId) {
+		jdbc.sql("DELETE FROM login_attempts WHERE id = ?").param(attemptId).update();
 	}
 
 	/** Forgets the failures of an email, after its owner proved themselves with a password reset. */

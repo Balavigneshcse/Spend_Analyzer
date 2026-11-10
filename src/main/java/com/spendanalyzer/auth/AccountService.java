@@ -74,7 +74,16 @@ public class AccountService {
 			throw ApiException.field(field, missing);
 		}
 		long attempt = throttle.claim(user.email(), ip);
-		if (!hasher.matches(password, user.passwordHash())) {
+		boolean matches;
+		try {
+			matches = hasher.matches(password, user.passwordHash());
+		}
+		catch (RuntimeException ex) {
+			// the password was never compared (no free hashing slot): not a wrong guess
+			throttle.cancel(attempt);
+			throw ex;
+		}
+		if (!matches) {
 			throw ApiException.field(field, wrong);
 		}
 		throttle.succeeded(attempt);

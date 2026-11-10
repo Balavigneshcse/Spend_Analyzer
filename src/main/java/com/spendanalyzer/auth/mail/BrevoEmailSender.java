@@ -2,8 +2,10 @@ package com.spendanalyzer.auth.mail;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpConnectTimeoutException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
@@ -21,8 +23,12 @@ import org.springframework.stereotype.Component;
 
 /**
  * Production mail: Brevo's HTTPS API. (The free host blocks the SMTP ports, so SMTP is not an option.)
- * Short timeouts, and a failure is reported with the HTTP status and Brevo's answer only: never
- * with the request body, which contains the code.
+ * A failure is reported with the HTTP status and Brevo's answer only: never with the request body,
+ * which contains the code.
+ * <p>
+ * The timeouts are generous: mail goes out on a background thread that nobody waits for, and the
+ * first TLS handshake of a cold JVM on a tenth of a CPU takes several seconds. A connection that
+ * could not be made at all is tried once more.
  */
 @Component
 @ConditionalOnProperty(name = "app.mail.provider", havingValue = "brevo")
@@ -30,9 +36,10 @@ public class BrevoEmailSender implements EmailSender {
 
 	public static final String DEFAULT_URL = "https://api.brevo.com/v3/smtp/email";
 
-	static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(3);
+	/** Covers the TLS handshake as well. */
+	static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(15);
 
-	static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(8);
+	static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(30);
 
 	private static final int MAX_LOGGED_BODY = 500;
 
@@ -68,7 +75,14 @@ public class BrevoEmailSender implements EmailSender {
 	public void send(EmailMessage message) {
 		HttpResponse<String> response;
 		try {
-			response = client().send(request(message), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+			try {
+				response = exchange(request(message));
+			}
+			catch (HttpConnectTimeoutException | ConnectException ex) {
+				// No connection was made, so nothing was transmitted: one more try cannot send the
+				// mail twice. Any other failure may have delivered it and is not retried.
+				response = exchange(request(message));
+			}
 		}
 		catch (IOException | UncheckedIOException ex) {
 			// only the exception type: nothing of the request may end up in the log
@@ -79,6 +93,11 @@ public class BrevoEmailSender implements EmailSender {
 			throw new EmailException("Interrupted while sending through Brevo");
 		}
 		requireAccepted(response.statusCode(), response.body());
+	}
+
+	/** One HTTP round trip. On its own so that a test can stand in for the network. */
+	HttpResponse<String> exchange(HttpRequest request) throws IOException, InterruptedException {
+		return client().send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 	}
 
 	/** Brevo's "send a transactional email" call for this mail. */

@@ -51,8 +51,18 @@ public class LoginService {
 		errors.throwIfAny();
 
 		long attempt = throttle.claim(email, ip);
-		Optional<UserRow> user = users.findByEmail(email);
-		boolean matches = hasher.matches(form.password(), user.map(UserRow::passwordHash).orElse(null));
+		Optional<UserRow> user;
+		boolean matches;
+		try {
+			user = users.findByEmail(email);
+			matches = hasher.matches(form.password(), user.map(UserRow::passwordHash).orElse(null));
+		}
+		catch (RuntimeException ex) {
+			// A wrong password returns false. An exception (no free hashing slot, a database error)
+			// means the password was never compared, so this was not a wrong guess.
+			throttle.cancel(attempt);
+			throw ex;
+		}
 		if (!matches) {
 			throw AuthErrors.invalidCredentials();
 		}
