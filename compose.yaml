@@ -1,0 +1,35 @@
+# Local smoke test of the production image under Render-like limits (512 MB, 0.1 CPU).
+#   docker compose up --build
+#   then open http://localhost:10000
+# The mail key below is a dummy: the app starts, but OTP emails are not delivered here.
+# For normal development run the app directly instead:  ./mvnw spring-boot:run
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: spend_analyzer
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d spend_analyzer"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: "10000"
+      DATABASE_URL: postgresql://postgres:postgres@db/spend_analyzer
+      BREVO_API_KEY: dummy-key-for-local-smoke-test
+      MAIL_FROM_EMAIL: smoke-test@example.com
+      OTP_PEPPER: local-smoke-test-pepper-0123456789abcdef0123456789
+      APP_ORIGIN: http://localhost:10000
+    ports:
+      - "10000:10000"
+    mem_limit: 512m
+    cpus: 0.1

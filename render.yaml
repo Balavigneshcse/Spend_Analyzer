@@ -1,0 +1,30 @@
+# Render Blueprint: one free Docker web service.
+# The database is NOT created here: it lives on Neon (free, does not expire).
+# Values marked "sync: false" are secrets you type into the Render dashboard once.
+services:
+  - type: web
+    name: spend-analyzer
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /healthz
+    autoDeployTrigger: commit
+    envVars:
+      # Neon connection string, e.g. postgresql://user:password@ep-xxxx.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+      - key: DATABASE_URL
+        sync: false
+      # Brevo API key (starts with xkeysib-)
+      - key: BREVO_API_KEY
+        sync: false
+      # The sender address you verified in Brevo (your Gmail)
+      - key: MAIL_FROM_EMAIL
+        sync: false
+      - key: MAIL_FROM_NAME
+        value: Spend Analyzer
+      # Secret used to protect OTP codes; Render generates it once.
+      - key: OTP_PEPPER
+        generateValue: true
+      # Set to "false" after you have registered to stop strangers from signing up.
+      - key: APP_REGISTRATION_ENABLED
+        value: "true"
