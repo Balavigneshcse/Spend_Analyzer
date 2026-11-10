@@ -29,6 +29,3 @@ application-local.properties
 /nbdist/
 /.nb-gradle/
 
-# tooling
-.claude/
-CLAUDE.md
