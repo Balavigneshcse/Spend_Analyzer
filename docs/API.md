@@ -118,9 +118,9 @@ Accounts: `BANK`, `CASH`, `CREDIT_CARD`.
 Three balances per user. `bank` and `cash` are money you have. `creditCardDue` is money you owe on the card. Balances may go negative (the page shows a warning) because the entered balance can be out of date.
 
 ```json
-Balances = { "bank": "5200.00", "cash": "340.00", "creditCardDue": "0.00", "available": "5540.00", "onboarded": true }
+Balances = { "bank": "5200.00", "cash": "340.00", "creditCardDue": "0.00", "available": "5540.00", "owedToFriends": "1500.00", "onboarded": true }
 ```
-`available` = bank + cash.
+`available` = bank + cash. `owedToFriends` = everything borrowed from friends and not yet paid back (never negative).
 
 ### `GET /api/balances`
 `200 Balances`. `onboarded` is false until the user has entered opening balances.
@@ -134,9 +134,10 @@ Sets the starting balances and marks the user onboarded. `200 Balances`. 409 `al
 ```json
 Entry = {
   "id": "uuid",
-  "type": "EXPENSE",            // EXPENSE | INCOME | WITHDRAWAL | CARD_PAYMENT | ADJUSTMENT
+  "type": "EXPENSE",            // EXPENSE | INCOME | WITHDRAWAL | CARD_PAYMENT | ADJUSTMENT | BORROW | REPAY
   "amount": "40.00",            // positive; for ADJUSTMENT the signed difference, e.g. "-120.00"
   "account": "BANK",            // balance it touched (see below)
+  "person": null,               // BORROW and REPAY only: the friend's name as typed, e.g. "Ravi"
   "paymentMode": "UPI",         // EXPENSE only, else null
   "description": "juse",        // what the user typed; null allowed for non-expenses
   "category": "SNACKS_BEVERAGES", // EXPENSE only, else null
@@ -160,6 +161,30 @@ What each type does:
 | `WITHDRAWAL` | `amount` | Bank down, cash up (ATM) |
 | `CARD_PAYMENT` | `amount`, `account` (`BANK` or `CASH`) | That balance down, card due down |
 | `ADJUSTMENT` | `account` (any of the three), `newBalance` (0 or more) | Sets that balance to `newBalance`; the entry stores the difference. 400 if nothing changes |
+| `BORROW` | `person` (1-40), `amount`, `account` (`BANK` = received by UPI, `CASH` = received in cash), optional `description` | That balance up; you now owe that friend the amount |
+| `REPAY` | `person`, `amount`, `account` (`BANK` = paid by UPI, `CASH` = paid in cash), optional `description` | That balance down; what you owe that friend goes down |
+
+Borrowing from friends:
+
+- `person` is the friend's name: 1 to 40 characters after trimming, no control characters. "Ravi", "ravi" and " RAVI " are the same friend (compared without case and extra spaces); the first spelling used is the one shown.
+- Borrowed money is not income and paying it back is not spending: neither appears in the analysis totals.
+- `REPAY` is refused with 400 `validation` (`fields.amount`) when it is more than you owe that friend, and with `fields.person` when you owe that friend nothing.
+- Deleting a `BORROW` that has already been (partly) paid back, so that the friend would end up below zero, is refused with 409 `conflict` and a message telling the user to delete the pay-back first.
+- `BORROW` and `REPAY` entries cannot be edited (`PATCH` is for expenses); delete and re-enter instead.
+
+### `GET /api/debts`
+What the user owes, per friend. Friends who are fully paid back are not listed.
+```json
+{
+  "total": "1500.00",
+  "people": [
+    { "name": "Ravi", "owed": "1000.00", "borrowed": "1500.00", "repaid": "500.00", "lastDate": "2026-11-08" },
+    { "name": "Arun", "owed": "500.00", "borrowed": "500.00", "repaid": "0.00", "lastDate": "2026-11-02" }
+  ],
+  "knownNames": [ "Arun", "Ravi", "Suresh" ]
+}
+```
+`people` is sorted by `owed`, largest first. `knownNames` lists every friend ever used (for suggestions while typing), sorted by name.
 
 ### `POST /api/entries/preview`
 Live AI guess while typing. Body `{ "description": "juse", "amount": "40", "paymentMode": "UPI" }` (`amount`, `paymentMode` optional). Saves nothing.
@@ -180,7 +205,7 @@ Body: `clientId` (a UUID the page generates once per form submit), `type`, `date
 - `201 { "entry": Entry, "balances": Balances }`. Sending the same `clientId` again returns `200` with the original entry (no double charge).
 
 ### `GET /api/entries`
-Query (all optional): `from`, `to` (dates, inclusive), `type`, `mode`, `category`, `needsReview=true`, `q` (text in description), `page` (0-based, default 0), `size` (default 20, max 100).
+Query (all optional): `from`, `to` (dates, inclusive), `type`, `mode`, `category`, `needsReview=true`, `q` (text in description or friend's name), `page` (0-based, default 0), `size` (default 20, max 100).
 Newest first (date, then creation time).
 `200 { "items": [Entry], "page": 0, "size": 20, "total": 57, "hasMore": true }`
 
@@ -193,7 +218,7 @@ Giving `category` records the user's choice and teaches the AI. Changing only `d
 Any type. Reverses its effect on the balances. `200 { "balances": Balances }`. 404 if not found.
 
 ### `GET /api/export`
-All of the user's data as a JSON file download (`Content-Disposition: attachment`): `{ "exportedAt", "user": User, "balances": Balances, "entries": [Entry] }`.
+All of the user's data as a JSON file download (`Content-Disposition: attachment`): `{ "exportedAt", "user": User, "balances": Balances, "debts": Debts, "entries": [Entry] }` (`Debts` is the `GET /api/debts` answer).
 
 ---
 
@@ -237,7 +262,8 @@ Only `EXPENSE` entries count as spending. Blocks that need more data than the us
 - `byCategory`, `byMode`, `topItems` are sorted by amount, largest first. `percent` values are of the period's total spend, one decimal.
 - `daily` has one row for every day of the period (zero days included), oldest first; for `ALL_TIME` only the most recent 90 days.
 - `runway`, `forecast` and `health` describe the user's situation today (they use recent history and current balances, not the chosen period). Each may be `null` when there is too little data.
-- `insights[].severity` is `ALERT`, `WARN`, `INFO` or `GOOD`. `insights[].type` is one of `SMALL_LEAK, UNUSUAL_SPEND, PERIOD_CHANGE, RUNWAY, FORECAST, RECURRING, WEEK_PATTERN, NEEDS_WANTS, TOP_CATEGORY, REVIEW_NEEDED, CREDIT_CARD, POSITIVE`. At most 6 insights and 3 tips, most important first.
+- `insights[].severity` is `ALERT`, `WARN`, `INFO` or `GOOD`. `insights[].type` is one of `SMALL_LEAK, UNUSUAL_SPEND, PERIOD_CHANGE, RUNWAY, FORECAST, RECURRING, WEEK_PATTERN, NEEDS_WANTS, TOP_CATEGORY, REVIEW_NEEDED, CREDIT_CARD, BORROWED, POSITIVE`. At most 6 insights and 3 tips, most important first.
+- `BORROWED` appears when the user owes friends money: it states the total, names the friends owed the most, and says how much bank + cash would be left after paying everyone back. It is about today, like `RUNWAY`.
 - `summary` is plain text (no HTML), 2 to 5 sentences. With very little data it is a short friendly note.
 - `dataQuality.message` is a short hint such as "Add 5 more spends to unlock trends", or `null`.
 - All text is plain text. The page must render it with `textContent`, never as HTML.
