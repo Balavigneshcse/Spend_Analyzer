@@ -25,6 +25,5 @@ services:
       # Secret used to protect OTP codes; Render generates it once.
       - key: OTP_PEPPER
         generateValue: true
-      # Set to "false" after you have registered to stop strangers from signing up.
-      - key: APP_REGISTRATION_ENABLED
-        value: "true"
+      # To stop strangers from signing up after you have registered, add
+      # APP_REGISTRATION_ENABLED=false in the Render dashboard (not here, so a sync never undoes it).

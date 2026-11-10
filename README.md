@@ -22,7 +22,7 @@ You need Java 25 and PostgreSQL running on `localhost:5432` with user `postgres`
 
 1. Create the database once (any SQL tool): `CREATE DATABASE spend_analyzer;`
 2. Start the app:
-   - Windows: `mvnw.cmd spring-boot:run`
+   - Windows: `.\mvnw.cmd spring-boot:run`
    - macOS / Linux: `./mvnw spring-boot:run`
 3. Open <http://localhost:8080>.
 
@@ -32,7 +32,7 @@ Different database settings: set the environment variables `DB_NAME`, `DB_USER`,
 
 ### Tests
 
-Create a second database once: `CREATE DATABASE spend_analyzer_test;` then run `mvnw.cmd verify`. The test database is wiped on every run.
+Create a second database once: `CREATE DATABASE spend_analyzer_test;` then run `.\mvnw.cmd verify` (Windows) or `./mvnw verify`. The test database is wiped on every run.
 
 ## Deploy to Render (free)
 
@@ -67,7 +67,7 @@ Every push to `main` deploys again automatically.
 
 ### After your first login
 
-- Register your own account on the live site, then in Render set `APP_REGISTRATION_ENABLED` to `false` if nobody else should be able to sign up.
+- Register your own account on the live site. If nobody else should be able to sign up, open the service in the Render dashboard, go to **Environment**, and add the variable `APP_REGISTRATION_ENABLED` with the value `false`.
 - If the code email does not arrive, look in the **Spam** folder. Emails sent through Brevo from a Gmail address are sometimes filtered at first.
 
 ### Things to know about the free plan

@@ -29,6 +29,8 @@ This is the contract between the browser pages and the Spring Boot backend.
 | 403 | `cross_site`, `forbidden`, `registration_closed` | Not allowed |
 | 404 | `not_found` | No such thing (also used for other users' data) |
 | 409 | `already_onboarded`, `conflict` | State conflict |
+| 405 / 406 / 415 | `request_error` | Wrong method or media type |
+| 413 | `too_large` | Body larger than 16 KB |
 | 415 | `json_required` | Body was not JSON |
 | 429 | `too_many_requests` | Slow down; `Retry-After` header and `retryAfterSeconds` say when |
 | 500 | `server_error` | Unexpected; message carries a reference |
@@ -95,7 +97,7 @@ Body `{ "password" }` → `204`. Deletes the user and all their data, clears the
 
 ---
 
-## Fixed lists
+## Fixed lists (login required)
 
 ### `GET /api/meta`
 ```json
@@ -230,7 +232,8 @@ Only `EXPENSE` entries count as spending. Blocks that need more data than the us
 }
 ```
 
-- `totals.biggestDay`, `totals.biggestSpend`, `totals.previousSpent`, `totals.changePercent` may be `null`.
+- `totals.avgPerDay` is spent divided by the days of the period since the user's first entry (so a user who started mid-month is not averaged over days they did not track).
+- `totals.biggestDay`, `totals.biggestSpend`, `totals.previousSpent`, `totals.changePercent` may be `null`. `tips[].saving` may be `null`.
 - `byCategory`, `byMode`, `topItems` are sorted by amount, largest first. `percent` values are of the period's total spend, one decimal.
 - `daily` has one row for every day of the period (zero days included), oldest first; for `ALL_TIME` only the most recent 90 days.
 - `runway`, `forecast` and `health` describe the user's situation today (they use recent history and current balances, not the chosen period). Each may be `null` when there is too little data.
