@@ -52,7 +52,9 @@ class AuthFlowIntegrationTest extends AuthIntegrationBase {
 		assertThat(user.get("name").asString()).isEqualTo("Bala Student");
 		assertThat(user.get("email").asString()).isEqualTo(email);
 		assertThat(user.get("phoneMasked").asString()).isEqualTo("+91 ••••••5678");
-		assertThat(user.properties()).hasSize(3);
+		// a new account is never an administrator: only app.admin.emails makes one
+		assertThat(user.get("admin").asBoolean()).isFalse();
+		assertThat(user.properties()).hasSize(4);
 		assertThat(client.userCount(email)).isEqualTo(1);
 		Cookie session = AuthClient.sessionCookie(verified);
 

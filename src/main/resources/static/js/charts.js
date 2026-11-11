@@ -151,3 +151,71 @@ export function rangeChart(low, expected, high, width) {
 	svg.append(s("text", { class: "chart-text", x: W - pad, y: 30, "text-anchor": "end" }, "High " + moneyShort(hi)));
 	return svg;
 }
+
+/**
+ * Whole numbers per day as columns, drawn like dailyChart (the administrator's sign-ups).
+ * days: [{ date, count }], oldest first. noun: "sign-up" (the plural adds an "s").
+ */
+export function countChart(days, width, noun) {
+	const W = Math.max(260, Math.floor(width));
+	const H = W < 520 ? 150 : 170;
+	const left = 4;
+	const right = 4;
+	const top = 26;
+	const bottom = 24;
+	const plotW = W - left - right;
+	const plotH = H - top - bottom;
+	const values = days.map((d) => Math.max(0, Math.round(Number(d.count) || 0)));
+	const max = Math.max(...values, 0);
+	const words = (n) => n.toLocaleString("en-IN") + " " + noun + (n === 1 ? "" : "s");
+	const svg = s("svg", { class: "daily counts", viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img" });
+
+	let peak = 0;
+	values.forEach((v, i) => {
+		if (v > values[peak]) {
+			peak = i;
+		}
+	});
+	const total = values.reduce((sum, v) => sum + v, 0);
+	svg.setAttribute(
+		"aria-label",
+		words(total) + " from " + showDate(days[0].date) + " to " + showDate(days[days.length - 1].date) + "." + (max > 0 ? " Most in one day: " + words(max) + " on " + showDate(days[peak].date) + "." : ""),
+	);
+
+	const n = days.length;
+	const slot = plotW / n;
+	const barW = clamp(slot * 0.68, 1.5, 28);
+	const baseY = top + plotH;
+
+	svg.append(s("line", { class: "stroke-dash", x1: left, x2: W - right, y1: top, y2: top }));
+	svg.append(s("line", { class: "stroke-line", x1: left, x2: W - right, y1: baseY + 0.5, y2: baseY + 0.5 }));
+
+	values.forEach((value, i) => {
+		const x = left + slot * i + (slot - barW) / 2;
+		const day = days[i];
+		if (value <= 0) {
+			const dot = s("rect", { class: "fill-zero", x, y: baseY - 2, width: barW, height: 2, rx: 1 });
+			dot.append(s("title", null, showDate(day.date) + ": none"));
+			svg.append(dot);
+			return;
+		}
+		const height = Math.max(3, (value / max) * plotH);
+		const bar = s("rect", { class: "fill-main", x, y: baseY - height, width: barW, height, rx: Math.min(2, barW / 2), "fill-opacity": i === peak ? 1 : 0.62 });
+		bar.append(s("title", null, showDate(day.date) + ": " + words(value)));
+		svg.append(bar);
+	});
+
+	// the busiest day is labelled on the chart; with none at all the label says so
+	const label = max > 0 ? words(max) + " on " + showDate(days[peak].date) : "No " + noun + "s";
+	const peakX = max > 0 ? clamp(left + slot * peak + slot / 2, left + 64, W - right - 64) : W / 2;
+	svg.append(s("text", { class: "chart-text strong", x: peakX, y: top - 9, "text-anchor": "middle" }, label));
+
+	// first and last date, and the middle one when there is room
+	const marks = W >= 360 ? [0, Math.floor((n - 1) / 2), n - 1] : [0, n - 1];
+	marks.forEach((i) => {
+		const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";
+		const tx = i === 0 ? left : i === n - 1 ? W - right : left + slot * i + slot / 2;
+		svg.append(s("text", { class: "chart-text", x: tx, y: H - 6, "text-anchor": anchor }, showDate(days[i].date)));
+	});
+	return svg;
+}

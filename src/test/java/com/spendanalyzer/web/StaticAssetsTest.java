@@ -454,6 +454,45 @@ class StaticAssetsTest {
 		failIfAny("The login page ends the session after a logout", problems);
 	}
 
+	@Test
+	void theAdminNumbersAreAskedForOnlyByAnAdministratorAndNeverOnATimer() throws IOException {
+		String admin = "js/admin.js";
+		assertTrue(Files.isRegularFile(STATIC.resolve(admin)), admin + " is missing");
+		List<String> problems = new ArrayList<>();
+		if (!modulesOf("index.html").contains(admin)) {
+			problems.add("index.html does not load " + admin);
+		}
+		if (modulesOf("login.html").contains(admin)) {
+			problems.add("login.html loads " + admin);
+		}
+		for (Path script : files(".js")) {
+			if (!name(script).equals(admin) && read(script).contains("/api/admin/")) {
+				problems.add(name(script) + " calls /api/admin/; only " + admin + " may");
+			}
+		}
+		String js = read(STATIC.resolve(admin));
+		// a repeating request would count as activity and stop the idle logout
+		if (js.contains("setInterval")) {
+			problems.add(admin + " uses setInterval; the numbers load on opening and on Refresh only");
+		}
+		// a non-administrator's page must not even ask
+		if (!js.contains("user.admin !== true")) {
+			problems.add(admin + ": setupAdmin must return at once unless user.admin is true");
+		}
+		if (js.contains("innerText")) {
+			problems.add(admin + " should set text with textContent only");
+		}
+		// a disabled button loses the keyboard focus: Refresh uses aria-disabled while it loads
+		if (js.contains(".disabled =")) {
+			problems.add(admin + " disables Refresh; use aria-disabled so the focus stays on it");
+		}
+		// an account that stops being an administrator must not keep seeing the old numbers
+		if (!js.contains("error.status === 404") || !js.contains("$(\"admin\").hidden = true")) {
+			problems.add(admin + " must hide the section when /api/admin/stats answers 404");
+		}
+		failIfAny("The admin section keeps to its rules", problems);
+	}
+
 	/** Every script a page runs: its script tags and, through them, every module they import. */
 	private static Set<String> modulesOf(String page) throws IOException {
 		Set<String> found = new LinkedHashSet<>();

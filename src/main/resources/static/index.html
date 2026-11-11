@@ -146,6 +146,45 @@
 			<button type="button" class="btn link owe-more" id="owe-more" aria-controls="owe-list" hidden></button>
 		</section>
 
+		<!-- Admin (only for an administrator): counts only, never anybody's details -->
+		<section class="panel admin" id="admin" aria-labelledby="h-admin" aria-busy="false" hidden>
+			<div class="panel-head">
+				<h2 id="h-admin">Admin</h2>
+				<button type="button" class="btn link admin-refresh" id="admin-refresh">Refresh</button>
+			</div>
+			<p class="empty admin-error" id="admin-error" role="alert" hidden></p>
+			<div id="admin-body" hidden>
+				<div class="admin-tiles">
+					<article class="card">
+						<h3><span class="card-icon" data-icon="people"></span>Users</h3>
+						<p class="card-value num" id="adm-users">-</p>
+						<p class="card-note" id="adm-users-note"></p>
+					</article>
+					<article class="card">
+						<h3><span class="card-icon" data-icon="user"></span>Online now</h3>
+						<p class="card-value num" id="adm-online">-</p>
+						<p class="card-note">Using the app now</p>
+					</article>
+					<article class="card">
+						<h3><span class="card-icon" data-icon="chart"></span>Active in 7 days</h3>
+						<p class="card-value num" id="adm-active">-</p>
+						<p class="card-note">Added a spend</p>
+					</article>
+					<article class="card">
+						<h3><span class="card-icon" data-icon="plus"></span>New in 30 days</h3>
+						<p class="card-value num" id="adm-new">-</p>
+						<p class="card-note" id="adm-new-note"></p>
+					</article>
+				</div>
+				<h3 class="admin-chart-title">Sign-ups in the last 30 days</h3>
+				<div class="admin-chart" id="admin-chart"></div>
+				<div class="admin-foot">
+					<p class="admin-wait num" id="adm-wait"></p>
+					<p class="sub" id="adm-time"></p>
+				</div>
+			</div>
+		</section>
+
 		<div class="work">
 
 			<!-- Add a spend -->

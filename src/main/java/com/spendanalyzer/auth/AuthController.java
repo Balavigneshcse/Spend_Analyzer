@@ -2,6 +2,7 @@ package com.spendanalyzer.auth;
 
 import java.util.UUID;
 
+import com.spendanalyzer.admin.AdminAccess;
 import com.spendanalyzer.security.AuthUser;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -52,13 +53,16 @@ public class AuthController {
 
 	private final SessionService sessions;
 
+	private final AdminAccess admins;
+
 	AuthController(RegistrationService registration, LoginService login, PasswordResetService passwordReset,
-			AccountService account, SessionService sessions) {
+			AccountService account, SessionService sessions, AdminAccess admins) {
 		this.registration = registration;
 		this.login = login;
 		this.passwordReset = passwordReset;
 		this.account = account;
 		this.sessions = sessions;
+		this.admins = admins;
 	}
 
 	@GetMapping("/config")
@@ -118,7 +122,7 @@ public class AuthController {
 		if (user == null) {
 			throw AuthErrors.unauthorized();
 		}
-		return new UserResponse(account.current(user.id()).view());
+		return new UserResponse(viewOf(account.current(user.id())));
 	}
 
 	@PostMapping("/password-reset/request")
@@ -142,7 +146,12 @@ public class AuthController {
 	private ResponseEntity<UserResponse> loggedIn(UserRow user, String sessionToken) {
 		return ResponseEntity.ok()
 			.header(HttpHeaders.SET_COOKIE, sessions.cookie(sessionToken).toString())
-			.body(new UserResponse(user.view()));
+			.body(new UserResponse(viewOf(user)));
+	}
+
+	/** The user as the page sees them, with the admin flag (true only for an email in app.admin.emails). */
+	private UserView viewOf(UserRow user) {
+		return user.view().withAdmin(admins.isAdmin(user.email()));
 	}
 
 }

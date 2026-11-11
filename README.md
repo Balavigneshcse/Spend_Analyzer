@@ -19,6 +19,7 @@ A personal spend tracker. You enter your bank balance, cash in hand and credit c
 - Add money, withdraw cash from an ATM, pay the credit card bill, correct a balance.
 - Borrow money from a friend (name, amount, by UPI or in cash) and pay it back later. The dashboard shows what you owe each friend.
 - The AI picks the category; if you correct it, it remembers for next time.
+- An administrator (you, the owner) also sees an "Admin" section on the same dashboard: how many users, how many are online and active, and new sign-ups. Counts only (see "Administrator" below).
 - Analysis: spending by category and payment mode, items you buy most often, daily trend, unusual spends, how many days your money will last, a health score, and a short written summary with tips.
 
 ## Run it on your computer
@@ -144,6 +145,30 @@ Use this if you do not want to send from your Gmail through a script, or if Goog
 
 With Brevo, parts 2 and 4 above are not needed.
 
+## Administrator
+
+The administrator is a normal account (register like everybody else) whose email is set in `ADMIN_EMAILS`. On the dashboard, under the balances, the administrator sees an **Admin** section:
+
+- **Users**: how many accounts there are, and how many are new in the last 7 days.
+- **Online now**: people logged in and using the app now (seen in the last 6 minutes: the idle limit of 5 minutes plus one minute).
+- **Active in 7 days**: people who added a spend (or any entry) in the last 7 days. The app does not keep a login history, so a person who only looked counts in "Online now" only, not here.
+- **New in 30 days**: new accounts in the last 30 days, and today.
+- A small chart **Sign-ups in the last 30 days**, and **Waiting for code**: people who started to register but did not enter their code yet.
+
+Only numbers: the administrator never sees another person's email, name, phone, balances or spends. The numbers load when the dashboard opens; press **Refresh** for new ones. Other users do not see the section, and for them the address `/api/admin/stats` does not exist (404).
+
+To become the administrator on Render:
+
+1. Open <https://dashboard.render.com> and click your service (spend-analyzer).
+2. Click **Environment** on the left.
+3. Click **Add environment variable**. Key: `ADMIN_EMAILS`. Value: the email you log in with (for two people: both emails with a comma between them).
+4. Click **Save** (or **Save, rebuild, and deploy**). The app restarts; wait until the log says it is live.
+5. Open the site, **log out and log in again**. The Admin section appears under the balances.
+
+Keep the email only in the Render dashboard: do not put it in `render.yaml` or anywhere in the code. To remove an administrator, delete the variable (or the email) and save.
+
+On your computer: start the app with `--app.admin.emails=you@example.com` (or set `ADMIN_EMAILS`).
+
 ## Settings
 
 | Environment variable | Needed in production | Meaning |
@@ -159,6 +184,7 @@ With Brevo, parts 2 and 4 above are not needed.
 | `APP_AUTH_LIMITS_MAILSPERDAY` | no | Most emails the app sends in 24 hours. Default 80 with `google`, 200 with `brevo` |
 | `APP_REGISTRATION_ENABLED` | no | `false` closes registration |
 | `APP_SESSION_IDLEMINUTES` | no | Log out after this many minutes with no activity, 1 to 120. Default 5 |
+| `ADMIN_EMAILS` | no | Login emails of the administrators, separated by commas. Empty = nobody. They see user counts only (see "Administrator"). Set it only in the Render dashboard |
 | `APP_ORIGIN` | no | Public address of the site; on Render it is detected automatically |
 | `PORT` | no | Port to listen on (Render sets it) |
 
@@ -172,6 +198,7 @@ src/main/java/com/spendanalyzer
   insight/   the analysis engine: statistics, findings, written summary
   auth/      registration, OTP, login, sessions, password reset
   ledger/    balances and entries
+  admin/     the administrator: who it is (ADMIN_EMAILS) and the user counts
   config/ security/ common/ model/ web/   shared plumbing
 src/main/resources
   db/migration/   Flyway SQL

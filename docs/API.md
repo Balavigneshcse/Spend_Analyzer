@@ -89,8 +89,10 @@ Login required. No body (an empty JSON object `{}` is accepted too). `204`, and 
 `200 { "user": User }` or 401 `unauthorized`.
 
 ```json
-User = { "name": "Bala", "email": "bala@example.com", "phoneMasked": "+91 ••••••3210" }
+User = { "name": "Bala", "email": "bala@example.com", "phoneMasked": "+91 ••••••3210", "admin": false }
 ```
+
+`admin` is true only when this user's email is listed in the setting `app.admin.emails` (environment variable `ADMIN_EMAILS`, see "Administrator" below). It is about the logged-in user only. The same User shape is returned by register/verify and login.
 
 ### `POST /api/auth/password-reset/request`
 Body `{ "email" }` → `200 { "resetId": "uuid", "expiresInSeconds": 600, "resendAfterSeconds": 60 }` always (no hint whether the email exists).
@@ -108,6 +110,44 @@ Body `{ "currentPassword", "newPassword" }` → `204`. Other sessions are logged
 
 ### `DELETE /api/account`
 Body `{ "password" }` → `204`. Deletes the user and all their data, clears the cookie.
+
+---
+
+## Administrator (login required)
+
+An administrator is a normal account whose login email is listed in `app.admin.emails` (environment variable `ADMIN_EMAILS`: comma-separated, spaces trimmed, compared in lower case like login emails, at most 20). Empty or missing means nobody. There is no way to become an administrator from the app (no page, no endpoint, no database flag).
+
+The administrator sees **counts only**: never an email, name, phone number, id, balance or spend of another user.
+
+### `GET /api/admin/stats`
+`Cache-Control: no-store`. 401 `unauthorized` when not logged in. **404 `not_found`** for a logged-in user who is not an administrator, with the same body as any unknown path (`{ "error": "not_found", "message": "Not found." }`), so the endpoint is not advertised.
+
+```json
+{
+  "users": { "total": 12, "newToday": 1, "newLast7Days": 4, "newLast30Days": 9 },
+  "activity": { "onlineNow": 2, "activeLast7Days": 6, "activeLast30Days": 10 },
+  "waitingForCode": 1,
+  "signupsLast30Days": [ { "date": "2026-10-13", "count": 0 }, "... 30 rows, oldest first, today last" ],
+  "generatedAt": "2026-11-11T09:30:00.123Z"
+}
+```
+
+Definitions. Days are calendar days in India (`app.zone`, Asia/Kolkata): "today" starts at 00:00 IST, so a user created at 23:50 IST counts on that day, not the next.
+
+| Field | Meaning |
+|---|---|
+| `users.total` | All accounts (verified users) |
+| `users.newToday` | Accounts created today |
+| `users.newLast7Days` | Accounts created today or in the 6 days before |
+| `users.newLast30Days` | Accounts created today or in the 29 days before (the sum of `signupsLast30Days`) |
+| `activity.onlineNow` | Different users with a session the server still accepts: not expired, and `last_seen_at` later than now minus the idle cutoff (`app.session.idle-minutes`, default 5, plus a grace of 60 seconds) |
+| `activity.activeLast7Days` | Different users who added an entry (`entries.created_at`) in the same 7 days |
+| `activity.activeLast30Days` | The same over the same 30 days |
+| `waitingForCode` | Different email addresses with a registration that has not expired and has no account yet: people who started to register but have not entered their code |
+| `signupsLast30Days` | Accounts created per day, 30 rows, oldest first, days without sign-ups as 0 |
+| `generatedAt` | When the numbers were counted |
+
+Why "active" counts entries only: a session row is deleted when it ends (logout, idle logout, clean-up within minutes), and no separate login history is kept. So a user who only looked at the app, without adding an entry, is counted in `onlineNow` while logged in, and not in the "active" numbers.
 
 ---
 

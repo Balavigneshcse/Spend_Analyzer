@@ -8,6 +8,7 @@ import { setupFriends } from "/js/friends.js";
 import { setupSpend } from "/js/spend.js";
 import { setupEntries } from "/js/entries.js";
 import { setupAnalysis } from "/js/analysis.js";
+import { setupAdmin } from "/js/admin.js";
 import { startIdle, loginUrl } from "/js/idle.js";
 
 const $ = (id) => document.getElementById(id);
@@ -28,6 +29,7 @@ function showDash() {
 		setupSpend();
 		setupEntries();
 		setupAnalysis();
+		setupAdmin(store.user); // does nothing unless /api/auth/me said admin: true
 	}
 }
 

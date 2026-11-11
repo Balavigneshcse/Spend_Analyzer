@@ -87,7 +87,7 @@ public class SessionService implements SessionAuthenticator {
 	}
 
 	/** A session whose last_seen_at is at or before {@code now} minus this is over. */
-	Duration idleCutoff() {
+	public Duration idleCutoff() {
 		return idleCutoff;
 	}
 

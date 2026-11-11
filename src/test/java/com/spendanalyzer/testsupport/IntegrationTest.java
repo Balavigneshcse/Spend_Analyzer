@@ -21,10 +21,18 @@ import org.springframework.test.context.ActiveProfiles;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@SpringBootTest
+// The administrator list of every integration test (written with odd case and spaces on purpose).
+// It is here, not in a test class, so that all test classes keep sharing one application context.
+@SpringBootTest(properties = "app.admin.emails=" + IntegrationTest.ADMIN_EMAILS)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Import(TestDatabaseConfig.class)
 public @interface IntegrationTest {
+
+	/** As an owner might type it: mixed case, spaces and an empty item. */
+	String ADMIN_EMAILS = "  Stats.Admin@Example.COM , ,second.admin@example.com  ";
+
+	/** The first administrator above, as its login email is stored. */
+	String ADMIN_EMAIL = "stats.admin@example.com";
 
 }
