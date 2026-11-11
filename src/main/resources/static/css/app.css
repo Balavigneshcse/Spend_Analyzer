@@ -205,6 +205,57 @@
 	color: var(--ink-2);
 }
 
+/* ---------- total money (the one big number above the cards) ---------- */
+
+.total {
+	margin-bottom: 8px;
+	padding: 14px 14px 14px;
+	border-radius: var(--radius);
+	background: var(--v-700);
+	color: var(--white);
+}
+
+.total-label {
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.3;
+	color: var(--v-200);
+}
+
+.total-value {
+	margin-top: 4px;
+	font-size: 30px;
+	font-weight: 700;
+	line-height: 1.15;
+	letter-spacing: -0.01em;
+	overflow-wrap: anywhere;
+}
+
+.total-value.long {
+	font-size: 26px;
+}
+
+.total-value.xlong {
+	font-size: 21px;
+}
+
+.total-note {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+	margin-top: 6px;
+	font-size: 13px;
+	line-height: 1.4;
+	color: var(--v-200);
+}
+
+.total-note .icon {
+	flex: none;
+	width: 15px;
+	height: 15px;
+	margin-top: 1px;
+}
+
 /* ---------- balance cards ---------- */
 
 .cards {
@@ -1175,6 +1226,38 @@
 @media (min-width: 768px) {
 	.page {
 		padding: 24px 20px 8px;
+	}
+
+	.total {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 24px;
+		margin-bottom: 14px;
+		padding: 18px 22px 20px;
+	}
+
+	.total-label {
+		font-size: 14px;
+	}
+
+	.total-value {
+		font-size: 36px;
+	}
+
+	.total-value.long {
+		font-size: 32px;
+	}
+
+	.total-value.xlong {
+		font-size: 26px;
+	}
+
+	.total-note {
+		margin-top: 0;
+		max-width: 50%;
+		text-align: right;
+		font-size: 14px;
 	}
 
 	.cards {

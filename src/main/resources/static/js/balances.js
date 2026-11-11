@@ -31,7 +31,40 @@ function paintValue(valueNode, noteNode, card, amount, note) {
 	}
 }
 
+/** "1234.50" -> 123450 (whole paise), so sums never go through fractions. */
+function paise(value) {
+	const text = String(value == null ? "0" : value).trim();
+	const match = /^(-?)(\d+)(?:\.(\d{1,2}))?$/.exec(text);
+	if (!match) {
+		return 0;
+	}
+	const whole = Number(match[2]) * 100 + Number((match[3] || "").padEnd(2, "0"));
+	return match[1] ? -whole : whole;
+}
+
+/** The big line on top: bank + cash, and what is left of it after the card due and friends. */
+function paintTotal(balances) {
+	const value = $("bal-total");
+	const note = $("bal-total-note");
+	const text = money(balances.available);
+	value.textContent = text;
+	sizeValue(value, text);
+	clear(note);
+	const have = paise(balances.available);
+	// money that is not really the user's to keep: the card bill and what friends are owed
+	const dues = Math.max(0, paise(balances.creditCardDue)) + Math.max(0, paise(balances.owedToFriends));
+	if (have < 0) {
+		note.append(icon("alert"), h("span", null, "Below zero - correct your balances if this is wrong"));
+	} else if (dues > 0) {
+		const left = ((have - dues) / 100).toFixed(2);
+		note.append(h("span", null, "Bank + cash. After paying card due and friends: " + money(left)));
+	} else {
+		note.append(h("span", null, "Bank balance + cash in hand"));
+	}
+}
+
 function paintBalances(balances) {
+	paintTotal(balances);
 	paintValue($("bal-bank"), $("bal-bank-note"), $("card-bank"), balances.bank);
 	paintValue($("bal-cash"), $("bal-cash-note"), $("card-cash"), balances.cash);
 	paintValue($("bal-due"), $("bal-due-note"), $("card-due"), balances.creditCardDue, "Below zero - you paid more than you owed. Correct it if this is wrong");
