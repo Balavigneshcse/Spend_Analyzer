@@ -14,6 +14,7 @@ A personal spend tracker. You enter your bank balance, cash in hand and credit c
 - Register with email, Indian mobile number and a strong password. A 6-digit code is emailed to finish registration and to reset a password.
 - One dashboard: balances, add a spend, transactions, analysis.
 - The top of the dashboard shows the total money you have (bank + cash), and what would be left after paying the credit card due and your friends.
+- Light and dark mode: the sun / moon button in the top bar switches them. The first time, the app follows your phone or computer setting; after you press the button it remembers your choice on that device.
 - Payment modes: UPI and debit card reduce the bank balance, cash reduces cash in hand, credit card adds to the card due.
 - Add money, withdraw cash from an ATM, pay the credit card bill, correct a balance.
 - Borrow money from a friend (name, amount, by UPI or in cash) and pay it back later. The dashboard shows what you owe each friend.

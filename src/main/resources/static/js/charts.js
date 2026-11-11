@@ -23,7 +23,8 @@ export function meter(fraction, opacity, className) {
 export function barList(rows) {
 	const list = h("ul", { class: "bars" });
 	rows.forEach((item, index) => {
-		const opacity = clamp(1 - index * 0.13, 0.35, 1);
+		// rank shows as a fading tint; it stops at 58% so the last bar still stands out (3:1) in both themes
+		const opacity = clamp(1 - index * 0.1, 0.58, 1);
 		const percent = Number(item.percent) || 0;
 		list.append(
 			h(

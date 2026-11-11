@@ -1,30 +1,160 @@
-/* Spend Analyzer - shared styles. One hue (violet) on white, neutral greys for text and lines. */
+/* Spend Analyzer - shared styles. One hue (violet) and neutral greys, in a light and a dark theme. */
 
+/*
+ * COLOURS. Every colour on both pages comes from the names below, and from nowhere else:
+ * the rules further down (and in app.css / login.css) never write a colour themselves
+ * (StaticAssetsTest checks this). A name says what the colour is FOR, not what it looks like.
+ * ":root" is the light theme; ':root[data-theme="dark"]' gives the same names their dark values.
+ * /js/theme-init.js puts data-theme on <html> before the first paint.
+ */
 :root {
-	--v-900: #2a1247;
-	--v-800: #431f6e;
-	--v-700: #5b2d8e; /* primary */
-	--v-600: #6e41a3;
-	--v-500: #8a62b9;
-	--v-400: #a98bcd;
-	--v-300: #c8b4e0;
-	--v-200: #e0d4ee;
-	--v-100: #eee7f6;
-	--v-50: #f7f4fb;
+	color-scheme: light;
 
-	--ink: #1e1926;
-	--ink-2: #48414f;
-	--ink-3: #655e6e;
-	--line: #e3deea;
-	--line-2: #cbc4d6;
-	--field-line: #8c8497;
-	--bg: #f8f6fb;
-	--white: #ffffff;
+	/* surfaces, from the back to the front */
+	--page: #f8f6fb; /* behind everything */
+	--surface: #ffffff; /* cards and panels */
+	--raised: #ffffff; /* dialogs, menus, pop-ups */
+	--field: #ffffff; /* inside inputs, selects and chips */
+
+	/* text */
+	--text: #1e1926;
+	--text-2: #48414f; /* labels, second lines */
+	--text-3: #655e6e; /* quiet notes */
+	--placeholder: #736c7d;
+
+	/* lines */
+	--line: #e3deea; /* hairlines around cards and between rows */
+	--line-strong: #cbc4d6; /* around dialogs and menus */
+	--field-line: #8c8497; /* around inputs and chips: 3:1 against every surface */
+
+	/* violet you can press: the filled button, the chosen chip */
+	--accent: #5b2d8e;
+	--accent-hover: #431f6e;
+	--accent-active: #2a1247;
+	--on-accent: #ffffff;
+
+	/* violet as text, icon and outline */
+	--accent-text: #5b2d8e; /* links, violet words, icons */
+	--accent-text-strong: #431f6e; /* tag text */
+	--accent-line: #5b2d8e; /* strong outlines: hover, chosen chip */
+	--accent-line-soft: #a07fc7; /* outline buttons and tags: 3:1 against every surface */
+	--link-line: #c8b4e0; /* the underline of a link */
+	--focus: #5b2d8e; /* the focus ring */
+	--button-fill: #ffffff; /* inside an outline button */
+
+	/* the brand: top bar and "Total money you have" */
+	--brand: #5b2d8e;
+	--brand-hover: #431f6e;
+	--brand-line: #5b2d8e; /* hairline around a brand surface (only seen in the dark theme) */
+	--on-brand: #ffffff;
+	--on-brand-2: #e0d4ee; /* labels on the brand */
+
+	/* quiet violet fills */
+	--tint: #f7f4fb; /* hover, notices, table head, tags */
+	--tint-2: #eee7f6; /* icon discs, a button that cannot be pressed */
+	--tint-line: #e0d4ee;
+
+	/* the strongest ink: errors, "are you sure" buttons */
+	--strong: #1e1926;
+	--strong-hover: #000000;
+	--on-strong: #ffffff;
+	--problem-bg: #f3f1f5;
+
+	/* toast */
+	--toast-bg: #2a1247;
+	--toast-text: #ffffff;
+	--toast-line: #2a1247;
+
+	/* charts */
+	--chart-track: #eee7f6;
+	--chart-fill: #5b2d8e;
+	--chart-soft: #c8b4e0; /* the second part of a two-part bar, the forecast range */
+	--chart-zero: #cbc4d6; /* a day with no spending */
+
+	/* depth */
+	--backdrop: rgba(30, 25, 38, 0.5);
+	--shadow-pop: 0 4px 16px rgba(42, 18, 71, 0.16);
+	--shadow-toast: 0 4px 16px rgba(42, 18, 71, 0.24);
+	--shadow-menu: 0 8px 28px rgba(42, 18, 71, 0.18);
+	--shadow-dialog: 0 12px 40px rgba(42, 18, 71, 0.22);
+
+	/* small pictures drawn in one fixed colour need one file per theme */
+	--img-chevron: url("/img/chevron.svg");
+	--img-check: url("/img/check.svg");
 
 	--radius: 8px;
 	--radius-s: 6px;
 	--font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
 	--bar-h: 56px;
+}
+
+/*
+ * Dark: a deep, slightly violet near-black. Surfaces step up in lightness and are told apart by
+ * hairlines, not shadows. Violet used as text or outline gets lighter; violet you press stays
+ * solid enough for white text; the brand surfaces turn deep violet with soft light text.
+ */
+:root[data-theme="dark"] {
+	color-scheme: dark;
+
+	--page: #131019;
+	--surface: #1b1722;
+	--raised: #231e2c;
+	--field: #15121c;
+
+	--text: #ece8f2;
+	--text-2: #c5bfcf;
+	--text-3: #a59eb1;
+	--placeholder: #9189a0;
+
+	--line: #372f45;
+	--line-strong: #4a4259;
+	--field-line: #7f7792;
+
+	--accent: #8458c2;
+	--accent-hover: #7649b4;
+	--accent-active: #693da6;
+	--on-accent: #ffffff;
+
+	--accent-text: #c6adec;
+	--accent-text-strong: #d9c8f4;
+	--accent-line: #b89ae2;
+	--accent-line-soft: #8468b0;
+	--link-line: #6b5594;
+	--focus: #c9b0f0;
+	--button-fill: transparent;
+
+	--brand: #38205c;
+	--brand-hover: #4a2d78;
+	--brand-line: #50357f;
+	--on-brand: #f1ecf8;
+	--on-brand-2: #d0bfe8;
+
+	--tint: #2a2239;
+	--tint-2: #342a4a;
+	--tint-line: #44375f;
+
+	--strong: #ece8f2;
+	--strong-hover: #ffffff;
+	--on-strong: #1b1722;
+	--problem-bg: #2b2832;
+
+	--toast-bg: #4a2d78;
+	--toast-text: #f6f2fb;
+	--toast-line: #6d4ea3;
+
+	--chart-track: #2e2542;
+	--chart-fill: #ae8ee0;
+	--chart-soft: #4d3c72;
+	--chart-zero: #4a4259;
+
+	--backdrop: rgba(6, 4, 10, 0.68);
+	--shadow-pop: 0 4px 16px rgba(0, 0, 0, 0.4);
+	--shadow-toast: 0 4px 16px rgba(0, 0, 0, 0.4);
+	--shadow-menu: 0 8px 28px rgba(0, 0, 0, 0.5);
+	--shadow-dialog: 0 12px 40px rgba(0, 0, 0, 0.55);
+
+	--img-chevron: url("/img/chevron-dark.svg");
+	--img-check: url("/img/check-dark.svg");
 }
 
 *,
@@ -41,8 +171,8 @@ html {
 body {
 	margin: 0;
 	min-height: 100vh;
-	background: var(--bg);
-	color: var(--ink);
+	background: var(--page);
+	color: var(--text);
 	font-family: var(--font);
 	font-size: 16px;
 	line-height: 1.5;
@@ -86,7 +216,7 @@ button {
 }
 
 a {
-	color: var(--v-700);
+	color: var(--accent-text);
 }
 
 [hidden] {
@@ -113,7 +243,7 @@ a {
 }
 
 :focus-visible {
-	outline: 2px solid var(--v-700);
+	outline: 2px solid var(--focus);
 	outline-offset: 2px;
 }
 
@@ -131,8 +261,9 @@ a {
 /* ---------- top bar ---------- */
 
 .topbar {
-	background: var(--v-700);
-	color: var(--white);
+	background: var(--brand);
+	color: var(--on-brand);
+	box-shadow: inset 0 -1px 0 var(--brand-line);
 }
 
 .topbar-inner {
@@ -153,7 +284,7 @@ a {
 	font-size: 18px;
 	font-weight: 600;
 	letter-spacing: 0.01em;
-	color: var(--white);
+	color: var(--on-brand);
 	text-decoration: none;
 }
 
@@ -164,7 +295,54 @@ a {
 }
 
 .topbar :focus-visible {
-	outline-color: var(--white);
+	outline-color: var(--on-brand);
+}
+
+/* the right side of the top bar: light / dark button, then the account button */
+.topbar-tools {
+	display: flex;
+	align-items: center;
+	flex: none;
+	gap: 4px;
+}
+
+.theme-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: none;
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--on-brand);
+}
+
+.theme-btn:hover {
+	background: var(--brand-hover);
+}
+
+.theme-btn .icon {
+	width: 22px;
+	height: 22px;
+}
+
+@media (max-width: 359px) {
+	.topbar-inner {
+		padding: 0 8px 0 12px;
+		gap: 6px;
+	}
+
+	.topbar-tools {
+		gap: 0;
+	}
+
+	.brand {
+		gap: 8px;
+		font-size: 17px;
+	}
 }
 
 /* ---------- buttons ---------- */
@@ -176,10 +354,10 @@ a {
 	gap: 8px;
 	min-height: 44px;
 	padding: 0 18px;
-	border: 1px solid var(--v-700);
+	border: 1px solid var(--accent);
 	border-radius: var(--radius-s);
-	background: var(--v-700);
-	color: var(--white);
+	background: var(--accent);
+	color: var(--on-accent);
 	font-size: 15px;
 	font-weight: 600;
 	line-height: 1.2;
@@ -188,12 +366,12 @@ a {
 }
 
 .btn:hover {
-	background: var(--v-800);
-	border-color: var(--v-800);
+	background: var(--accent-hover);
+	border-color: var(--accent-hover);
 }
 
 .btn:active {
-	background: var(--v-900);
+	background: var(--accent-active);
 }
 
 .btn.block {
@@ -207,24 +385,25 @@ a {
 }
 
 .btn.secondary {
-	background: var(--white);
-	color: var(--v-700);
-	border-color: var(--v-400);
+	background: var(--button-fill);
+	color: var(--accent-text);
+	border-color: var(--accent-line-soft);
 }
 
 .btn.secondary:hover {
-	background: var(--v-50);
-	border-color: var(--v-700);
+	background: var(--tint);
+	border-color: var(--accent-line);
 }
 
 .btn.strong {
-	background: var(--ink);
-	border-color: var(--ink);
-	color: var(--white);
+	background: var(--strong);
+	border-color: var(--strong);
+	color: var(--on-strong);
 }
 
 .btn.strong:hover {
-	background: #000;
+	background: var(--strong-hover);
+	border-color: var(--strong-hover);
 }
 
 .btn.link {
@@ -232,24 +411,24 @@ a {
 	padding: 0 6px;
 	border-color: transparent;
 	background: transparent;
-	color: var(--v-700);
+	color: var(--accent-text);
 	font-weight: 600;
 	text-decoration: underline;
-	text-decoration-color: var(--v-300);
+	text-decoration-color: var(--link-line);
 	text-underline-offset: 3px;
 }
 
 .btn.link:hover {
 	background: transparent;
-	text-decoration-color: var(--v-700);
+	text-decoration-color: var(--accent-text);
 }
 
 .btn:disabled,
 .btn[aria-disabled="true"] {
 	cursor: default;
-	background: var(--v-100);
-	border-color: var(--v-100);
-	color: var(--ink-3);
+	background: var(--tint-2);
+	border-color: var(--tint-2);
+	color: var(--text-3);
 }
 
 .btn.link:disabled {
@@ -292,12 +471,12 @@ a {
 	margin-bottom: 6px;
 	font-size: 14px;
 	font-weight: 600;
-	color: var(--ink-2);
+	color: var(--text-2);
 }
 
 .field .optional {
 	font-weight: 400;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 .input,
@@ -308,8 +487,8 @@ a {
 	padding: 10px 12px;
 	border: 1px solid var(--field-line);
 	border-radius: var(--radius-s);
-	background: var(--white);
-	color: var(--ink);
+	background: var(--field);
+	color: var(--text);
 	font-size: 16px; /* 16px stops iOS zooming into the field */
 	line-height: 1.4;
 	appearance: none;
@@ -317,24 +496,24 @@ a {
 }
 
 .input::placeholder {
-	color: #736c7d;
+	color: var(--placeholder);
 }
 
 .input:hover,
 .select:hover {
-	border-color: var(--v-700);
+	border-color: var(--accent-line);
 }
 
 .input:focus,
 .select:focus {
-	outline: 2px solid var(--v-700);
+	outline: 2px solid var(--focus);
 	outline-offset: 1px;
-	border-color: var(--v-700);
+	border-color: var(--focus);
 }
 
 .select {
 	padding-right: 36px;
-	background-image: url("/img/chevron.svg");
+	background-image: var(--img-chevron);
 	background-repeat: no-repeat;
 	background-position: right 10px center;
 	background-size: 16px 16px;
@@ -354,8 +533,36 @@ a {
 
 .input[aria-invalid="true"],
 .select[aria-invalid="true"] {
-	border-color: var(--ink);
-	box-shadow: inset 0 0 0 1px var(--ink);
+	border-color: var(--strong);
+	box-shadow: inset 0 0 0 1px var(--strong);
+}
+
+/*
+ * A field the browser filled in by itself (a saved email or password). The browser paints such a
+ * field in its own tint and text colour and does not let a page change that background, so the
+ * field colour is laid over it as an inset shadow and the text colour is set again.
+ */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--text);
+	caret-color: var(--text);
+	box-shadow: inset 0 0 0 100px var(--field);
+}
+
+.input[aria-invalid="true"]:-webkit-autofill {
+	box-shadow: inset 0 0 0 1px var(--strong), inset 0 0 0 100px var(--field);
+}
+
+/* the same under the newer name; kept apart, because a name a browser does not know drops the whole rule */
+.input:autofill {
+	-webkit-text-fill-color: var(--text);
+	caret-color: var(--text);
+	box-shadow: inset 0 0 0 100px var(--field);
+}
+
+.input[aria-invalid="true"]:autofill {
+	box-shadow: inset 0 0 0 1px var(--strong), inset 0 0 0 100px var(--field);
 }
 
 .field-error {
@@ -365,7 +572,7 @@ a {
 	margin-top: 6px;
 	font-size: 14px;
 	font-weight: 600;
-	color: var(--ink);
+	color: var(--text);
 }
 
 .field-error::before,
@@ -376,8 +583,8 @@ a {
 	height: 16px;
 	margin-top: 2px;
 	border-radius: 50%;
-	background: var(--ink);
-	color: var(--white);
+	background: var(--strong);
+	color: var(--on-strong);
 	font-size: 12px;
 	font-weight: 700;
 	line-height: 16px;
@@ -387,7 +594,7 @@ a {
 .field-hint {
 	margin-top: 6px;
 	font-size: 13px;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 /* money input with the rupee sign in front */
@@ -401,7 +608,7 @@ a {
 	left: 12px;
 	top: 50%;
 	transform: translateY(-50%);
-	color: var(--ink-3);
+	color: var(--text-3);
 	font-size: 16px;
 	pointer-events: none;
 }
@@ -430,7 +637,7 @@ a {
 	border: 0;
 	border-radius: var(--radius-s);
 	background: transparent;
-	color: var(--v-700);
+	color: var(--accent-text);
 	font-size: 14px;
 	font-weight: 600;
 }
@@ -471,8 +678,8 @@ a {
 	padding: 4px 10px;
 	border: 1px solid var(--field-line);
 	border-radius: var(--radius-s);
-	background: var(--white);
-	color: var(--ink-2);
+	background: var(--field);
+	color: var(--text-2);
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1.2;
@@ -480,17 +687,17 @@ a {
 }
 
 .chip input:hover + span {
-	border-color: var(--v-700);
+	border-color: var(--accent-line);
 }
 
 .chip input:checked + span {
-	border-color: var(--v-700);
-	background: var(--v-700);
-	color: var(--white);
+	border-color: var(--accent-line);
+	background: var(--accent);
+	color: var(--on-accent);
 }
 
 .chip input:focus-visible + span {
-	outline: 2px solid var(--v-700);
+	outline: 2px solid var(--focus);
 	outline-offset: 2px;
 }
 
@@ -500,15 +707,31 @@ a {
 	gap: 8px;
 	min-height: 44px;
 	font-size: 15px;
-	color: var(--ink-2);
+	color: var(--text-2);
 	cursor: pointer;
 }
 
+/* the tick box is drawn here, like the fields beside it (the browser's own box is a plain grey in dark) */
 .check input {
+	flex: none;
 	width: 20px;
 	height: 20px;
 	margin: 0;
-	accent-color: var(--v-700);
+	border: 1.5px solid var(--field-line);
+	border-radius: 4px;
+	background: var(--field);
+	appearance: none;
+	-webkit-appearance: none;
+	cursor: pointer;
+}
+
+.check input:hover {
+	border-color: var(--accent-line);
+}
+
+.check input:checked {
+	border-color: var(--accent);
+	background: var(--accent) url("/img/check-white.svg") center / 14px 14px no-repeat;
 }
 
 /* ---------- notices ---------- */
@@ -519,11 +742,11 @@ a {
 	align-items: flex-start;
 	margin-bottom: 16px;
 	padding: 10px 12px;
-	border: 1px solid var(--v-200);
-	border-left: 3px solid var(--v-700);
+	border: 1px solid var(--tint-line);
+	border-left: 3px solid var(--accent-line);
 	border-radius: var(--radius-s);
-	background: var(--v-50);
-	color: var(--ink);
+	background: var(--tint);
+	color: var(--text);
 	font-size: 14px;
 	overflow-wrap: anywhere;
 }
@@ -533,9 +756,9 @@ a {
 }
 
 .notice.problem {
-	border-color: var(--line-2);
-	border-left-color: var(--ink);
-	background: #f3f1f5;
+	border-color: var(--line-strong);
+	border-left-color: var(--strong);
+	background: var(--problem-bg);
 	font-weight: 600;
 }
 
@@ -545,7 +768,7 @@ a {
 	width: 16px;
 	height: 16px;
 	margin-top: 2px;
-	background: url("/img/check.svg") center / 16px 16px no-repeat;
+	background: var(--img-check) center / 16px 16px no-repeat;
 }
 
 /* waking-up banner and toast */
@@ -561,12 +784,12 @@ a {
 	width: max-content;
 	max-width: calc(100vw - 24px);
 	padding: 10px 14px;
-	border: 1px solid var(--v-300);
+	border: 1px solid var(--accent-line-soft);
 	border-radius: var(--radius);
-	background: var(--white);
-	color: var(--ink);
+	background: var(--raised);
+	color: var(--text);
 	font-size: 14px;
-	box-shadow: 0 4px 16px rgba(42, 18, 71, 0.16);
+	box-shadow: var(--shadow-pop);
 }
 
 .wake::before {
@@ -574,7 +797,7 @@ a {
 	flex: none;
 	width: 14px;
 	height: 14px;
-	border: 2px solid var(--v-700);
+	border: 2px solid var(--accent-text);
 	border-right-color: transparent;
 	border-radius: 50%;
 	animation: spin 0.8s linear infinite;
@@ -589,12 +812,13 @@ a {
 	width: max-content;
 	max-width: calc(100vw - 24px);
 	padding: 10px 16px;
+	border: 1px solid var(--toast-line);
 	border-radius: var(--radius);
-	background: var(--v-900);
-	color: var(--white);
+	background: var(--toast-bg);
+	color: var(--toast-text);
 	font-size: 14px;
 	font-weight: 600;
-	box-shadow: 0 4px 16px rgba(42, 18, 71, 0.24);
+	box-shadow: var(--shadow-toast);
 }
 
 /* ---------- dialogs ---------- */
@@ -604,16 +828,20 @@ dialog.dialog {
 	max-height: calc(100vh - 24px);
 	max-height: calc(100dvh - 24px);
 	padding: 0;
-	border: 1px solid var(--line-2);
+	border: 1px solid var(--line-strong);
 	border-radius: 10px;
-	background: var(--white);
-	color: var(--ink);
-	box-shadow: 0 12px 40px rgba(42, 18, 71, 0.22);
+	background: var(--raised);
+	color: var(--text);
+	/*
+	 * The second shadow dims the page behind. It is on the dialog, not on ::backdrop, because in
+	 * browsers from before 2024 ::backdrop cannot read the colour names set on :root.
+	 */
+	box-shadow: var(--shadow-dialog), 0 0 0 100vmax var(--backdrop);
 	overflow: auto;
 }
 
 dialog.dialog::backdrop {
-	background: rgba(30, 25, 38, 0.5);
+	background: transparent;
 }
 
 .dialog-head {
@@ -626,7 +854,7 @@ dialog.dialog::backdrop {
 	gap: 12px;
 	padding: 10px 8px 10px 20px;
 	border-bottom: 1px solid var(--line);
-	background: var(--white);
+	background: var(--raised);
 }
 
 .dialog-head h2 {
@@ -643,12 +871,12 @@ dialog.dialog::backdrop {
 	border: 0;
 	border-radius: var(--radius-s);
 	background: transparent;
-	color: var(--ink-2);
+	color: var(--text-2);
 }
 
 .icon-btn:hover {
-	background: var(--v-50);
-	color: var(--v-700);
+	background: var(--tint);
+	color: var(--accent-text);
 }
 
 .dialog-body {
@@ -659,7 +887,7 @@ dialog.dialog::backdrop {
 .dialog-body form > p:not([class]) {
 	margin-bottom: 14px;
 	font-size: 15px;
-	color: var(--ink-2);
+	color: var(--text-2);
 }
 
 .dialog-actions {
@@ -701,7 +929,7 @@ dialog.dialog::backdrop {
 	display: grid;
 	gap: 4px;
 	font-size: 13px;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 .rules li {
@@ -715,19 +943,29 @@ dialog.dialog::backdrop {
 	flex: none;
 	width: 14px;
 	height: 14px;
-	border: 1.5px solid var(--line-2);
+	border: 1.5px solid var(--field-line);
 	border-radius: 50%;
-	background: var(--white);
+	background: var(--field);
 }
 
 .rules li.ok {
-	color: var(--ink);
+	color: var(--text);
 	font-weight: 600;
 }
 
 .rules li.ok::before {
-	border-color: var(--v-700);
-	background: var(--v-700) url("/img/check-white.svg") center / 10px 10px no-repeat;
+	border-color: var(--accent);
+	background: var(--accent) url("/img/check-white.svg") center / 10px 10px no-repeat;
+}
+
+/* a short, calm colour change when the light / dark button is pressed (never on first load) */
+@media (prefers-reduced-motion: no-preference) {
+	.theme-switching,
+	.theme-switching *,
+	.theme-switching *::before,
+	.theme-switching *::after {
+		transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease, fill 0.16s ease, stroke 0.16s ease, outline-color 0.16s ease !important;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {

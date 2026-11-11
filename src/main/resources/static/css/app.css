@@ -7,8 +7,8 @@
 	z-index: 80;
 	padding: 10px 14px;
 	border-radius: var(--radius-s);
-	background: var(--white);
-	color: var(--v-700);
+	background: var(--raised);
+	color: var(--accent-text);
 	font-weight: 600;
 }
 
@@ -24,7 +24,7 @@
 
 .page-state {
 	padding: 64px 16px;
-	color: var(--ink-3);
+	color: var(--text-3);
 	text-align: center;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .muted {
-	color: var(--ink-3);
+	color: var(--text-3);
 	font-size: 14px;
 }
 
@@ -52,14 +52,14 @@
 	border: 0;
 	border-radius: 22px;
 	background: transparent;
-	color: var(--white);
+	color: var(--on-brand);
 	font-size: 15px;
 	font-weight: 600;
 }
 
 .account-btn:hover,
 .account-btn[aria-expanded="true"] {
-	background: var(--v-800);
+	background: var(--brand-hover);
 }
 
 .account-btn .icon {
@@ -74,8 +74,8 @@
 	width: 34px;
 	height: 34px;
 	border-radius: 50%;
-	background: var(--white);
-	color: var(--v-700);
+	background: var(--on-brand);
+	color: var(--brand);
 	font-size: 15px;
 	font-weight: 700;
 	text-transform: uppercase;
@@ -95,11 +95,11 @@
 	z-index: 40;
 	width: 264px;
 	max-width: calc(100vw - 24px);
-	border: 1px solid var(--line-2);
+	border: 1px solid var(--line-strong);
 	border-radius: var(--radius);
-	background: var(--white);
-	color: var(--ink);
-	box-shadow: 0 8px 28px rgba(42, 18, 71, 0.18);
+	background: var(--raised);
+	color: var(--text);
+	box-shadow: var(--shadow-menu);
 	overflow: hidden;
 }
 
@@ -108,15 +108,15 @@
 	gap: 2px;
 	padding: 14px 16px;
 	border-bottom: 1px solid var(--line);
-	background: var(--v-50);
+	background: var(--tint);
 	font-size: 13px;
-	color: var(--ink-2);
+	color: var(--text-2);
 	overflow-wrap: anywhere;
 }
 
 .menu-who strong {
 	font-size: 15px;
-	color: var(--ink);
+	color: var(--text);
 }
 
 .menu ul button {
@@ -126,19 +126,19 @@
 	padding: 0 16px;
 	border: 0;
 	background: transparent;
-	color: var(--ink);
+	color: var(--text);
 	font-size: 15px;
 	text-align: left;
 }
 
 .menu ul button:hover {
-	background: var(--v-50);
-	color: var(--v-700);
+	background: var(--tint);
+	color: var(--accent-text);
 }
 
 .menu ul button:focus-visible {
 	outline-offset: -2px;
-	outline-color: var(--v-700);
+	outline-color: var(--focus);
 }
 
 .menu .menu-last {
@@ -147,7 +147,7 @@
 
 .menu .menu-last button {
 	font-weight: 600;
-	color: var(--v-700);
+	color: var(--accent-text);
 }
 
 /* ---------- panels ---------- */
@@ -155,7 +155,7 @@
 .panel {
 	border: 1px solid var(--line);
 	border-radius: var(--radius);
-	background: var(--white);
+	background: var(--surface);
 	padding: 16px 14px;
 }
 
@@ -164,7 +164,7 @@
 	font-size: 18px;
 	font-weight: 600;
 	line-height: 1.3;
-	color: var(--ink);
+	color: var(--text);
 }
 
 .panel-head {
@@ -177,7 +177,7 @@
 .empty {
 	padding: 18px 0 6px;
 	font-size: 15px;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 /* ---------- onboarding ---------- */
@@ -202,7 +202,7 @@
 .onboard .lead {
 	margin: 8px 0 20px;
 	font-size: 15px;
-	color: var(--ink-2);
+	color: var(--text-2);
 }
 
 /* ---------- total money (the one big number above the cards) ---------- */
@@ -211,15 +211,16 @@
 	margin-bottom: 8px;
 	padding: 14px 14px 14px;
 	border-radius: var(--radius);
-	background: var(--v-700);
-	color: var(--white);
+	background: var(--brand);
+	color: var(--on-brand);
+	box-shadow: inset 0 0 0 1px var(--brand-line);
 }
 
 .total-label {
 	font-size: 13px;
 	font-weight: 600;
 	line-height: 1.3;
-	color: var(--v-200);
+	color: var(--on-brand-2);
 }
 
 .total-value {
@@ -246,7 +247,7 @@
 	margin-top: 6px;
 	font-size: 13px;
 	line-height: 1.4;
-	color: var(--v-200);
+	color: var(--on-brand-2);
 }
 
 .total-note .icon {
@@ -269,7 +270,7 @@
 	padding: 12px 12px 12px;
 	border: 1px solid var(--line);
 	border-radius: var(--radius);
-	background: var(--white);
+	background: var(--surface);
 }
 
 .card h2 {
@@ -279,7 +280,7 @@
 	font-size: 13px;
 	font-weight: 600;
 	line-height: 1.3;
-	color: var(--ink-2);
+	color: var(--text-2);
 }
 
 .card-icon {
@@ -290,8 +291,8 @@
 	width: 26px;
 	height: 26px;
 	border-radius: 50%;
-	background: var(--v-100);
-	color: var(--v-700);
+	background: var(--tint-2);
+	color: var(--accent-text);
 }
 
 .card-icon .icon {
@@ -305,7 +306,7 @@
 	font-weight: 600;
 	line-height: 1.2;
 	letter-spacing: -0.01em;
-	color: var(--ink);
+	color: var(--text);
 }
 
 .card-value.long {
@@ -323,7 +324,7 @@
 	margin-top: 6px;
 	font-size: 12px;
 	line-height: 1.35;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 .card-note .icon {
@@ -333,22 +334,22 @@
 }
 
 .card.below {
-	border-color: var(--ink-2);
+	border-color: var(--text-2);
 }
 
 .card.below .card-note {
-	color: var(--ink);
+	color: var(--text);
 	font-weight: 600;
 }
 
 .card-spent {
-	border-color: var(--v-200);
-	background: var(--v-50);
+	border-color: var(--tint-line);
+	background: var(--tint);
 }
 
 .card-spent .card-icon {
-	background: var(--v-700);
-	color: var(--white);
+	background: var(--accent);
+	color: var(--on-accent);
 }
 
 /* five cards: the four balances two by two, then "Spent this month" across */
@@ -366,18 +367,18 @@
 .action {
 	min-height: 44px;
 	padding: 4px 4px;
-	border: 1px solid var(--line-2);
+	border: 1px solid var(--accent-line-soft);
 	border-radius: var(--radius-s);
-	background: var(--white);
-	color: var(--v-700);
+	background: var(--surface);
+	color: var(--accent-text);
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1.2;
 }
 
 .action:hover {
-	border-color: var(--v-700);
-	background: var(--v-50);
+	border-color: var(--accent-line);
+	background: var(--tint);
 }
 
 /* ---------- friends you owe ---------- */
@@ -411,13 +412,13 @@
 .friend-name {
 	font-size: 15px;
 	font-weight: 600;
-	color: var(--ink);
+	color: var(--text);
 	overflow-wrap: anywhere;
 }
 
 .friend-sub {
 	font-size: 13px;
-	color: var(--ink-3);
+	color: var(--text-3);
 	overflow-wrap: anywhere;
 }
 
@@ -446,7 +447,7 @@
 	gap: 0 10px;
 	margin: -14px 0 6px;
 	font-size: 13px;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 .hint-row .btn.link {
@@ -484,14 +485,14 @@
 	margin-top: 6px;
 	font-size: 13.5px;
 	line-height: 1.45;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 .ai .icon {
 	width: 16px;
 	height: 16px;
 	margin-top: 2px;
-	color: var(--v-700);
+	color: var(--accent-text);
 }
 
 .ai-text {
@@ -501,7 +502,7 @@
 }
 
 .ai-text strong {
-	color: var(--ink);
+	color: var(--text);
 	font-weight: 600;
 }
 
@@ -512,11 +513,11 @@
 	padding: 11px 6px;
 	border: 0;
 	background: transparent;
-	color: var(--v-700);
+	color: var(--accent-text);
 	font-size: 13.5px;
 	font-weight: 600;
 	text-decoration: underline;
-	text-decoration-color: var(--v-300);
+	text-decoration-color: var(--link-line);
 	text-underline-offset: 3px;
 }
 
@@ -533,7 +534,7 @@
 	margin: -6px 0 10px;
 	font-size: 13.5px;
 	font-weight: 600;
-	color: var(--ink);
+	color: var(--text);
 }
 
 .date-note .ai-change {
@@ -570,8 +571,8 @@
 	height: 20px;
 	padding: 0 6px;
 	border-radius: 10px;
-	background: var(--v-700);
-	color: var(--white);
+	background: var(--accent);
+	color: var(--on-accent);
 	font-size: 12px;
 }
 
@@ -591,7 +592,7 @@
 	align-items: center;
 	gap: 8px;
 	font-size: 14px;
-	color: var(--ink-2);
+	color: var(--text-2);
 }
 
 .tx-head {
@@ -620,14 +621,14 @@
 	padding: 9px 4px;
 	border: 0;
 	background: transparent;
-	color: var(--ink);
+	color: var(--text);
 	font-size: 15px;
 	text-align: left;
 	align-items: center;
 }
 
 .tx-row:hover {
-	background: var(--v-50);
+	background: var(--tint);
 }
 
 .tx-row:focus-visible {
@@ -666,7 +667,7 @@
 	gap: 0 6px;
 	min-width: 0;
 	font-size: 13px;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 .tx-sub > span:not(:empty) ~ span:not(:empty)::before {
@@ -683,10 +684,10 @@
 	align-items: center;
 	flex: none;
 	padding: 1px 7px;
-	border: 1px solid var(--v-400);
+	border: 1px solid var(--accent-line-soft);
 	border-radius: 10px;
-	background: var(--v-50);
-	color: var(--v-800);
+	background: var(--tint);
+	color: var(--accent-text-strong);
 	font-size: 11.5px;
 	font-weight: 600;
 	line-height: 1.5;
@@ -713,7 +714,7 @@
 }
 
 .facts dt {
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 .facts dd {
@@ -723,7 +724,7 @@
 
 .confirm-text {
 	font-size: 15px;
-	color: var(--ink-2);
+	color: var(--text-2);
 }
 
 .confirm-what {
@@ -731,10 +732,10 @@
 	padding: 10px 12px;
 	border: 1px solid var(--line);
 	border-radius: var(--radius-s);
-	background: var(--v-50);
+	background: var(--tint);
 	font-size: 15px;
 	font-weight: 600;
-	color: var(--ink);
+	color: var(--text);
 	overflow-wrap: anywhere;
 }
 
@@ -758,7 +759,6 @@
 .periods .chip span {
 	min-height: 44px;
 	padding: 4px 12px;
-	border-color: var(--line-2);
 	border-radius: 22px;
 	font-size: 13.5px;
 }
@@ -782,7 +782,7 @@
 	margin-bottom: 12px;
 	font-size: 15px;
 	font-weight: 600;
-	color: var(--ink);
+	color: var(--text);
 }
 
 .block .empty {
@@ -799,7 +799,7 @@
 
 .sub {
 	font-size: 13px;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 /* summary */
@@ -814,7 +814,7 @@
 
 .stat dt {
 	font-size: 13px;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 .stat dd {
@@ -822,7 +822,7 @@
 	font-size: 19px;
 	font-weight: 600;
 	line-height: 1.25;
-	color: var(--ink);
+	color: var(--text);
 }
 
 .stat .sub {
@@ -835,7 +835,7 @@
 .summary-text {
 	font-size: 15.5px;
 	line-height: 1.6;
-	color: var(--ink);
+	color: var(--text);
 	overflow-wrap: anywhere;
 }
 
@@ -852,19 +852,19 @@
 	font-weight: 600;
 	line-height: 1;
 	letter-spacing: -0.02em;
-	color: var(--v-700);
+	color: var(--accent-text);
 }
 
 .score-of {
 	font-size: 14px;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 .score-band {
 	margin-left: auto;
 	font-size: 15px;
 	font-weight: 600;
-	color: var(--ink);
+	color: var(--text);
 }
 
 .meter {
@@ -892,7 +892,7 @@
 
 .part-top .num {
 	font-weight: 400;
-	color: var(--ink-2);
+	color: var(--text-2);
 }
 
 .part .meter {
@@ -921,13 +921,13 @@
 	font-weight: 600;
 	line-height: 1.2;
 	letter-spacing: -0.01em;
-	color: var(--ink);
+	color: var(--text);
 }
 
 .figure-label {
 	margin-top: 2px;
 	font-size: 13px;
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 .block .after {
@@ -935,7 +935,7 @@
 	padding-top: 12px;
 	border-top: 1px solid var(--line);
 	font-size: 14px;
-	color: var(--ink-2);
+	color: var(--text-2);
 	overflow-wrap: anywhere;
 }
 
@@ -965,7 +965,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	color: var(--ink);
+	color: var(--text);
 }
 
 .bar-val {
@@ -974,7 +974,7 @@
 
 .bar-pct {
 	text-align: right;
-	color: var(--ink-3);
+	color: var(--text-3);
 	font-size: 13px;
 }
 
@@ -996,11 +996,11 @@
 	justify-content: space-between;
 	gap: 12px;
 	font-size: 13.5px;
-	color: var(--ink-2);
+	color: var(--text-2);
 }
 
 .split-labels strong {
-	color: var(--ink);
+	color: var(--text);
 }
 
 .split-labels span:last-child {
@@ -1009,19 +1009,19 @@
 
 /* svg colours (classes, because style attributes are not allowed) */
 .fill-track {
-	fill: var(--v-100);
+	fill: var(--chart-track);
 }
 
 .fill-main {
-	fill: var(--v-700);
+	fill: var(--chart-fill);
 }
 
 .fill-soft {
-	fill: var(--v-300);
+	fill: var(--chart-soft);
 }
 
 .fill-zero {
-	fill: var(--line-2);
+	fill: var(--chart-zero);
 }
 
 .stroke-line {
@@ -1030,25 +1030,25 @@
 }
 
 .stroke-dash {
-	stroke: var(--line-2);
+	stroke: var(--line-strong);
 	stroke-width: 1;
 	stroke-dasharray: 3 3;
 }
 
 .stroke-main {
-	stroke: var(--v-700);
+	stroke: var(--chart-fill);
 	stroke-width: 2;
 }
 
 .chart-text {
-	fill: var(--ink-3);
+	fill: var(--text-3);
 	font-size: 11.5px;
 	font-family: var(--font);
 	font-variant-numeric: tabular-nums;
 }
 
 .chart-text.strong {
-	fill: var(--ink);
+	fill: var(--text);
 	font-weight: 600;
 }
 
@@ -1094,7 +1094,7 @@
 }
 
 .item-count {
-	color: var(--ink-2);
+	color: var(--text-2);
 	font-size: 13.5px;
 	white-space: nowrap;
 }
@@ -1121,21 +1121,21 @@
 
 .notes .icon {
 	margin-top: 1px;
-	color: var(--v-700);
+	color: var(--accent-text);
 }
 
 .notes li.quiet .icon {
-	color: var(--ink-3);
+	color: var(--text-3);
 }
 
 .notes strong {
 	display: block;
 	font-weight: 600;
-	color: var(--ink);
+	color: var(--text);
 }
 
 .notes p {
-	color: var(--ink-2);
+	color: var(--text-2);
 }
 
 .quality {
@@ -1145,7 +1145,7 @@
 	gap: 4px 10px;
 	padding: 2px 4px;
 	font-size: 14px;
-	color: var(--ink-2);
+	color: var(--text-2);
 }
 
 .quality .btn.link {
@@ -1160,7 +1160,7 @@
 	margin: 0 auto;
 	padding: 20px 16px 32px;
 	font-size: 13px;
-	color: var(--ink-3);
+	color: var(--text-3);
 	text-align: center;
 }
 
@@ -1210,7 +1210,7 @@
 		border-color: transparent;
 		background: transparent;
 		text-decoration: underline;
-		text-decoration-color: var(--v-300);
+		text-decoration-color: var(--link-line);
 		text-underline-offset: 3px;
 	}
 }
@@ -1382,10 +1382,10 @@
 		margin-top: 14px;
 		padding: 8px 6px;
 		border-top: 1px solid var(--line);
-		background: var(--v-50);
+		background: var(--tint);
 		font-size: 12.5px;
 		font-weight: 600;
-		color: var(--ink-2);
+		color: var(--text-2);
 	}
 
 	.tx-head .tx-amt {
@@ -1415,7 +1415,7 @@
 	.tx-date {
 		grid-column: 1;
 		grid-row: 1;
-		color: var(--ink-2);
+		color: var(--text-2);
 		font-size: 14px;
 	}
 
@@ -1434,14 +1434,14 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		color: var(--ink-2);
+		color: var(--text-2);
 		font-size: 14px;
 	}
 
 	.tx-mode {
 		grid-column: 4;
 		grid-row: 1;
-		color: var(--ink-2);
+		color: var(--text-2);
 		font-size: 14px;
 	}
 

@@ -4,13 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#5b2d8e">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="light dark">
 <meta name="description" content="Track what you spend. Simple and private.">
 <title>Spend Analyzer</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/manifest.webmanifest">
+<script src="/js/theme-init.js"></script>
 <link rel="stylesheet" href="/css/base.css">
 <link rel="stylesheet" href="/css/app.css">
+<script type="module" src="/js/theme.js"></script>
 <script type="module" src="/js/app.js"></script>
 </head>
 <body>
@@ -22,24 +24,27 @@
 <header class="topbar">
 	<div class="topbar-inner">
 		<a class="brand" href="/"><img src="/img/logo.svg" alt="" width="28" height="28">Spend Analyzer</a>
-		<div class="account" id="account" hidden>
-			<button type="button" class="account-btn" id="account-btn" aria-expanded="false" aria-controls="account-menu">
-				<span class="avatar" id="account-initial" aria-hidden="true"></span>
-				<span class="account-name" id="account-name"></span>
-				<span class="sr-only">Account menu</span>
-			</button>
-			<div class="menu" id="account-menu" hidden>
-				<div class="menu-who">
-					<strong id="menu-name"></strong>
-					<span id="menu-email"></span>
-					<span id="menu-phone"></span>
+		<div class="topbar-tools">
+			<button type="button" class="theme-btn" id="theme-toggle" aria-label="Switch to dark mode"></button>
+			<div class="account" id="account" hidden>
+				<button type="button" class="account-btn" id="account-btn" aria-expanded="false" aria-controls="account-menu">
+					<span class="avatar" id="account-initial" aria-hidden="true"></span>
+					<span class="account-name" id="account-name"></span>
+					<span class="sr-only">Account menu</span>
+				</button>
+				<div class="menu" id="account-menu" hidden>
+					<div class="menu-who">
+						<strong id="menu-name"></strong>
+						<span id="menu-email"></span>
+						<span id="menu-phone"></span>
+					</div>
+					<ul>
+						<li><button type="button" id="menu-password">Change password</button></li>
+						<li><button type="button" id="menu-export">Download my data</button></li>
+						<li><button type="button" id="menu-delete">Delete my account</button></li>
+						<li class="menu-last"><button type="button" id="menu-logout">Log out</button></li>
+					</ul>
 				</div>
-				<ul>
-					<li><button type="button" id="menu-password">Change password</button></li>
-					<li><button type="button" id="menu-export">Download my data</button></li>
-					<li><button type="button" id="menu-delete">Delete my account</button></li>
-					<li class="menu-last"><button type="button" id="menu-logout">Log out</button></li>
-				</ul>
 			</div>
 		</div>
 	</div>
