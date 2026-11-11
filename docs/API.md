@@ -219,6 +219,27 @@ Any type. Reverses its effect on the balances. `200 { "balances": Balances }`. 4
 
 ### `GET /api/export`
 All of the user's data as a JSON file download (`Content-Disposition: attachment`): `{ "exportedAt", "user": User, "balances": Balances, "debts": Debts, "entries": [Entry] }` (`Debts` is the `GET /api/debts` answer).
+This is the full backup. At most the newest 20,000 entries.
+
+### `GET /api/export/excel`
+The same data as an Excel workbook; this is what "Download my data" on the page saves.
+`Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`, `Content-Disposition: attachment; filename="spend-analyzer-YYYY-MM-DD.xlsx"` (the date in India), `Cache-Control: no-store`.
+Read in one snapshot like the JSON export, and capped the same way: the newest 20,000 entries.
+
+| Sheet | What is in it |
+|---|---|
+| `Summary` | Exported on (date and time in India), Name, Email, Phone (masked like `+91 ••••••3210`), Bank balance, Cash in hand, Credit card due, Total money you have (bank + cash), Owed to friends, Entries in this file. When the cap cut the list, one more line: "Only your newest 20,000 entries are included." |
+| `Transactions` | One row per entry, newest first. Columns: Date, Type, What, Category, Paid by / Account, Amount, Friend, Note, Needs checking, Added on. |
+| `Friends you owe` | Friend, Owed, Borrowed, Paid back, Last date, then an empty row and a `Total` row. When nothing is owed, the single line "You do not owe any friend money." |
+
+- **Type** uses the page's words: Spend, Money added, Cash withdrawn, Card bill paid, Balance corrected, Opening balance, Borrowed, Paid back.
+- **What** is the description; for money with a friend it is "Borrowed from Ravi" / "Paid back Ravi" and the description goes to **Note**. **Category** is filled for spends only. **Paid by / Account** is UPI, Debit card, Credit card or Cash for a spend; To bank / To cash, Bank to cash, From bank / From cash, the balance name for a correction, UPI or Cash for money with a friend.
+- **Amount** is signed like the transaction list: money out (a spend, a withdrawal, a card bill, a pay-back) is negative, money in (money added, a borrow) is positive, a balance correction keeps its own sign.
+- Money cells are numbers (Excel can add them up) shown as `"₹"#,##0.00`, negatives with a minus sign. Dates are real Excel dates (`d mmm yyyy`), "Added on" and "Exported on" date and time.
+- Every text cell is plain text (an inline string), never a formula: a description such as `=HYPERLINK(...)`, `+1+1` or `@SUM(A1)` shows as typed and is never run. Characters XML cannot hold are dropped; a cell holds at most 32,767 characters.
+- Text that looks like Excel's character code `_xHHHH_` (for example `bill_x0041_ref`) is stored with the underscore written as `_x005F_`, so Excel shows it as typed.
+- On `Transactions` and `Friends you owe` the header row stays on screen while scrolling and has filter buttons. On `Friends you owe` the filter stops at the last friend (the empty row keeps Excel from growing it), so sorting keeps `Total` at the bottom; the "nobody owed" sentence is a plain sheet with no filter.
+- An error before the file starts (for example the account was deleted) is the usual JSON error. An error after it started leaves the file without its end, so the download fails instead of saving a shorter workbook.
 
 ---
 

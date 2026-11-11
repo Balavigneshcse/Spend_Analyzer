@@ -120,12 +120,13 @@ function changePassword() {
 	});
 }
 
+/** Saves the user's data as an Excel file (the JSON backup stays at /api/export). */
 async function fetchExport() {
-	const response = await api.get("/api/export", { raw: true });
+	const response = await api.get("/api/export/excel", { raw: true });
 	const blob = await response.blob();
 	const header = response.headers.get("Content-Disposition") || "";
 	const match = /filename="?([^";]+)"?/i.exec(header);
-	const name = match ? match[1] : "spend-analyzer-export.json";
+	const name = match ? match[1] : "spend-analyzer.xlsx";
 	const url = URL.createObjectURL(blob);
 	const link = h("a", { href: url, download: name, hidden: true });
 	document.body.append(link);
@@ -143,7 +144,7 @@ async function downloadData() {
 	toast("Getting your data...");
 	try {
 		await fetchExport();
-		toast("Your data is downloaded.");
+		toast("Your data is saved as an Excel file.");
 	} catch (error) {
 		toast("Cannot download. " + errorText(error));
 	} finally {
@@ -160,7 +161,7 @@ function deleteAccount() {
 			exportButton.disabled = true;
 			try {
 				await fetchExport();
-				toast("Your data is downloaded.");
+				toast("Your data is saved as an Excel file.");
 			} catch (error) {
 				setNotice(notice, "Cannot download. " + errorText(error), "problem");
 			} finally {
