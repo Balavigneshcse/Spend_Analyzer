@@ -22,7 +22,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
- * Production mail: Brevo's HTTPS API. (The free host blocks the SMTP ports, so SMTP is not an option.)
+ * Production mail, the alternative to {@link GoogleScriptEmailSender}: Brevo's HTTPS API. (The free
+ * host blocks the SMTP ports, so SMTP is not an option.)
  * A failure is reported with the HTTP status and Brevo's answer only: never with the request body,
  * which contains the code.
  * <p>

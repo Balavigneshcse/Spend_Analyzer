@@ -39,8 +39,8 @@ public class MailDispatcher {
 
 	public MailDispatcher(ObjectProvider<EmailSender> sender, MailStartupCheck checked) {
 		this.sender = sender.getIfAvailable(() -> {
-			throw new IllegalStateException("No email sender: set app.mail.provider to \"brevo\" (production) "
-					+ "or \"console\" (local development only)");
+			throw new IllegalStateException("No email sender: set app.mail.provider to \"google\" or \"brevo\" "
+					+ "(production) or \"console\" (local development only)");
 		});
 		AtomicInteger number = new AtomicInteger();
 		this.executor = new ThreadPoolExecutor(THREADS, THREADS, 30, TimeUnit.SECONDS,

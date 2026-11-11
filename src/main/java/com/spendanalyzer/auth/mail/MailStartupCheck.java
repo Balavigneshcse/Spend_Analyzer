@@ -17,6 +17,8 @@ public class MailStartupCheck {
 		ProductionGuard.check(new ProductionGuard.Settings(environment.acceptsProfiles(Profiles.of("prod")),
 				render != null && !render.isBlank(), environment.getProperty("app.mail.provider", ""),
 				environment.getProperty("app.mail.brevo.api-key", ""), environment.getProperty("app.mail.from-email", ""),
+				environment.getProperty("app.mail.google.script-url", ""),
+				environment.getProperty("app.mail.google.secret", ""),
 				environment.getProperty("app.security.otp-pepper", ""),
 				environment.getProperty("app.cookie.secure", Boolean.class, Boolean.TRUE)));
 	}

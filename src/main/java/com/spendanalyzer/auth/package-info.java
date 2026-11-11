@@ -15,8 +15,8 @@
  * {@link com.spendanalyzer.security.SessionAuthenticator} the security filter asks.</li>
  * <li>{@link com.spendanalyzer.auth.PasswordPolicy}, {@link com.spendanalyzer.auth.PasswordHasher}:
  * the password rule and BCrypt.</li>
- * <li>{@code com.spendanalyzer.auth.mail}: the mail texts and the senders (Brevo in production,
- * the console in development).</li>
+ * <li>{@code com.spendanalyzer.auth.mail}: the mail texts and the senders (the owner's Gmail
+ * through a Google Apps Script, or Brevo, in production; the console in development).</li>
  * </ul>
  * Two rules run through all of it: an answer never reveals whether an email address has an
  * account, and a code or password is never logged or sent back.

@@ -1,6 +1,8 @@
 # Render Blueprint: one free Docker web service.
 # The database is NOT created here: it lives on Neon (free, does not expire).
+# Code emails are sent from your own Gmail by a small Google Apps Script (see the README).
 # Values marked "sync: false" are secrets you type into the Render dashboard once.
+# Values marked "generateValue: true" are long random secrets that Render makes for you.
 services:
   - type: web
     name: spend-analyzer
@@ -14,16 +16,23 @@ services:
       # Neon connection string, e.g. postgresql://user:password@ep-xxxx.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
       - key: DATABASE_URL
         sync: false
-      # Brevo API key (starts with xkeysib-)
-      - key: BREVO_API_KEY
+      # Who sends the code emails. "google" = your own Gmail, through your Google Apps Script.
+      - key: MAIL_PROVIDER
+        value: google
+      # The "Web app URL" of your Google Apps Script. It ends with /exec.
+      - key: GOOGLE_SCRIPT_URL
         sync: false
-      # The sender address you verified in Brevo (your Gmail)
-      - key: MAIL_FROM_EMAIL
-        sync: false
+      # The password between this app and your script; Render generates it once.
+      # After the first deploy, copy it from Render > Environment into the script:
+      # Project Settings > Script Properties > property SECRET.
+      - key: GOOGLE_SCRIPT_SECRET
+        generateValue: true
+      # The sender name people see next to your Gmail address.
       - key: MAIL_FROM_NAME
         value: Spend Analyzer
       # Secret used to protect OTP codes; Render generates it once.
       - key: OTP_PEPPER
         generateValue: true
+      # To use Brevo instead of Gmail, see "Alternative: Brevo" in the README.
       # To stop strangers from signing up after you have registered, add
       # APP_REGISTRATION_ENABLED=false in the Render dashboard (not here, so a sync never undoes it).

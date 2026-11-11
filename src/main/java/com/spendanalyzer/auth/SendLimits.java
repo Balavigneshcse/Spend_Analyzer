@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 
@@ -45,10 +46,15 @@ class SendLimits {
 
 	private final AuthLimits limits;
 
-	SendLimits(JdbcClient jdbc, MailLog mailLog, AuthLimits limits) {
+	/** The circuit breaker's limit; without a configured one it depends on the mail provider. */
+	private final int mailsPerDay;
+
+	SendLimits(JdbcClient jdbc, MailLog mailLog, AuthLimits limits,
+			@Value("${app.mail.provider:}") String mailProvider) {
 		this.jdbc = jdbc;
 		this.mailLog = mailLog;
 		this.limits = limits;
+		this.mailsPerDay = limits.mailBudget(mailProvider);
 	}
 
 	/** One earlier code of the same address and purpose. */
@@ -106,9 +112,9 @@ class SendLimits {
 	 */
 	boolean mailBudgetLeft(Instant now) {
 		int sent = mailLog.mailsSince(now.minus(DAY));
-		if (sent >= limits.mailsPerDay()) {
+		if (sent >= mailsPerDay) {
 			log.error("Mail circuit breaker is open: {} mails in the last 24 hours (limit {}). Not sending.", sent,
-					limits.mailsPerDay());
+					mailsPerDay);
 			return false;
 		}
 		return true;

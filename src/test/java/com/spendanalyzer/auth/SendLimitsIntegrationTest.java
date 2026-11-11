@@ -12,13 +12,18 @@ import static com.spendanalyzer.auth.AuthClient.wrongCode;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
+import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MvcResult;
 
 /** How often codes may be requested: per flow, per address, per client, in total. All counted in the database. */
 class SendLimitsIntegrationTest extends AuthIntegrationBase {
+
+	@Autowired
+	MailLog mailLog;
 
 	private MvcResult requestReset(String email, String ip) throws Exception {
 		return client.post("/api/auth/password-reset/request", body("email", email), ip);
@@ -230,6 +235,48 @@ class SendLimitsIntegrationTest extends AuthIntegrationBase {
 		client.shiftBack(email, Duration.ofSeconds(61));
 		client.requestReset(email, newIp());
 		assertThat(client.codes(email)).hasSize(1);
+	}
+
+	@Test
+	void theGmailSenderStopsAtEightyMailsADayUnlessABudgetIsConfigured() {
+		// the same mail log, seen with the limits of each mail provider
+		SendLimits google = new SendLimits(jdbc, mailLog, new AuthLimits(10, null), "google");
+		SendLimits brevo = new SendLimits(jdbc, mailLog, new AuthLimits(10, null), "brevo");
+		SendLimits configured = new SendLimits(jdbc, mailLog, new AuthLimits(10, 120), "google");
+		String filler = "filler-" + newEmail();
+		try {
+			sentToday(filler, 79);
+			assertThat(google.mailBudgetLeft(Instant.now())).isTrue();
+
+			// a suppressed request sent nothing and does not use up the budget
+			jdbc.sql("INSERT INTO mail_log (recipient, kind, created_at) VALUES (?, 'SUPPRESSED', now())")
+				.param(filler)
+				.update();
+			assertThat(google.mailBudgetLeft(Instant.now())).isTrue();
+
+			sentToday(filler, 1);
+			assertThat(google.mailBudgetLeft(Instant.now())).as("80 mails: below Gmail's 100 a day").isFalse();
+			assertThat(brevo.mailBudgetLeft(Instant.now())).isTrue();
+			assertThat(configured.mailBudgetLeft(Instant.now())).isTrue();
+
+			sentToday(filler, 40);
+			assertThat(configured.mailBudgetLeft(Instant.now())).isFalse();
+			assertThat(brevo.mailBudgetLeft(Instant.now())).isTrue();
+
+			// a day later the budget is back
+			assertThat(google.mailBudgetLeft(Instant.now().plus(Duration.ofHours(25)))).isTrue();
+		}
+		finally {
+			jdbc.sql("DELETE FROM mail_log WHERE recipient = ?").param(filler).update();
+		}
+	}
+
+	private void sentToday(String recipient, int mails) {
+		for (int i = 0; i < mails; i++) {
+			jdbc.sql("INSERT INTO mail_log (recipient, kind, created_at) VALUES (?, 'REGISTER_CODE', now())")
+				.param(recipient)
+				.update();
+		}
 	}
 
 	@Test
