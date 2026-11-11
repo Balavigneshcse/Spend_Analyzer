@@ -184,7 +184,7 @@ What the user owes, per friend. Friends who are fully paid back are not listed.
   "knownNames": [ "Arun", "Ravi", "Suresh" ]
 }
 ```
-`people` is sorted by `owed`, largest first. `knownNames` lists every friend ever used (for suggestions while typing), sorted by name.
+`people` is sorted by `owed`, largest first. `knownNames` lists the friends that appear in the user's entries (for suggestions while typing), sorted by name, at most 200; a name disappears once every entry with that friend is deleted. The name shown for a friend is the spelling of their oldest entry.
 
 ### `POST /api/entries/preview`
 Live AI guess while typing. Body `{ "description": "juse", "amount": "40", "paymentMode": "UPI" }` (`amount`, `paymentMode` optional). Saves nothing.

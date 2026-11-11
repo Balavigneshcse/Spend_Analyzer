@@ -20,7 +20,7 @@ const state = {
 
 // ----- how one entry reads ---------------------------------------------------
 
-/** Plain words for an entry: { what, note, how, amount } */
+/** Plain words for an entry: { what, note, how, amount } and, for some, a shorter dialog title */
 export function describe(entry) {
 	const amount = money(entry.amount);
 	switch (entry.type) {
@@ -37,6 +37,10 @@ export function describe(entry) {
 			const signed = Number(entry.amount) > 0 ? "+" + amount : amount;
 			return { what: opening ? "Opening balance" : "Balance corrected", note: opening ? null : entry.description, how: accountName(entry.account), amount: signed };
 		}
+		case "BORROW":
+			return { what: "Borrowed from " + (entry.person || "a friend"), title: "Money borrowed", note: entry.description, how: entry.account === "CASH" ? "Cash" : "UPI", amount: "+" + amount };
+		case "REPAY":
+			return { what: "Paid back " + (entry.person || "a friend"), title: "Money paid back", note: entry.description, how: entry.account === "CASH" ? "Cash" : "UPI", amount: "−" + amount };
 		default:
 			return { what: entry.description || entry.type, how: "", amount };
 	}
@@ -435,7 +439,12 @@ function showOther(entry, body, close) {
 			facts.append(h("dt", null, name), h("dd", null, value));
 		}
 	};
+	const friend = entry.type === "BORROW" || entry.type === "REPAY";
 	add("Amount", words.amount);
+	if (friend) {
+		add("Friend", entry.person);
+		add(entry.type === "BORROW" ? "Received by" : "Paid by", words.how);
+	}
 	add("Balance", entry.type === "WITHDRAWAL" ? "Bank balance to Cash in hand" : entry.type === "CARD_PAYMENT" ? (entry.account === "CASH" ? "Cash in hand" : "Bank balance") + " and Credit card due" : accountName(entry.account));
 	add("Date", showDate(entry.date, true));
 	add("Note", words.note);
@@ -455,7 +464,7 @@ function showOther(entry, body, close) {
 function openEntry(entry) {
 	const words = describe(entry);
 	openDialog(
-		entry.type === "EXPENSE" ? "Edit spend" : words.what,
+		entry.type === "EXPENSE" ? "Edit spend" : words.title || words.what,
 		(body, close) => {
 			if (entry.type === "EXPENSE") {
 				editExpense(entry, body, close);

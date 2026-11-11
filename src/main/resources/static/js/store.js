@@ -7,6 +7,7 @@ export const store = {
 	user: null,
 	meta: { categories: [], paymentModes: [], accounts: [] },
 	balances: null,
+	debts: null, // GET /api/debts: what is owed to each friend; null until it has loaded
 };
 
 const listeners = new Map();
@@ -28,6 +29,13 @@ export function setBalances(balances) {
 	if (balances) {
 		store.balances = balances;
 		emit("balances", balances);
+	}
+}
+
+export function setDebts(debts) {
+	if (debts) {
+		store.debts = debts;
+		emit("debts", debts);
 	}
 }
 

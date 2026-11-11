@@ -300,16 +300,21 @@
 	color: var(--white);
 }
 
+/* five cards: the four balances two by two, then "Spent this month" across */
+.card-spent {
+	grid-column: 1 / -1;
+}
+
 .actions {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 8px;
 	margin-top: 8px;
 }
 
 .action {
 	min-height: 44px;
-	padding: 4px 8px;
+	padding: 4px 4px;
 	border: 1px solid var(--line-2);
 	border-radius: var(--radius-s);
 	background: var(--white);
@@ -322,6 +327,80 @@
 .action:hover {
 	border-color: var(--v-700);
 	background: var(--v-50);
+}
+
+/* ---------- friends you owe ---------- */
+
+.owe {
+	margin-top: 12px;
+}
+
+.owe-list {
+	margin: 2px 0 -10px;
+}
+
+.friend {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto;
+	gap: 2px 12px;
+	align-items: center;
+	padding: 10px 0;
+}
+
+.friend + .friend {
+	border-top: 1px solid var(--line);
+}
+
+.friend-who {
+	display: grid;
+	gap: 2px;
+	min-width: 0;
+}
+
+.friend-name {
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--ink);
+	overflow-wrap: anywhere;
+}
+
+.friend-sub {
+	font-size: 13px;
+	color: var(--ink-3);
+	overflow-wrap: anywhere;
+}
+
+.friend-owed {
+	font-size: 15px;
+	font-weight: 600;
+	text-align: right;
+}
+
+.btn.friend-pay {
+	padding: 0 14px;
+	font-size: 14px;
+}
+
+.owe-more {
+	margin: 10px 0 -10px -6px;
+	font-size: 14px;
+}
+
+/* a quiet line with one small action, under a row of fields in a dialog */
+.hint-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0 10px;
+	margin: -14px 0 6px;
+	font-size: 13px;
+	color: var(--ink-3);
+}
+
+.hint-row .btn.link {
+	margin-right: -6px;
+	font-size: 14px;
 }
 
 /* ---------- work area: add a spend + transactions ---------- */
@@ -1045,6 +1124,44 @@
 		margin: 0 -4px;
 		width: calc(100% + 8px);
 	}
+
+	/* a friend takes two short lines (name and amount, then the small line) with "Pay back" beside them */
+	.friend {
+		align-items: baseline;
+	}
+
+	.friend-who {
+		display: contents;
+	}
+
+	.friend-name {
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	.friend-owed {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.friend-sub {
+		grid-column: 1 / 3;
+		grid-row: 2;
+	}
+
+	.btn.friend-pay,
+	.btn.friend-pay:hover {
+		grid-column: 3;
+		grid-row: 1 / 3;
+		align-self: center;
+		margin-right: -6px;
+		padding: 0 6px;
+		border-color: transparent;
+		background: transparent;
+		text-decoration: underline;
+		text-decoration-color: var(--v-300);
+		text-underline-offset: 3px;
+	}
 }
 
 @media (max-width: 359px) {
@@ -1100,14 +1217,20 @@
 	}
 
 	.actions {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 10px;
 		margin-top: 14px;
 	}
 
 	.action {
 		padding: 4px 16px;
+	}
+
+	.owe {
+		margin-top: 20px;
+	}
+
+	.friend {
+		column-gap: 20px;
 	}
 
 	.panel {
@@ -1282,7 +1405,27 @@
 
 @media (min-width: 1000px) {
 	.cards {
-		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+	}
+
+	.card-spent {
+		grid-column: auto;
+	}
+
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	/* friends side by side, so a name stays close to its amount */
+	.owe-list {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		column-gap: 48px;
+	}
+
+	.friend:nth-child(2) {
+		border-top: 0;
 	}
 
 	.work {
@@ -1293,5 +1436,20 @@
 	.add {
 		position: sticky;
 		top: 16px;
+	}
+}
+
+/* five cards in one row are narrow until the page reaches its full width */
+@media (min-width: 1000px) and (max-width: 1199px) {
+	.cards {
+		gap: 12px;
+	}
+
+	.card {
+		padding: 16px 14px 18px;
+	}
+
+	.card h2 {
+		gap: 6px;
 	}
 }

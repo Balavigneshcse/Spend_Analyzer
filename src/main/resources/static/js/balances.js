@@ -11,7 +11,7 @@ const BELOW_ZERO = "Below zero - correct your balance if this is wrong";
 // ----- cards -----------------------------------------------------------------
 
 /** Long amounts get a smaller size so they never spill out of the card. */
-function sizeValue(node, text) {
+export function sizeValue(node, text) {
 	node.classList.toggle("long", text.length > 11 && text.length <= 14);
 	node.classList.toggle("xlong", text.length > 14);
 }
@@ -114,11 +114,11 @@ function setupOpening(onDone) {
 
 // ----- dialogs ---------------------------------------------------------------
 
-function dateField(label) {
+export function dateField(label) {
 	return field({ label: label || "Date", name: "date", type: "date", value: todayIso(), attrs: { min: "2000-01-01" } });
 }
 
-function actions(close, submitLabel) {
+export function actions(close, submitLabel) {
 	return h(
 		"div",
 		{ class: "dialog-actions" },

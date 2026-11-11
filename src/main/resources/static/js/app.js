@@ -4,6 +4,7 @@ import { api, onUnauthorized, errorText } from "/js/api.js";
 import { store, setBalances } from "/js/store.js";
 import { setupAccount, paintUser } from "/js/account.js";
 import { setupBalances } from "/js/balances.js";
+import { setupFriends } from "/js/friends.js";
 import { setupSpend } from "/js/spend.js";
 import { setupEntries } from "/js/entries.js";
 import { setupAnalysis } from "/js/analysis.js";
@@ -21,6 +22,7 @@ function showDash() {
 	$("dash").hidden = false;
 	if (!dashReady) {
 		dashReady = true;
+		setupFriends();
 		setupSpend();
 		setupEntries();
 		setupAnalysis();

@@ -106,6 +106,11 @@
 					<p class="card-value num" id="bal-due">-</p>
 					<p class="card-note" id="bal-due-note" hidden></p>
 				</article>
+				<article class="card" id="card-owed">
+					<h2><span class="card-icon" data-icon="people"></span>Owed to friends</h2>
+					<p class="card-value num" id="bal-owed">-</p>
+					<p class="card-note" id="bal-owed-note" hidden></p>
+				</article>
 				<article class="card card-spent" id="card-spent">
 					<h2><span class="card-icon" data-icon="chart"></span>Spent this month</h2>
 					<p class="card-value num" id="bal-spent">-</p>
@@ -117,7 +122,16 @@
 				<button type="button" class="action" id="act-withdraw">Withdraw cash</button>
 				<button type="button" class="action" id="act-card">Pay card bill</button>
 				<button type="button" class="action" id="act-adjust">Correct a balance</button>
+				<button type="button" class="action" id="act-borrow">Borrow money</button>
+				<button type="button" class="action" id="act-repay">Pay back a friend</button>
 			</div>
+		</section>
+
+		<!-- Friends you owe (only when something is owed) -->
+		<section class="panel owe" id="owe" aria-labelledby="h-owe" hidden>
+			<h2 id="h-owe">Friends you owe</h2>
+			<ul class="owe-list" id="owe-list"></ul>
+			<button type="button" class="btn link owe-more" id="owe-more" aria-controls="owe-list" hidden></button>
 		</section>
 
 		<div class="work">

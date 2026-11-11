@@ -13,6 +13,7 @@ A personal spend tracker. You enter your bank balance, cash in hand and credit c
 - One dashboard: balances, add a spend, transactions, analysis.
 - Payment modes: UPI and debit card reduce the bank balance, cash reduces cash in hand, credit card adds to the card due.
 - Add money, withdraw cash from an ATM, pay the credit card bill, correct a balance.
+- Borrow money from a friend (name, amount, by UPI or in cash) and pay it back later. The dashboard shows what you owe each friend.
 - The AI picks the category; if you correct it, it remembers for next time.
 - Analysis: spending by category and payment mode, items you buy most often, daily trend, unusual spends, how many days your money will last, a health score, and a short written summary with tips.
 
