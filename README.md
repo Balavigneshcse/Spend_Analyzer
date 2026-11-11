@@ -1,5 +1,7 @@
 # Spend Analyzer
 
+**Live site:** <https://spend-analyzer-gyms.onrender.com> (the first visit after a quiet time takes about one to two minutes to wake up)
+
 A personal spend tracker. You enter your bank balance, cash in hand and credit card due, then log each spend in your own words ("juse", "briyany", "pen", "bus ticket"). A hand-written AI recognises what it was, even when misspelt, puts it in a category, and gives you an analysis of where your money goes.
 
 - **Frontend:** plain HTML, CSS and JavaScript (no framework), served by the backend.
