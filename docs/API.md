@@ -48,7 +48,9 @@ Input rules (server is authoritative, the page shows the same rules live):
 - **code**: exactly 6 digits. Valid 10 minutes, 5 wrong tries per code.
 
 ### `GET /api/auth/config`
-`200 { "registrationEnabled": true }`
+`200 { "registrationEnabled": true, "idleMinutes": 5 }`
+
+`idleMinutes` is the idle limit (see "Sessions and the idle logout" below); the pages use it so that they and the server agree.
 
 ### `POST /api/auth/register`
 Body `{ "name", "email", "phone", "password" }`
@@ -70,6 +72,18 @@ Body `{ "email", "password" }` → `200 { "user": User }` + cookie. 401 `invalid
 
 ### `POST /api/auth/logout`
 `204`. Deletes the session and clears the cookie. Safe to call when not logged in.
+
+### Sessions and the idle logout
+
+A session ends at the first of two limits:
+
+- **Absolute:** `app.session.days` (default 7) after login. The cookie's `Max-Age` is this time.
+- **Idle:** no request for longer than `app.session.idle-minutes` (default 5, allowed 1 to 120) **plus 60 seconds of grace**. The server then deletes the session and answers `401 unauthorized`, like any other request without a login. The grace covers the keep-alive below and the fact that `last_seen_at` is written at most every 30 seconds.
+
+Every request with the cookie counts as activity. The dashboard also sends `POST /api/auth/ping` at most once a minute while the user clicks, types or scrolls without saving anything. It warns ("Are you still there?") 60 seconds before the idle limit (half the limit when it is under 2 minutes) and logs out at the limit, then opens `/login.html?reason=idle`. Activity in any open tab counts for all tabs, and a logout in one tab logs out the others.
+
+### `POST /api/auth/ping`
+Login required. No body (an empty JSON object `{}` is accepted too). `204`, and the session's idle time starts again. 401 `unauthorized` when not logged in or when the session has already ended.
 
 ### `GET /api/auth/me`
 `200 { "user": User }` or 401 `unauthorized`.

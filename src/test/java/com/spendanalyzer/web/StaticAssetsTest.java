@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -70,6 +72,16 @@ class StaticAssetsTest {
 
 	/** The script that sets the theme before the first paint. */
 	private static final String THEME_SCRIPT = "/js/theme-init.js";
+
+	/** The script that logs the user out after a time without activity. */
+	private static final String IDLE_SCRIPT = "js/idle.js";
+
+	/** A page's script tag, giving the path without the leading slash. */
+	private static final Pattern SCRIPT_SRC = Pattern.compile("<script\\b[^>]*\\bsrc\\s*=\\s*\"/([^\"]+)\"",
+			Pattern.CASE_INSENSITIVE);
+
+	/** A static ES module import of one of the site's own scripts. */
+	private static final Pattern IMPORT_FROM = Pattern.compile("\\bimport\\b[^;]*?[\"']/(js/[^\"']+)[\"']");
 
 	private static final Pattern CSS_COMMENT = Pattern.compile("/\\*.*?\\*/", Pattern.DOTALL);
 
@@ -372,6 +384,99 @@ class StaticAssetsTest {
 			}
 		}
 		failIfAny("The browser's own bar must match the top bar", problems);
+	}
+
+	@Test
+	void theIdleLogoutRunsOnTheDashboardOnly() throws IOException {
+		// idle.js logs out after a time without activity: it belongs to the logged-in page, never the login page.
+		assertTrue(Files.isRegularFile(STATIC.resolve(IDLE_SCRIPT)), IDLE_SCRIPT + " is missing");
+		List<String> problems = new ArrayList<>();
+		if (!modulesOf("index.html").contains(IDLE_SCRIPT)) {
+			problems.add("index.html does not load " + IDLE_SCRIPT + " (directly or through an import)");
+		}
+		if (modulesOf("login.html").contains(IDLE_SCRIPT)) {
+			problems.add("login.html loads " + IDLE_SCRIPT + "; the login page must not log anyone out");
+		}
+		failIfAny("The idle logout belongs to the dashboard", problems);
+	}
+
+	@Test
+	void theIdleScriptKeepsToTheRules() throws IOException {
+		String js = read(STATIC.resolve(IDLE_SCRIPT));
+		List<String> problems = new ArrayList<>();
+		for (Pattern banned : BANNED_IN_SCRIPTS) {
+			if (banned.matcher(js).find()) {
+				problems.add(IDLE_SCRIPT + " matches " + banned.pattern());
+			}
+		}
+		// the last-activity time goes through store.js like the other saved choices
+		for (String api : List.of("localStorage", "sessionStorage", "indexedDB", "document.cookie", "innerHTML")) {
+			if (js.contains(api)) {
+				problems.add(IDLE_SCRIPT + " uses " + api);
+			}
+		}
+		// wall-clock time, so a phone that slept still logs out on time
+		if (!js.contains("Date.now()")) {
+			problems.add(IDLE_SCRIPT + " must measure time with Date.now()");
+		}
+		// pressing "Log out" in the warning is not "no activity"
+		if (!js.contains("logOut(\"out\")")) {
+			problems.add(IDLE_SCRIPT + ": the warning's Log out button must call logOut(\"out\")");
+		}
+		failIfAny("idle.js keeps to the page rules", problems);
+	}
+
+	@Test
+	void theLoginPageEndsTheSessionAfterALogoutBeforeAnythingElse() throws IOException {
+		// If the dashboard's logout request failed, the login page must not find the session alive and
+		// open the dashboard again: it logs out first, because every other call keeps the session alive.
+		String js = read(STATIC.resolve("js/login.js"));
+		int start = js.indexOf("async function start()");
+		assertTrue(start >= 0, "login.js has no start()");
+		String body = js.substring(start);
+		int logout = body.indexOf("\"/api/auth/logout\"");
+		int config = body.indexOf("\"/api/auth/config\"");
+		int me = body.indexOf("\"/api/auth/me\"");
+		List<String> problems = new ArrayList<>();
+		if (logout < 0) {
+			problems.add("start() does not send /api/auth/logout after an idle logout or #out");
+		} else {
+			if (config >= 0 && config < logout) {
+				problems.add("start() asks /api/auth/config before it logs out");
+			}
+			if (me >= 0 && me < logout) {
+				problems.add("start() asks /api/auth/me before it logs out");
+			}
+		}
+		if (!body.contains("\"idle\"") || !body.contains("\"#out\"")) {
+			problems.add("start() must log out for both ?reason=idle and #out");
+		}
+		failIfAny("The login page ends the session after a logout", problems);
+	}
+
+	/** Every script a page runs: its script tags and, through them, every module they import. */
+	private static Set<String> modulesOf(String page) throws IOException {
+		Set<String> found = new LinkedHashSet<>();
+		ArrayDeque<String> next = new ArrayDeque<>();
+		Matcher tag = SCRIPT_SRC.matcher(read(STATIC.resolve(page)));
+		while (tag.find()) {
+			next.add(tag.group(1));
+		}
+		while (!next.isEmpty()) {
+			String script = next.poll();
+			if (!found.add(script)) {
+				continue;
+			}
+			Path file = STATIC.resolve(script);
+			if (!Files.isRegularFile(file)) {
+				continue;
+			}
+			Matcher imported = IMPORT_FROM.matcher(read(file));
+			while (imported.find()) {
+				next.add(imported.group(1));
+			}
+		}
+		return found;
 	}
 
 	private static String withoutComments(String css) {

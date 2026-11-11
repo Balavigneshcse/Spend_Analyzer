@@ -8,11 +8,13 @@ import { setupFriends } from "/js/friends.js";
 import { setupSpend } from "/js/spend.js";
 import { setupEntries } from "/js/entries.js";
 import { setupAnalysis } from "/js/analysis.js";
+import { startIdle, loginUrl } from "/js/idle.js";
 
 const $ = (id) => document.getElementById(id);
 
 onUnauthorized(() => {
-	window.location.replace("/login.html");
+	// with the "no activity" notice when the idle watch knows the user was away
+	window.location.replace(loginUrl());
 });
 
 let dashReady = false;
@@ -39,7 +41,13 @@ async function start() {
 	$("loading").hidden = false;
 	$("load-error").hidden = true;
 	try {
-		const [me, meta, balances] = await Promise.all([api.get("/api/auth/me"), api.get("/api/meta"), api.get("/api/balances")]);
+		const [me, meta, balances, config] = await Promise.all([
+			api.get("/api/auth/me"),
+			api.get("/api/meta"),
+			api.get("/api/balances"),
+			api.get("/api/auth/config"),
+		]);
+		startIdle(config.idleMinutes);
 		store.user = me.user;
 		store.meta = meta;
 		paintUser(me.user);

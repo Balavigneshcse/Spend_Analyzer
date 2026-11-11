@@ -158,8 +158,11 @@ With Brevo, parts 2 and 4 above are not needed.
 | `OTP_PEPPER` | yes | Random secret of at least 32 characters (Render generates it) |
 | `APP_AUTH_LIMITS_MAILSPERDAY` | no | Most emails the app sends in 24 hours. Default 80 with `google`, 200 with `brevo` |
 | `APP_REGISTRATION_ENABLED` | no | `false` closes registration |
+| `APP_SESSION_IDLEMINUTES` | no | Log out after this many minutes with no activity, 1 to 120. Default 5 |
 | `APP_ORIGIN` | no | Public address of the site; on Render it is detected automatically |
 | `PORT` | no | Port to listen on (Render sets it) |
+
+**You are logged out after 5 minutes with no activity** (no click, key, scroll or touch). One minute before, the page asks "Are you still there?". The server checks this too, so it works even if the page is closed. Change the time with `APP_SESSION_IDLEMINUTES`.
 
 ## Project layout
 

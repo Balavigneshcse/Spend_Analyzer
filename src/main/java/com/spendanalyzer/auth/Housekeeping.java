@@ -33,11 +33,14 @@ class Housekeeping {
 
 	private final Clock clock;
 
+	private final SessionService sessions;
+
 	private final AtomicReference<Instant> lastRun = new AtomicReference<>(Instant.MIN);
 
-	Housekeeping(JdbcClient jdbc, Clock clock) {
+	Housekeeping(JdbcClient jdbc, Clock clock, SessionService sessions) {
 		this.jdbc = jdbc;
 		this.clock = clock;
+		this.sessions = sessions;
 	}
 
 	/** Cleans up if the last clean-up is long enough ago. Never fails the request it rides on. */
@@ -58,7 +61,10 @@ class Housekeeping {
 	void run(Instant now) {
 		jdbc.sql("DELETE FROM pending_registrations WHERE expires_at < ?").param(Db.ts(now)).update();
 		jdbc.sql("DELETE FROM otp_challenges WHERE created_at < ?").param(Db.ts(now.minus(LIMIT_WINDOW))).update();
-		jdbc.sql("DELETE FROM sessions WHERE expires_at < ?").param(Db.ts(now)).update();
+		// past the absolute lifetime, or idle too long (authenticate refuses both)
+		jdbc.sql("DELETE FROM sessions WHERE expires_at < ? OR last_seen_at <= ?")
+			.params(Db.ts(now), Db.ts(now.minus(sessions.idleCutoff())))
+			.update();
 		jdbc.sql("DELETE FROM login_attempts WHERE created_at < ?").param(Db.ts(now.minus(LIMIT_WINDOW))).update();
 		jdbc.sql("DELETE FROM mail_log WHERE created_at < ?").param(Db.ts(now.minus(MAIL_LOG_KEPT))).update();
 	}

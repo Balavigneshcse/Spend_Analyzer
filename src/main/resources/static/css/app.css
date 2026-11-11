@@ -1536,3 +1536,11 @@
 		gap: 6px;
 	}
 }
+
+/* "Are you still there?": the seconds left, so the number does not jump about */
+.idle-count {
+	font-weight: 600;
+	color: var(--text);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}

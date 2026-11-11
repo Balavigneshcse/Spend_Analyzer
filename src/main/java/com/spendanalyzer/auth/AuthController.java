@@ -26,7 +26,8 @@ public class AuthController {
 
 	private static final int RESEND_AFTER_SECONDS = (int) SendLimits.RESEND_COOLDOWN.toSeconds();
 
-	public record ConfigResponse(boolean registrationEnabled) {
+	/** idleMinutes: the page logs out after this many minutes without activity (the server decides too). */
+	public record ConfigResponse(boolean registrationEnabled, int idleMinutes) {
 	}
 
 	public record RegisterResponse(UUID registrationId, int expiresInSeconds, int resendAfterSeconds) {
@@ -62,7 +63,7 @@ public class AuthController {
 
 	@GetMapping("/config")
 	public ConfigResponse config() {
-		return new ConfigResponse(registration.enabled());
+		return new ConfigResponse(registration.enabled(), sessions.idleMinutes());
 	}
 
 	@PostMapping("/register")
@@ -97,6 +98,18 @@ public class AuthController {
 		return ResponseEntity.noContent()
 			.header(HttpHeaders.SET_COOKIE, sessions.clearingCookie().toString())
 			.build();
+	}
+
+	/**
+	 * The page's keep-alive while the user reads or types without saving. The session filter has
+	 * already refreshed last_seen_at; this only has to say whether the session is still there.
+	 */
+	@PostMapping("/ping")
+	public ResponseEntity<Void> ping(@AuthenticationPrincipal AuthUser user) {
+		if (user == null) {
+			throw AuthErrors.unauthorized();
+		}
+		return ResponseEntity.noContent().header(HttpHeaders.CACHE_CONTROL, "no-store").build();
 	}
 
 	@GetMapping("/me")

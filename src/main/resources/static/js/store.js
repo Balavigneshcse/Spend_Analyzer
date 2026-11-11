@@ -1,5 +1,6 @@
 // What the dashboard knows right now, and a tiny event bus between its parts.
-// Nothing here is saved in the browser; only two harmless choices go to localStorage.
+// Nothing here is saved in the browser; only two harmless choices go to localStorage, and
+// idle.js keeps the time of the last activity there so that all open tabs share it.
 
 import { api, ApiError, newClientId } from "/js/api.js";
 

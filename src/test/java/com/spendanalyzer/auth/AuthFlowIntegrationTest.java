@@ -110,7 +110,7 @@ class AuthFlowIntegrationTest extends AuthIntegrationBase {
 
 	@Test
 	void productionCookieIsSecureAndHostBound() {
-		SessionService production = new SessionService(jdbc, Clock.systemUTC(), tokens, true, 7);
+		SessionService production = new SessionService(jdbc, Clock.systemUTC(), tokens, true, 7, 5);
 		String header = production.cookie(tokens.sessionToken()).toString();
 		assertThat(header).startsWith("__Host-sa_session=");
 		assertThat(List.of(header.split("; "))).contains("Secure", "HttpOnly", "SameSite=Strict", "Path=/",
@@ -172,18 +172,18 @@ class AuthFlowIntegrationTest extends AuthIntegrationBase {
 	}
 
 	@Test
-	void lastSeenIsWrittenAtMostEveryFiveMinutes() throws Exception {
+	void lastSeenIsWrittenAtMostEveryThirtySeconds() throws Exception {
 		String email = newEmail();
 		UUID userId = client.insertUser(email, PASSWORD);
 		Cookie session = client.login(email, PASSWORD, newIp());
 
-		jdbc.sql("UPDATE sessions SET last_seen_at = now() - interval '2 minutes' WHERE user_id = ?").param(userId).update();
+		jdbc.sql("UPDATE sessions SET last_seen_at = now() - interval '20 seconds' WHERE user_id = ?").param(userId).update();
 		assertStatus(client.get("/api/auth/me", session), 200);
-		assertThat(lastSeenAge(userId)).as("fresh enough: not written").isGreaterThan(Duration.ofSeconds(100));
+		assertThat(lastSeenAge(userId)).as("fresh enough: not written").isGreaterThan(Duration.ofSeconds(15));
 
-		jdbc.sql("UPDATE sessions SET last_seen_at = now() - interval '6 minutes' WHERE user_id = ?").param(userId).update();
+		jdbc.sql("UPDATE sessions SET last_seen_at = now() - interval '45 seconds' WHERE user_id = ?").param(userId).update();
 		assertStatus(client.get("/api/auth/me", session), 200);
-		assertThat(lastSeenAge(userId)).as("stale: written").isLessThan(Duration.ofSeconds(60));
+		assertThat(lastSeenAge(userId)).as("stale: written").isLessThan(Duration.ofSeconds(10));
 	}
 
 	@Test
@@ -198,6 +198,7 @@ class AuthFlowIntegrationTest extends AuthIntegrationBase {
 		MvcResult result = client.get("/api/auth/config", null);
 		assertStatus(result, 200);
 		assertThat(json(result).get("registrationEnabled").asBoolean()).isTrue();
+		assertThat(json(result).get("idleMinutes").asInt()).as("app.session.idle-minutes default").isEqualTo(5);
 	}
 
 	@Test

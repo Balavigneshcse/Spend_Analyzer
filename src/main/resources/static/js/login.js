@@ -156,6 +156,9 @@ function focusFirstInvalid(form) {
 
 // ----- log in ---------------------------------------------------------------
 
+/** The logout this page sends when it was opened by a logout (see start). */
+let endingSession = Promise.resolve();
+
 const loginForm = $("form-login");
 loginForm.addEventListener("submit", (event) => {
 	event.preventDefault();
@@ -169,6 +172,7 @@ loginForm.addEventListener("submit", (event) => {
 				focusFirstInvalid(loginForm);
 				return false;
 			}
+			await endingSession;
 			await api.post("/api/auth/login", { email: email.value.trim(), password: password.value });
 			window.location.replace("/");
 			return await new Promise(() => {});
@@ -234,8 +238,9 @@ codeForm.addEventListener("submit", (event) => {
 			if (code === null) {
 				return false;
 			}
+			await endingSession;
 			try {
-				await api.post("/api/auth/register/verify", { registrationId: state.registrationId, code });
+				await api.post("/api/auth/register/verify",{ registrationId: state.registrationId, code });
 			} catch (error) {
 				if (codeProblem(codeForm, input, error)) {
 					return false;
@@ -359,8 +364,21 @@ $("reset-resend").addEventListener("click", () => {
 
 // ----- start ----------------------------------------------------------------
 
-function startNote() {
+/** Logged out by the idle watch (idle.js): say why, in the server's own number of minutes. */
+function idleNote(notice, config) {
+	const minutes = config && Number.isInteger(config.idleMinutes) && config.idleMinutes > 0 ? config.idleMinutes : null;
+	const time = minutes === null ? "" : " for " + (minutes === 1 ? "1 minute" : minutes + " minutes");
+	setNotice(notice, "You were logged out because there was no activity" + time + ". Please log in again.", "");
+}
+
+function startNote(config) {
 	const notice = loginForm.querySelector(".form-notice");
+	if (new URLSearchParams(window.location.search).get("reason") === "idle") {
+		// a refresh must not show it again
+		window.history.replaceState(null, "", window.location.pathname);
+		config.then((answer) => idleNote(notice, answer)).catch(() => idleNote(notice, null));
+		return;
+	}
 	const hash = window.location.hash;
 	if (hash === "#deleted") {
 		setNotice(notice, "Your account and all its data are deleted.", "good");
@@ -375,10 +393,19 @@ function startNote() {
 }
 
 async function start() {
-	startNote();
-	api.get("/api/auth/config")
-		.then((config) => {
-			state.registrationOpen = config.registrationEnabled !== false;
+	// Sent here by a logout (the idle watch or "Log out"): end the session here too, before any other
+	// call, in case the dashboard's logout request failed. Every call keeps a live session alive.
+	const loggedOut = new URLSearchParams(window.location.search).get("reason") === "idle" || window.location.hash === "#out";
+	if (loggedOut) {
+		// a log in waits for this, so a late answer cannot clear the new session's cookie
+		endingSession = api.post("/api/auth/logout").catch(() => {});
+		await endingSession;
+	}
+	const config = api.get("/api/auth/config");
+	startNote(config);
+	config
+		.then((answer) => {
+			state.registrationOpen = answer.registrationEnabled !== false;
 			for (const link of document.querySelectorAll("[data-register-link]")) {
 				link.hidden = !state.registrationOpen;
 			}
@@ -387,6 +414,9 @@ async function start() {
 			}
 		})
 		.catch(() => {});
+	if (loggedOut) {
+		return; // never straight back to the dashboard without the password
+	}
 	try {
 		await api.get("/api/auth/me");
 		window.location.replace("/");
