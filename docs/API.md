@@ -166,7 +166,7 @@ What each type does:
 
 Borrowing from friends:
 
-- `person` is the friend's name: 1 to 40 characters after trimming, no control characters. "Ravi", "ravi" and " RAVI " are the same friend (compared without case and extra spaces); the first spelling used is the one shown.
+- `person` is the friend's name: 1 to 40 characters after trimming, no control characters. "Ravi", "ravi" and " RAVI " are the same friend (compared without case, extra spaces, invisible characters and Unicode spelling differences); the first spelling used is the one shown.
 - Borrowed money is not income and paying it back is not spending: neither appears in the analysis totals.
 - `REPAY` is refused with 400 `validation` (`fields.amount`) when it is more than you owe that friend, and with `fields.person` when you owe that friend nothing.
 - Deleting a `BORROW` that has already been (partly) paid back, so that the friend would end up below zero, is refused with 409 `conflict` and a message telling the user to delete the pay-back first.

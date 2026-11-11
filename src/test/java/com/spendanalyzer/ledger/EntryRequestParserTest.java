@@ -298,6 +298,52 @@ class EntryRequestParserTest {
 		assertThat(PersonName.key("Ravi")).isNotEqualTo(PersonName.key("Ravi K"));
 	}
 
+	@Test
+	void theSameLetterTypedAsOneCodePointOrAsTwoIsTheSameFriend() {
+		// Tamil "Ponni": keyboards write the vowel sign "o" as U+0BCA or as its two halves U+0BC6 U+0BBE
+		String oneCodePoint = "பொன்னி";
+		String twoCodePoints = "பொன்னி";
+		assertThat(oneCodePoint).isNotEqualTo(twoCodePoints);
+		assertThat(PersonName.parse("person", twoCodePoints)).isEqualTo(oneCodePoint);
+		assertThat(PersonName.parse("person", oneCodePoint)).isEqualTo(oneCodePoint);
+		assertThat(PersonName.key(PersonName.parse("person", twoCodePoints)))
+			.isEqualTo(PersonName.key(PersonName.parse("person", oneCodePoint)));
+
+		// Devanagari "qa": U+0958 or "ka" with a nukta; here the two-code-point form is the normal one
+		assertThat(PersonName.parse("person", "क़")).isEqualTo("क़");
+		assertThat(PersonName.key(PersonName.parse("person", "क़")))
+			.isEqualTo(PersonName.key(PersonName.parse("person", "क़")));
+		// the length is counted after that: 21 such letters are 42 characters once stored
+		assertThat(PersonName.parse("person", "क़".repeat(20))).isEqualTo("क़".repeat(20));
+		assertRejected("person", () -> PersonName.parse("person", "क़".repeat(21)));
+
+		// Latin too: "e" with a combining accent is the letter "e acute"
+		assertThat(PersonName.parse("person", "Émile")).isEqualTo("Émile");
+		assertThat(PersonName.key(PersonName.parse("person", "éMILE"))).isEqualTo("émile");
+	}
+
+	@Test
+	void invisibleCharactersAreNoPartOfANameOrItsKey() {
+		// a zero-width space that came along with a paste
+		String pasted = PersonName.parse("person", "Ravi​");
+		assertThat(pasted).isEqualTo("Ravi");
+		assertThat(PersonName.key(pasted)).isEqualTo("ravi");
+		// anywhere in the name: zero-width space, soft hyphen, byte order mark, direction marks
+		assertThat(PersonName.parse("person", "﻿Ra­vi ​ Ku‎mar‏")).isEqualTo("Ravi Kumar");
+		// one between the two halves of a letter does not keep them apart
+		assertThat(PersonName.parse("person", "பெ​ா")).isEqualTo("பொ");
+		// they do not count towards the length
+		assertThat(PersonName.parse("person", "x​".repeat(40))).isEqualTo("x".repeat(40));
+
+		// the joiner and the non-joiner change how letters and emoji are drawn: they stay
+		assertThat(PersonName.parse("person", "க்‌ஷ")).isEqualTo("க்‌ஷ");
+		assertThat(PersonName.parse("person", "👩‍💻 Asha"))
+			.isEqualTo("👩‍💻 Asha");
+		// but a name made only of invisible characters is still no name
+		assertRejected("person", () -> PersonName.parse("person", "​﻿­"));
+		assertRejected("person", () -> PersonName.parse("person", "​ ‍‌"));
+	}
+
 	@ParameterizedTest
 	@ValueSource(strings = { "", " ", " \t\r\n ", "\u0000", "\u0007\u001B", "  ", "​‍",
 			"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" })

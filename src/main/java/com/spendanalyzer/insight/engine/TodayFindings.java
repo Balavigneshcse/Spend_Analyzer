@@ -76,15 +76,41 @@ final class TodayFindings {
 			title = "Money lasts about {days} days";
 		}
 		else {
-			severity = Severity.GOOD;
-			title = "Your money has room";
 			if (runway.capped()) {
 				text = "At about {burn} a day, your {available} in bank and cash lasts more than a year, "
 						+ "assuming no new money comes in.";
 			}
+			if (comfortableAfterPayingFriends(p, runway)) {
+				severity = Severity.GOOD;
+				title = "Your money has room";
+			}
+			else {
+				// still true, but no good news: too much of this money has to go back to friends
+				severity = Severity.INFO;
+				title = runway.capped() ? "Money lasts more than a year" : "Money lasts about {days} days";
+			}
 		}
 		double impact = severity == Severity.INFO ? 0.5 : 1;
 		out.add(Finding.of("runway", InsightType.RUNWAY, severity, title, text, facts, impact, 1, runwayTip(runway)));
+	}
+
+	/**
+	 * Whether the money would still last the comfortable number of days once every friend is paid
+	 * back. Only the praise depends on it: the days, the sentence and the runway block stay about
+	 * the money that is in bank and cash today.
+	 */
+	private static boolean comfortableAfterPayingFriends(Picture p, RunwayCalc.Result runway) {
+		BigDecimal afterFriends = runway.available().subtract(owedToFriends(p));
+		BigDecimal comfort = runway.dailyBurn().multiply(BigDecimal.valueOf(Guardrails.RUNWAY_COMFORT_DAYS));
+		return afterFriends.compareTo(comfort) >= 0;
+	}
+
+	private static BigDecimal owedToFriends(Picture p) {
+		BigDecimal total = BigDecimal.ZERO;
+		for (Debt debt : p.in().debts()) { // only friends still owed money
+			total = total.add(debt.owed());
+		}
+		return total;
 	}
 
 	/** When the money would not reach the end of the month: the daily amount that makes it last. */
@@ -311,10 +337,7 @@ final class TodayFindings {
 		if (debts.isEmpty()) {
 			return;
 		}
-		BigDecimal total = BigDecimal.ZERO;
-		for (Debt debt : debts) {
-			total = total.add(debt.owed());
-		}
+		BigDecimal total = owedToFriends(p);
 		BigDecimal available = p.in().balances().available();
 		Facts facts = Facts.of().rupees("total", total).rupees("available", available);
 
@@ -348,7 +371,8 @@ final class TodayFindings {
 			text.append(" That is more than the {available} you have in bank and cash.");
 		}
 		else {
-			severity = Severity.INFO;
+			// like the credit card due: owing more than half of the money is worth a warning
+			severity = total.multiply(BigDecimal.valueOf(2)).compareTo(available) > 0 ? Severity.WARN : Severity.INFO;
 			facts.rupees("left", available.subtract(total));
 			text.append(oneFriend ? " After paying it back" : " After paying everyone back")
 				.append(" you would have {left} in bank and cash.");

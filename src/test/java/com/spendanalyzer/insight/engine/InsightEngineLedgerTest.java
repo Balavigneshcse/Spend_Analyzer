@@ -895,15 +895,158 @@ class InsightEngineLedgerTest {
 	}
 
 	@Test
-	void aDebtOfExactlyWhatIsThereIsStillPayable() {
+	void aDebtOfExactlyWhatIsThereIsPayableButAWarning() {
 		Analysis analysis = Ledger.on("2026-11-10")
 			.everyDay("2026-11-01", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
 			.balances("500", "300", "0")
 			.owes("Ravi", "800")
 			.analyse(PeriodCode.THIS_MONTH);
 		Analysis.Insight borrowed = insight(analysis, InsightType.BORROWED).orElseThrow();
-		assertThat(borrowed.severity()).isEqualTo(Severity.INFO);
+		// all of the money is owed, which is more than half of it: a warning, in the words of a debt that can be paid
+		assertThat(borrowed.severity()).isEqualTo(Severity.WARN);
 		assertThat(borrowed.text()).isEqualTo("You owe Ravi ₹800. After paying it back you would have ₹0 in bank and cash.");
+	}
+
+	@Test
+	void aDebtAboveHalfOfBankAndCashIsAWarningLikeTheCreditCardDue() {
+		// ₹5,540 in bank and cash: exactly half of it is still only good to know ...
+		Analysis half = studentWithMoney().owes("Ravi", "2000").owes("Arun", "770").analyse(PeriodCode.THIS_MONTH);
+		Analysis.Insight info = insight(half, InsightType.BORROWED).orElseThrow();
+		assertThat(info.severity()).isEqualTo(Severity.INFO);
+		assertThat(info.text()).isEqualTo("You owe friends ₹2,770 in total: Ravi ₹2,000, Arun ₹770. "
+				+ "After paying everyone back you would have ₹2,770 in bank and cash.");
+
+		// ... and one paisa more is a warning, with the same words
+		Analysis more = studentWithMoney().owes("Ravi", "2000").owes("Arun", "770.01").analyse(PeriodCode.THIS_MONTH);
+		Analysis.Insight warn = insight(more, InsightType.BORROWED).orElseThrow();
+		assertThat(warn.severity()).isEqualTo(Severity.WARN);
+		assertThat(warn.title()).isEqualTo("Money owed to friends");
+		assertThat(warn.text()).isEqualTo("You owe friends ₹2,770.01 in total: Ravi ₹2,000, Arun ₹770.01. "
+				+ "After paying everyone back you would have ₹2,769.99 in bank and cash.");
+
+		// the same rule as for the card: a due of that size against the same money is a warning too
+		Analysis card = Ledger.on("2026-11-10")
+			.everyDay("2026-11-01", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.balances("5200", "340", "2770.01")
+			.analyse(PeriodCode.THIS_MONTH);
+		assertThat(insight(card, InsightType.CREDIT_CARD).orElseThrow().severity()).isEqualTo(Severity.WARN);
+		Analysis cardHalf = Ledger.on("2026-11-10")
+			.everyDay("2026-11-01", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.balances("5200", "340", "2770")
+			.analyse(PeriodCode.THIS_MONTH);
+		assertThat(insight(cardHalf, InsightType.CREDIT_CARD).orElseThrow().severity()).isEqualTo(Severity.INFO);
+	}
+
+	// ------------------------------------------------------------------ the runway of borrowed money
+
+	/** Thirty days of meals at ₹100, so ₹100 a day is the burn; everything in the bank, nothing on the card. */
+	private static Ledger hundredADay(String bank) {
+		return Ledger.on("2026-11-10")
+			.everyDay("2026-10-12", "2026-11-10", "100", Category.FOOD_MEALS, "meals")
+			.balances(bank, "0", "0");
+	}
+
+	@Test
+	void moneyThatIsMostlyBorrowedIsNotPraisedForLasting() {
+		// ₹300 of their own would last 3 days; ₹5,000 from Ravi makes it 53
+		Analysis own = hundredADay("5300").analyse(PeriodCode.THIS_MONTH);
+		Analysis borrowed = hundredADay("5300").owes("Ravi", "5000").analyse(PeriodCode.THIS_MONTH);
+
+		Analysis.Insight praised = insight(own, InsightType.RUNWAY).orElseThrow();
+		assertThat(praised.severity()).isEqualTo(Severity.GOOD);
+		assertThat(praised.title()).isEqualTo("Your money has room");
+
+		Analysis.Insight runway = insight(borrowed, InsightType.RUNWAY).orElseThrow();
+		assertThat(runway.severity()).isEqualTo(Severity.INFO);
+		assertThat(runway.title()).isEqualTo("Money lasts about 53 days");
+		// the sentence is about the money that is there today and stays as it was
+		assertThat(runway.text()).isEqualTo(praised.text())
+			.isEqualTo("At about ₹100 a day, your ₹5,300 in bank and cash lasts about 53 days, assuming no new money comes in.");
+		assertThat(allText(borrowed)).noneMatch(text -> text.contains("has room"));
+
+		// the debt is the louder of the two and comes first
+		Analysis.Insight debt = insight(borrowed, InsightType.BORROWED).orElseThrow();
+		assertThat(debt.severity()).isEqualTo(Severity.WARN);
+		assertThat(debt.text()).isEqualTo("You owe Ravi ₹5,000. After paying it back you would have ₹300 in bank and cash.");
+		assertThat(borrowed.insights().indexOf(debt)).isLessThan(borrowed.insights().indexOf(runway));
+
+		// no number is touched: the runway block and the health score are about bank and cash
+		assertThat(borrowed.runway()).isEqualTo(own.runway());
+		assertThat(borrowed.runway().daysLeft()).isEqualTo(53);
+		assertThat(borrowed.health()).isEqualTo(own.health());
+	}
+
+	@Test
+	void theRunwayIsPraisedWhileThirtyDaysAreLeftAfterPayingFriendsBack() {
+		// ₹5,000 at ₹100 a day: with ₹2,000 owed, ₹3,000 is left, exactly thirty days
+		Analysis enough = hundredADay("5000").owes("Ravi", "1500").owes("Arun", "500").analyse(PeriodCode.THIS_MONTH);
+		Analysis.Insight good = insight(enough, InsightType.RUNWAY).orElseThrow();
+		assertThat(good.severity()).isEqualTo(Severity.GOOD);
+		assertThat(good.title()).isEqualTo("Your money has room");
+		assertThat(insight(enough, InsightType.BORROWED).orElseThrow().severity()).isEqualTo(Severity.INFO);
+
+		// one paisa more owed and it is short of thirty days
+		Analysis less = hundredADay("5000").owes("Ravi", "1500").owes("Arun", "500.01").analyse(PeriodCode.THIS_MONTH);
+		Analysis.Insight info = insight(less, InsightType.RUNWAY).orElseThrow();
+		assertThat(info.severity()).isEqualTo(Severity.INFO);
+		assertThat(info.title()).isEqualTo("Money lasts about 50 days");
+		assertThat(info.text()).isEqualTo(good.text());
+		// a debt under half of the money stays good to know: only the praise is gone
+		assertThat(insight(less, InsightType.BORROWED).orElseThrow().severity()).isEqualTo(Severity.INFO);
+		assertThat(less.runway()).isEqualTo(enough.runway());
+		assertThat(less.health()).isEqualTo(enough.health());
+	}
+
+	@Test
+	void theRunwayFindingOfSomeoneWhoOwesNothingIsUnchanged() {
+		for (String bank : new String[] { "-150", "0", "50", "550", "1300", "2000", "2999.99", "3000", "5300", "900000" }) {
+			Analysis nothingOwed = hundredADay(bank).analyse(PeriodCode.THIS_MONTH);
+			// a friend who was paid back in full is no debt
+			Analysis paidBack = hundredADay(bank).owes("Ravi", "0").owes("Arun", "0.00").analyse(PeriodCode.THIS_MONTH);
+			assertThat(paidBack).as("bank %s", bank).isEqualTo(nothingOwed);
+		}
+		// the steps themselves, as they always were
+		assertThat(insight(hundredADay("550").analyse(PeriodCode.THIS_MONTH), InsightType.RUNWAY).orElseThrow().severity())
+			.isEqualTo(Severity.ALERT);
+		assertThat(insight(hundredADay("1300").analyse(PeriodCode.THIS_MONTH), InsightType.RUNWAY).orElseThrow().severity())
+			.isEqualTo(Severity.WARN);
+		Analysis.Insight twentyNine = insight(hundredADay("2999.99").analyse(PeriodCode.THIS_MONTH), InsightType.RUNWAY)
+			.orElseThrow();
+		assertThat(twentyNine.severity()).isEqualTo(Severity.INFO);
+		assertThat(twentyNine.title()).isEqualTo("Money lasts about 29 days");
+		Analysis.Insight thirty = insight(hundredADay("3000").analyse(PeriodCode.THIS_MONTH), InsightType.RUNWAY).orElseThrow();
+		assertThat(thirty.severity()).isEqualTo(Severity.GOOD);
+		assertThat(thirty.title()).isEqualTo("Your money has room");
+		assertThat(thirty.text())
+			.isEqualTo("At about ₹100 a day, your ₹3,000 in bank and cash lasts about 30 days, assuming no new money comes in.");
+		Analysis.Insight year = insight(hundredADay("900000").analyse(PeriodCode.THIS_MONTH), InsightType.RUNWAY).orElseThrow();
+		assertThat(year.severity()).isEqualTo(Severity.GOOD);
+		assertThat(year.title()).isEqualTo("Your money has room");
+		assertThat(year.text()).contains("more than a year");
+	}
+
+	@Test
+	void whatIsOwedLeavesARunwayFindingThatWasNoPraiseAsItIs() {
+		// under thirty days the finding never was good news: a debt changes nothing about it
+		for (String bank : new String[] { "-150", "0", "50", "550", "1300", "2000", "2999.99" }) {
+			Analysis.Insight without = insight(hundredADay(bank).analyse(PeriodCode.THIS_MONTH), InsightType.RUNWAY).orElseThrow();
+			Analysis.Insight with = insight(hundredADay(bank).owes("Ravi", "9000").analyse(PeriodCode.THIS_MONTH),
+					InsightType.RUNWAY)
+				.orElseThrow();
+			assertThat(with).as("bank %s", bank).isEqualTo(without);
+		}
+	}
+
+	@Test
+	void moreThanAYearOfMostlyBorrowedMoneyIsStatedButNotPraised() {
+		Analysis analysis = hundredADay("900000").owes("Ravi", "899000").analyse(PeriodCode.THIS_MONTH);
+		Analysis.Insight runway = insight(analysis, InsightType.RUNWAY).orElseThrow();
+		assertThat(runway.severity()).isEqualTo(Severity.INFO);
+		// not "about 365 days": the count stops at a year
+		assertThat(runway.title()).isEqualTo("Money lasts more than a year");
+		assertThat(runway.text()).isEqualTo("At about ₹100 a day, your ₹9,00,000 in bank and cash lasts more than a year, "
+				+ "assuming no new money comes in.");
+		assertThat(analysis.runway().daysLeft()).isEqualTo(365);
 	}
 
 	@Test

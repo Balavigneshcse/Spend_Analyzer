@@ -403,6 +403,46 @@ class BorrowingIntegrationTest {
 	}
 
 	@Test
+	void aNameThatLooksTheSameButIsTypedInAnotherUnicodeFormIsTheSameFriend() throws Exception {
+		AuthUser user = onboardedUser();
+		// Tamil "Ponni": the vowel sign "o" as one code point (U+0BCA) or as its two halves (U+0BC6 U+0BBE)
+		String oneCodePoint = "பொன்னி";
+		String twoCodePoints = "பொன்னி";
+		assertThat(oneCodePoint).isNotEqualTo(twoCodePoints);
+
+		api.created(user, borrow(oneCodePoint, "500", "BANK"));
+		// the second borrow is typed on another keyboard, and a paste added a zero-width space
+		api.create(user, borrow(twoCodePoints + "​", "200", "CASH"))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.entry.person").value(oneCodePoint))
+			.andExpect(jsonPath("$.balances.owedToFriends").value("700.00"));
+
+		api.debts(user)
+			.andExpect(jsonPath("$.total").value("700.00"))
+			.andExpect(jsonPath("$.people.length()").value(1))
+			.andExpect(jsonPath("$.people[0].name").value(oneCodePoint))
+			.andExpect(jsonPath("$.people[0].owed").value("700.00"))
+			.andExpect(jsonPath("$.people[0].borrowed").value("700.00"))
+			.andExpect(jsonPath("$.knownNames.length()").value(1))
+			.andExpect(jsonPath("$.knownNames[0]").value(oneCodePoint));
+		List<String> keys = jdbc.sql("SELECT DISTINCT person_key FROM entries WHERE user_id = ? AND person_key IS NOT NULL")
+			.param(user.id())
+			.query(String.class)
+			.list();
+		assertThat(keys).containsExactly(oneCodePoint);
+
+		// paying back in the other form finds the friend too
+		api.create(user, repay("​" + twoCodePoints, "300", "BANK"))
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.entry.person").value(oneCodePoint));
+		api.debts(user)
+			.andExpect(jsonPath("$.people.length()").value(1))
+			.andExpect(jsonPath("$.people[0].owed").value("400.00"))
+			.andExpect(jsonPath("$.people[0].repaid").value("300.00"));
+		assertOwed(user, "400.00");
+	}
+
+	@Test
 	void peopleAreSortedByDebtThenNameAndKnownNamesWithoutRegardToCase() throws Exception {
 		AuthUser user = onboardedUser();
 		api.created(user, borrow("bala", "300", "CASH"));

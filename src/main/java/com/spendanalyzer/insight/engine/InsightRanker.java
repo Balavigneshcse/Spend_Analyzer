@@ -20,13 +20,23 @@ final class InsightRanker {
 
 	static final int MAX_TIPS = 3;
 
-	/** Priority first; type and id only make the order stable. */
+	/**
+	 * Priority first. At equal priority what is owed today comes before a finding about the period,
+	 * so a debt warning is not the one dropped for the limit or for the good news; type and id only
+	 * make the order stable.
+	 */
 	private static final Comparator<Finding> ORDER = Comparator.comparingDouble(Finding::priority)
 		.reversed()
+		.thenComparing(finding -> !owedToday(finding.type()))
 		.thenComparing(Finding::type)
 		.thenComparing(Finding::id);
 
 	private InsightRanker() {
+	}
+
+	/** The facts about money the user owes right now: the credit card due and the debts to friends. */
+	private static boolean owedToday(InsightType type) {
+		return type == InsightType.CREDIT_CARD || type == InsightType.BORROWED;
 	}
 
 	static List<Finding> rank(List<Finding> findings) {

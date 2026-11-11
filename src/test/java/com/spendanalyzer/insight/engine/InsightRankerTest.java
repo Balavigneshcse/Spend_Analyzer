@@ -54,6 +54,54 @@ class InsightRankerTest {
 		assertThat(ids(shown)).endsWith("good");
 	}
 
+	/** Money runs out, four warnings about the period at 0.80, a debt warning at 0.80 and one piece of good news. */
+	private static List<Finding> overspendingMonthWithADebt() {
+		List<Finding> findings = new ArrayList<>();
+		findings.add(finding("no-spend-days", InsightType.POSITIVE, Severity.GOOD, 0.3));
+		findings.add(finding("borrowed", InsightType.BORROWED, Severity.WARN, 1));
+		findings.add(finding("leak-juice", InsightType.SMALL_LEAK, Severity.WARN, 1));
+		findings.add(finding("change-shopping", InsightType.PERIOD_CHANGE, Severity.WARN, 1));
+		findings.add(finding("change-overall", InsightType.PERIOD_CHANGE, Severity.WARN, 1));
+		findings.add(finding("needs-wants", InsightType.NEEDS_WANTS, Severity.WARN, 1));
+		findings.add(finding("runway", InsightType.RUNWAY, Severity.ALERT, 1));
+		return findings;
+	}
+
+	@Test
+	void aDebtWarningIsNotTheOneDroppedForGoodNews() {
+		List<Finding> ranked = InsightRanker.rank(overspendingMonthWithADebt());
+		// the debt ties with the four period warnings and goes ahead of them
+		assertThat(ranked.get(1).priority()).isEqualTo(ranked.get(5).priority());
+		assertThat(ids(ranked)).containsExactly("runway", "borrowed", "leak-juice", "change-overall", "change-shopping",
+				"needs-wants", "no-spend-days");
+
+		// six are shown: the good news takes the place of the last period warning, not of the debt
+		List<Finding> shown = InsightRanker.select(ranked);
+		assertThat(ids(shown)).containsExactly("runway", "borrowed", "leak-juice", "change-overall", "change-shopping",
+				"no-spend-days");
+	}
+
+	@Test
+	void aDebtWarningIsNotPushedOutByMoreWarningsOfTheSameWeight() {
+		List<Finding> findings = overspendingMonthWithADebt();
+		findings.add(finding("leak-chips", InsightType.SMALL_LEAK, Severity.WARN, 1));
+		findings.add(finding("unusual-shoes", InsightType.UNUSUAL_SPEND, Severity.WARN, 1));
+		findings.add(finding("credit-card", InsightType.CREDIT_CARD, Severity.WARN, 1));
+		List<Finding> shown = InsightRanker.select(InsightRanker.rank(findings));
+		// both facts about money owed today, in the order of their types, then the period
+		assertThat(ids(shown)).containsExactly("runway", "credit-card", "borrowed", "leak-chips", "leak-juice",
+				"no-spend-days");
+	}
+
+	@Test
+	void owingMoneyOnlyBreaksTiesAndNeverBeatsAHigherPriority() {
+		List<Finding> ranked = InsightRanker.rank(List.of(finding("top", InsightType.TOP_CATEGORY, Severity.INFO, 1),
+				finding("credit-card", InsightType.CREDIT_CARD, Severity.WARN, 0.5),
+				finding("leak", InsightType.SMALL_LEAK, Severity.WARN, 0.7),
+				finding("borrowed", InsightType.BORROWED, Severity.INFO, 1)));
+		assertThat(ids(ranked)).containsExactly("leak", "borrowed", "top", "credit-card");
+	}
+
 	@Test
 	void goodNewsOfAFullTypeReplacesTheWeakerOne() {
 		List<Finding> findings = List.of(finding("change-overall", InsightType.PERIOD_CHANGE, Severity.WARN, 1),
